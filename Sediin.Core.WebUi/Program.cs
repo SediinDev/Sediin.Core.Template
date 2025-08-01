@@ -1,25 +1,24 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Sediin.Core.WebUi.Areas.Identity.Data;
-using Sediin.Core.WebUi.Data;
+using Sediin.Core.DataAccess.Data;
+using Sediin.Core.Identity.Data;
 using Sediin.Core.WebUi.Controllers;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var AuthenticationConnection = builder.Configuration.GetConnectionString("AuthenticationConnection");
-builder.Services.AddDbContext<AuthenticationDbContext>(options => options.UseSqlServer(AuthenticationConnection));
+var SediinCoreIdentityConnection = builder.Configuration.GetConnectionString("SediinCoreIdentityConnection");
+builder.Services.AddDbContext<SediinCoreIdentityDbContext>(options => options.UseSqlServer(SediinCoreIdentityConnection));
 
-var ApplicationConnection = builder.Configuration.GetConnectionString("ApplicationConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(ApplicationConnection));
+var SediinCoreDataAccessConnection = builder.Configuration.GetConnectionString("SediinCoreDataAccessConnection");
+builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options => options.UseSqlServer(SediinCoreDataAccessConnection));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AuthenticationDbContext>();
+    .AddEntityFrameworkStores<SediinCoreIdentityDbContext>();
 
 builder.Services.AddControllersWithViews();
 

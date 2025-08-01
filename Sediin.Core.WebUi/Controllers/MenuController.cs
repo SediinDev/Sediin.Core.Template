@@ -1,15 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using Sediin.Core.WebUi.Areas.Administrator.Models;
-using Sediin.Core.WebUi.Areas.Identity.Data;
-using Sediin.Core.WebUi.Data;
 using Sediin.Core.WebUi.Models;
+using System.Data;
 
 namespace Sediin.Core.WebUi.Controllers
 {

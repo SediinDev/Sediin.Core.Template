@@ -3,24 +3,15 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+using Sediin.Core.Identity.Data;
+using Sediin.Core.WebUi.Controllers;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
-using Sediin.Core.WebUi.Areas.Identity.Data;
-using Sediin.Core.WebUi.Controllers;
 
 namespace Sediin.Core.WebUi.Areas.Identity.Pages.Account
 {
@@ -33,7 +24,7 @@ namespace Sediin.Core.WebUi.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         //private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly AuthenticationDbContext _context;
+        private readonly SediinCoreIdentityDbContext _context;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +33,7 @@ namespace Sediin.Core.WebUi.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             EmailSender emailSender,
             RoleManager<IdentityRole> roleManager,
-            AuthenticationDbContext context) : base(signInManager, emailSender)
+            SediinCoreIdentityDbContext context) : base(signInManager, emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;

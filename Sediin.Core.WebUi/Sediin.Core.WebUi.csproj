@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\ApplicationDbContext.cs" />
+    <Compile Remove="Data\AuthenticationDbContext.cs" />
+    <Compile Remove="Data\SediinCoreIdentityDbContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
@@ -23,6 +29,11 @@
 
   <ItemGroup>
     <Folder Include="Areas\Administrator\Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sediin.Core.DataAccess\Sediin.Core.DataAccess.csproj" />
+    <ProjectReference Include="..\Sediin.Core.Identity\Sediin.Core.Identity.csproj" />
   </ItemGroup>
 
 </Project>

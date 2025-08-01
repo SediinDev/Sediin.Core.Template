@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.WebUi", "Sediin.Core.WebUi\Sediin.Core.WebUi.csproj", "{4F93E027-F7F9-4CCC-8D4E-7957189CA4B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sediin.Core.WebUi", "Sediin.Core.WebUi\Sediin.Core.WebUi.csproj", "{4F93E027-F7F9-4CCC-8D4E-7957189CA4B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.DataAccess", "Sediin.Core.DataAccess\Sediin.Core.DataAccess.csproj", "{E9A91B86-6A54-4469-B9CC-F41E1F3A5C97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.Identity", "Sediin.Core.Identity\Sediin.Core.Identity.csproj", "{22B3B4F9-A030-4571-8883-3EAC1EF7E706}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{4F93E027-F7F9-4CCC-8D4E-7957189CA4B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F93E027-F7F9-4CCC-8D4E-7957189CA4B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F93E027-F7F9-4CCC-8D4E-7957189CA4B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9A91B86-6A54-4469-B9CC-F41E1F3A5C97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9A91B86-6A54-4469-B9CC-F41E1F3A5C97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9A91B86-6A54-4469-B9CC-F41E1F3A5C97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9A91B86-6A54-4469-B9CC-F41E1F3A5C97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B3B4F9-A030-4571-8883-3EAC1EF7E706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B3B4F9-A030-4571-8883-3EAC1EF7E706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B3B4F9-A030-4571-8883-3EAC1EF7E706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B3B4F9-A030-4571-8883-3EAC1EF7E706}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
