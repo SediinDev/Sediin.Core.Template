@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Sediin.Core.Identity;
 using Sediin.Core.WebUi.Areas.Administrator.Models;
-using Sediin.Core.WebUi.Data;
 using Sediin.Core.WebUi.Models;
 using System.Diagnostics;
 

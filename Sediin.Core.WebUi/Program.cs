@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
+using Sediin.Core.DataAccess.Repository;
 using Sediin.Core.Identity.Data;
 using Sediin.Core.WebUi.Controllers;
 using Serilog;
@@ -21,6 +23,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<SediinCoreIdentityDbContext>();
 
 builder.Services.AddControllersWithViews();
+
 
 // session key/value
 builder.Services.AddMemoryCache();
@@ -60,6 +63,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<EmailSender>();
 
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>

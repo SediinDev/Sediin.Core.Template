@@ -1,4 +1,4 @@
-﻿namespace Sediin.Core.WebUi.Data
+﻿namespace Sediin.Core.Identity
 {
     public enum Roles
     {
