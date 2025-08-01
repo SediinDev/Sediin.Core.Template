@@ -1,0 +1,94 @@
+﻿@page
+@model UserListModel
+@{
+}
+<section>
+    <h3>Gestione utenti.</h3>
+    <hr />
+
+    @if (@Model != null && @Model.UsersList.Count > 0)
+    {
+        <div class="row mt-3">
+            <div class="col-md-12 left">
+                <div class="table-responsive">
+                    <table id="tblTBRoles" class="table table-striped table-bordered dataTable table-hover" cellspacing="10" cellpadding="10" style="font-size: 100%; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Utente</th>
+                                <th>Email</th>
+                                <th>Ruoli</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.UsersList)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.UserName</td>
+                                    <td>@item.Email</td>
+                                    <td>
+                                        @foreach (var Role in item.Roles)
+                                        {
+                                            <form id="RemoveRoleUserForm" asp-page-handler="RemoveRoleUser" method="post" class="form-horizontal">
+                                                <input type="text" name="UserName" asp-for="@item.UserName" style="display: none;" />
+                                                <div class="row">
+                                                    <div class="col-md-9">
+                                                        <input type="text" value="@Role" disabled class="text-center" />
+                                                    </div>
+                                                    @if ((@item?.UserName?.ToUpper() != "Administrator".ToUpper()) || (Role.ToUpper() != "Administrator".ToUpper()))
+                                                    {
+                                                        <input type="text" name="Role" asp-for="@Role" style="display: none;" />
+                                                        <div class="col-md-3">
+                                                            <button class="btn btn-light text-center" ID="RemoveRoleUser" name="RemoveRoleUser" value="RemoveRoleUser" type="submit" title="Rimuovi ruolo">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </form>
+                                        }
+
+                                        <form id="AddRoleUserForm" asp-page-handler="AddRoleUser" method="post" class="form-horizontal">
+                                            <input type="text" name="UserName" asp-for="@item.UserName" style="display: none;" />
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <select id="ddlRolesList" asp-for="Role" class="form-control" asp-items="@Model.RolesList"></select>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <button class="btn btn-light text-center" ID="AddRoleUser" name="AddRoleUser" value="AddRoleUser" type="submit" title="Aggiungi ruolo">
+                                                        <i class="fa fa-add"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </td>
+
+
+                                    <td>
+                                        @if (@item?.UserName?.ToUpper() != "Administrator".ToUpper())
+                                        {
+                                            <form id="DeleteUserForm" asp-page-handler="DeleteUser" method="post" class="form-horizontal">
+                                                <input type="text" name="UserName" asp-for="@item.UserName" style="display: none;" />
+                                                <button class="btn btn-sm btn-primary" ID="DeleteUser" name="DeleteUser" value="DeleteUser" type="submit" title="Elimina utente">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

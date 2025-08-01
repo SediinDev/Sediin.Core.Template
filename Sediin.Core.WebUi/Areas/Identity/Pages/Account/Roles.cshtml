@@ -1,0 +1,99 @@
+﻿@page
+
+@using Sediin.Core.WebUi.Areas.Identity.Data;
+@using Sediin.Core.WebUi.Data;
+
+@model RoleModel
+@{
+    ViewData["Title"] = "Gestione dei ruoli";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="creaForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h2>Creazione di un nuovo ruolo.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.RoleName" class="form-control" autocomplete="off" aria-required="true" placeholder="ruolo" />
+                <label asp-for="Input.RoleName">Nome del ruolo</label>
+                <span asp-validation-for="Input.RoleName" class="text-danger"></span>
+            </div>
+            <input id="CreateRole" name="CreateRole" value="Crea il ruolo" type="submit" class="w-100 btn btn-lg btn-primary" />
+        </form>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <section>
+            <h3>Use another service to register.</h3>
+            <hr />
+            @{
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
+                            about setting up this ASP.NET application to support logging in via external services</a>.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div>
+                            <p>
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+                }
+            }
+        </section>
+        @if (@Model.Input.RoleList != null && @Model.Input.RoleList.Count > 0)
+        {
+            <div class="row mt-3">
+                <div class="col-md-12 left">
+                    <div class="table-responsive">
+                        <table id="tblTBRoles" class="table table-striped table-bordered dataTable table-hover" cellspacing="10" cellpadding="10" style="font-size: 100%; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Role ID</th>
+                                    <th>Role Name</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Input.RoleList)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Name</td>
+                                        <td>
+                                            @if(@item.Name?.ToUpper() != Roles.Administrator.ToString().ToUpper())
+                                            {
+                                                <form id="DeleteRoleForm" asp-page-handler="DeleteRole" method="post" class="form-horizontal">
+                                                    <input type="text" name="RoleName" asp-for="@item.Name" style="display: none;"/>
+                                                    <button class="btn btn-sm btn-primary" ID="DeleteRole" name="DeleteRole" value="DeleteRole" type="submit" title="Elimina ruolo">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,164 @@
+﻿@model List<MenuModel>
+
+@using Microsoft.AspNetCore.Identity
+@using Sediin.Core.WebUi.Areas.Identity.Data;
+@using Sediin.Core.WebUi.Areas.Identity.Pages.Account
+
+@inject SignInManager<IdentityUser> SignInManager
+@* @inject UserManager<IdentityUser> UserManager *@
+
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+
+@{
+
+    string urlTest = "https://www.google.com/maps";
+}
+
+<link rel="stylesheet" href="/menu/css/menu.css"> <!-- Resource style -->
+@functions
+{
+    public string LoadSubMenu(int IdMenu)
+    {
+        string menu = "<ul>";
+        foreach (var item in Model.Where(i => i.IdMenuPadre == IdMenu).OrderBy(i => i.Ordine))
+        {
+            switch (item.TipoMenu)
+            {
+                case "menuitem":
+                    menu += "<li>" +
+                        "<a href=\"" + "https://www.google.com/maps" + "\">" +
+                            "<i class=\"" + @item.IconFa + "\"></i>" +
+                            "<strong>&nbsp; " + @item.Descrizione + "</strong>";
+                    if (string.IsNullOrWhiteSpace(@item.DescrizioneSmall) == false)
+                    {
+                        menu += "<small>@item.DescrizioneSmall</small>";
+                    }
+                    menu += "</a></li>";
+                    break;
+
+                case "menu_items":
+                    menu += "<li><a href=\"#\"><i class=\"" + @item.IconFa + "\"></i><strong>&nbsp; " + @item.Descrizione + "</strong>";
+                    if (string.IsNullOrWhiteSpace(@item.DescrizioneSmall) == false)
+                    {
+                        menu += "<small>@item.DescrizioneSmall</small>";
+                    }
+                    menu += "</a>";
+                    menu += LoadSubMenu(item.IdMenu);
+                    menu += "</li>";
+                    break;
+            }
+        }
+        menu += "</ul>";
+        
+        return menu;
+    }
+}
+
+<nav id="sidebar" class="d-none d-md-block d-lg-block primary" style="border-right: 1px solid; display: flex;flex-flow: column;height: 100%;">
+    <nav id="menudropdown"  style="position: static;">
+        <ul class="mcd-menu">
+            @{
+                foreach (var item in Model.Where(i => i.IdMenuPadre == 0).OrderBy(i => i.Ordine))
+                {
+                    switch (item.TipoMenu)
+                    {
+                        case "search__":
+                            <form class="menu-search">
+                                <input type="search" placeholder="@item.Descrizione">
+                            </form>
+
+                            <li class="float">
+                                <a class="search">
+                                    <input type="text" value="@item.Descrizione">
+                                    <input type="button"><i class="@item.IconFa">
+                                </a>
+                                <a href="" class="search-mobile">
+                                    <i class="fa fa-search"></i>
+                                </a>
+                            </li>
+
+                            break;
+
+                        case "divider":
+                            <li class="menu-divider">@item.Descrizione</li>
+                            break;
+
+                        case "menu_items":
+                            <li>
+                                <a href="#">
+                                    <i class="@item.IconFa"></i>
+                                    <strong>&nbsp; @item.Descrizione</strong>
+                                    @if (string.IsNullOrWhiteSpace(@item.DescrizioneSmall) == false)
+                                    {
+                                        <small>@item.DescrizioneSmall</small>
+                                    }
+                                </a>
+                                @Html.Raw(LoadSubMenu(item.IdMenu))
+                            </li>
+                            break;
+
+                        case "menuitem":
+                            <li>
+                                <a href="@urlTest">
+                                    <i class="@item.IconFa"></i>
+                                    <strong>&nbsp; @item.Descrizione</strong>
+                                    @if (string.IsNullOrWhiteSpace(@item.DescrizioneSmall) == false)
+                                    {
+                                        <small>@item.DescrizioneSmall</small>
+                                    }
+                                </a>
+                            </li>
+                            break;
+                    }
+                }
+            }
+        </ul>
+    </nav>
+</nav>
+
+<script>
+    $(document).ready(function () {
+        document.querySelectorAll('.mcd-menu li a').forEach(function(item) {
+            item.addEventListener('mouseover', function() {
+            //debugger
+                item.classList.add("active");
+            });
+            item.addEventListener('mouseleave', function() {
+            //debugger
+                item.classList.remove("active");
+            });
+        });
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+            $(this).tooltip("hide");
+            if ($("#sidebar").hasClass("active")) {
+                $('#sidebarCollapseText').text("Apri menu");
+                $("#btnMenu")[0].click();
+            }
+            else {
+                $('#sidebarCollapseText').text("Chiudi menu");
+                $("#btnMenu")[0].click();
+                menuResize();
+            }
+        });
+
+        window.addEventListener('resize', function(event) {
+            menuResize();
+        }, true);
+
+        menuResize();
+        $("#btnMenu").click();
+    });
+
+    function menuResize()
+    {
+        //debugger
+        var h = window.innerHeight - $("footer").outerHeight() - $("header").outerHeight();
+        document.getElementById("sidebar").style["height"] /* = document.getElementById("btnMenu").style["height"] */ = h;
+        //var w = $("#sidebar")[0].offsetWidth;
+        //document.getElementById("sidebar").style["width"] /* = document.getElementById("btnMenu").style["width"] */ = w;
+    }
+</script>
