@@ -7,9 +7,9 @@ namespace Sediin.Core.Identity.Repository
     {
         public IAuthService AuthService { get; }
 
-        public UnitOfWorkIdentity(SignInManager<IdentityUser> signInManager)
+        public UnitOfWorkIdentity(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
-            AuthService = new AuthService(signInManager);
+            AuthService = new AuthService(signInManager, userManager);
         }
     }
 }

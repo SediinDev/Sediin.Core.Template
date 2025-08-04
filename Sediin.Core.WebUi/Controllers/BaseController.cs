@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Sediin.Core.Identity.Abstract;
+using System.Text;
 
 public abstract class BaseController : Controller
 {
     protected ILogger<BaseController> _logger;
     protected IUnitOfWorkIdentity _unitOfWorkIdentity;
-    //protected IEmailSender _emailSender;
+    protected IEmailSender _emailSender;
 
-    #pragma warning disable
+#pragma warning disable
     public BaseController()
     {
     }
@@ -21,8 +24,8 @@ public abstract class BaseController : Controller
             _logger = HttpContext.RequestServices.GetService<ILogger<BaseController>>();
         if (_unitOfWorkIdentity == null)
             _unitOfWorkIdentity = HttpContext.RequestServices.GetService<IUnitOfWorkIdentity>();
-        //if (_emailSender == null)
-        //    _emailSender = HttpContext.RequestServices.GetService<IEmailSender>();
+        if (_emailSender == null)
+            _emailSender = HttpContext.RequestServices.GetService<IEmailSender>();
 
         base.OnActionExecuting(context);
     }
@@ -44,6 +47,32 @@ public abstract class BaseController : Controller
         {
             viewName ??= ControllerContext.ActionDescriptor.ActionName;
             return View(viewName, model);
+        }
+    }
+
+    public string ModelStateErrorToString(ModelStateDictionary modelState)
+    {
+        try
+        {
+            var sb = new StringBuilder();
+
+            foreach (var entry in modelState)
+            {
+                foreach (var error in entry.Value.Errors)
+                {
+                    if (!string.IsNullOrWhiteSpace(error.ErrorMessage))
+                        sb.AppendLine($"{error.ErrorMessage}<br/>");
+                }
+            }
+
+            if (sb.Length == 0)
+                sb.Append("Si è verificato un errore!");
+
+            return sb.ToString();
+        }
+        catch
+        {
+            return string.Empty;
         }
     }
 }

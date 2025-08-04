@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Models;
 using System.Collections.Specialized;
 using System.Web;
@@ -62,25 +64,19 @@ namespace Sediin.Core.WebUi.Controllers
         {
             try
             {
-                return Content("OK");
-                //if (!ModelState.IsValid)
-                //{
-                //    throw new Exception(ModelStateErrorToString(ModelState));
-                //}
+                
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(ModelStateErrorToString(ModelState));
+                }
 
-                //var user = await UserManager.FindByEmailAsync(model.Email);
+                await _unitOfWorkIdentity.AuthService.RecoveryPassword(model.Email);
 
-                //if (user == null)
-                //{
-                //    throw new Exception("Indirizzo email non trovato");
-                //}
+                await _emailSender.SendEmailAsync("c.galletti@sediin.it", "prova email", "html");
 
-                //if (user.LockoutEndDateUtc != null)
-                //{
-                //    throw new Exception("Utente bloccato, non è possibile recuperare la password");
-                //}
 
-                //await IsEmailConfirmed(user);
+
+                return Content("Le è stata inviata una email per il cambio della sua password.");
 
                 //// Inviare un messaggio di posta elettronica con questo collegamento
                 //string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);

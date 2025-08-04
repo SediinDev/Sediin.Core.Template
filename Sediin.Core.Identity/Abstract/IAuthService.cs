@@ -6,5 +6,7 @@ namespace Sediin.Core.Identity.Abstract
     {
         Task<SignInResult> LoginAsync(string email, string password, bool rememberMe);
         Task LogoutAsync();
+
+        Task RecoveryPassword(string email);
     }
 }

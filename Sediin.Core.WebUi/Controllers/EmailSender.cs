@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace Sediin.Core.WebUi.Controllers
 {
@@ -23,20 +24,22 @@ namespace Sediin.Core.WebUi.Controllers
 
     public class EmailSender : IEmailSender
     {
-        private readonly EmailSettings _emailSettings;
+        private readonly IConfiguration _configuration;
 
-        public EmailSender(IOptions<EmailSettings> emailSettings)
+        public EmailSender(IConfiguration configuration)
         {
-            _emailSettings = emailSettings.Value;
+            _configuration = configuration;
         }
 
+        #pragma warning disable
         public async Task SendEmailAsync(string toAddress, string subject, string body)
         {
+            var _emailSettings = _configuration.GetSection("EmailSettings").Get<EmailSettings>();
             var smtpClient = new SmtpClient(_emailSettings.SmtpServer)
             {
                 Port = _emailSettings.SmtpPort,
                 EnableSsl = _emailSettings.SmtpServerUseSSL,
-                UseDefaultCredentials = false,               
+                UseDefaultCredentials = false,
             };
             smtpClient.Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword);
 
@@ -50,7 +53,7 @@ namespace Sediin.Core.WebUi.Controllers
             };
 
             emailMessage.To.Add(toAddress);
-            
+
             try
             {
                 await smtpClient.SendMailAsync(emailMessage);

@@ -71,8 +71,8 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 
-//builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.AddTransient<EmailSender>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+//builder.Services.AddTransient<EmailSender>();
 
 
 // --- LOGGING (Serilog) ---
