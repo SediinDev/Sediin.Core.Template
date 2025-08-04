@@ -28,7 +28,8 @@ namespace Sediin.Core.WebUi
             }
             else
             {
-                return Json(new { success = false, message = "Credenziali errate." });
+                throw new Exception("Credenziali errate.");
+                //return Json(new { success = false, message = "Credenziali errate." });
             }
         }
     }

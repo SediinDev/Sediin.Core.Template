@@ -8,6 +8,7 @@ using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
 using Sediin.Core.Identity.Repository;
 using Sediin.Core.WebUi.Controllers;
+using Sediin.Core.WebUi.Filters;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,6 +82,14 @@ builder.Services.AddRazorPages();
 
 // --- CONFIGURAZIONE FILE EXTRA ---
 builder.Configuration.AddJsonFile("Config/Menu.json", optional: true, reloadOnChange: true);
+
+
+// Aggiungi filtro globale
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<HandleAjaxErrorAttribute>();
+});
+
 
 var app = builder.Build();
 

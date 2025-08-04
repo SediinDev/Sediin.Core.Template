@@ -10,9 +10,9 @@
 <div id="loginResult"></div>
 
 @using (Html.BeginAjaxForm("Login", "Authentication",
-updateTargetId: "loginResult",
+onBegin: "alertWaid()",
 onSuccess: "onLoginSuccess",
-onFailure: "onLoginFailed"))
+onFailure: "handleError"))
 {
 
     <div class="form-floating mb-3">
