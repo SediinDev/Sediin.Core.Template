@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sediin.Core.DataAccess\Sediin.Core.DataAccess.csproj" />
+    <ProjectReference Include="..\Sediin.Core.Helpers\Sediin.Core.Helpers.csproj" />
     <ProjectReference Include="..\Sediin.Core.Identity\Sediin.Core.Identity.csproj" />
   </ItemGroup>
 
