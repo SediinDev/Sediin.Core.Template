@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Sediin.Core.Helpers.Html
 {
+    #pragma warning disable
     public static class AjaxExtensions
     {
         public static IDisposable BeginAjaxForm(this IHtmlHelper htmlHelper,
