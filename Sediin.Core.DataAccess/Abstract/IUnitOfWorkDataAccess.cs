@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sediin.Core.DataAccess.Abstract
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWorkDataAccess
     {
         IAziendaRepository Aziende { get; }
         void Save();

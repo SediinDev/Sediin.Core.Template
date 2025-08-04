@@ -3,13 +3,13 @@ using Sediin.Core.DataAccess.Data;
 
 namespace Sediin.Core.DataAccess.Repository
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWorkDataAccess : IUnitOfWorkDataAccess
     {
         SediinCoreDataAccessDbContext _db;
 
         public IAziendaRepository Aziende { get; private set; }
 
-        public UnitOfWork(SediinCoreDataAccessDbContext db)
+        public UnitOfWorkDataAccess(SediinCoreDataAccessDbContext db)
         {
             _db = db;
             Aziende = new AziendaRepository(_db);

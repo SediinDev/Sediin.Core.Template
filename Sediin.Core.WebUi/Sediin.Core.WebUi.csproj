@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Administrator\Data\" />
+    <Folder Include="wwwroot\lib\jquery-unobtrusive\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,38 +1,40 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
 using Sediin.Core.DataAccess.Repository;
+using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
+using Sediin.Core.Identity.Repository;
 using Sediin.Core.WebUi.Controllers;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var SediinCoreIdentityConnection = builder.Configuration.GetConnectionString("SediinCoreIdentityConnection");
-builder.Services.AddDbContext<SediinCoreIdentityDbContext>(options => options.UseSqlServer(SediinCoreIdentityConnection));
+// --- CONFIGURAZIONI CONNECTION STRING ---
+var identityConn = builder.Configuration.GetConnectionString("SediinCoreIdentityConnection");
+var dataConn = builder.Configuration.GetConnectionString("SediinCoreDataAccessConnection");
 
-var SediinCoreDataAccessConnection = builder.Configuration.GetConnectionString("SediinCoreDataAccessConnection");
-builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options => options.UseSqlServer(SediinCoreDataAccessConnection));
+// --- DB CONTEXTS ---
+builder.Services.AddDbContext<SediinCoreIdentityDbContext>(options =>
+    options.UseSqlServer(identityConn));
+
+builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options =>
+    options.UseSqlServer(dataConn));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<SediinCoreIdentityDbContext>();
-
-builder.Services.AddControllersWithViews();
-
-
-// session key/value
-builder.Services.AddMemoryCache();
-builder.Services.AddSession();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+// --- IDENTITY ---
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<SediinCoreIdentityDbContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Password settings.
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
@@ -40,52 +42,49 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 
-    // Lockout settings.
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 
-    // User settings.
-    options.User.AllowedUserNameCharacters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    // Cookie settings
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
 
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<EmailSender>();
+// --- DEPENDENCY INJECTION ---
+builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
+builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
 
-builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
-    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddMemoryCache();
+builder.Services.AddSession();
 
-//builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
-//    .WriteTo.Console()
-//    .WriteTo.File(new JsonFormatter(), "logsevere_.json", restrictedToMinimumLevel: LogEventLevel.Warning, rollingInterval: RollingInterval.Day)
-//    .WriteTo.File("log_.txt", restrictedToMinimumLevel: LogEventLevel.Warning, rollingInterval: RollingInterval.Day)
-//    .MinimumLevel.Debug().
-//    ReadFrom.Configuration(hostingContext.Configuration));
-
-//using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
-//    .SetMinimumLevel(LogLevel.Trace)
-//    .AddConsole());
+//builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<EmailSender>();
 
 
-builder.Configuration.AddJsonFile($"Config\\Menu.json", optional: true, reloadOnChange: true);
+// --- LOGGING (Serilog) ---
+builder.Host.UseSerilog((ctx, cfg) =>
+    cfg.ReadFrom.Configuration(ctx.Configuration));
+
+// --- CONTROLLERS / VIEWS / RAZOR ---
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+// --- CONFIGURAZIONE FILE EXTRA ---
+builder.Configuration.AddJsonFile("Config/Menu.json", optional: true, reloadOnChange: true);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- MIDDLEWARE ---
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -93,29 +92,27 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
+// --- ROUTING ---
 app.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-    );
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages()
-   .WithStaticAssets();
+app.MapRazorPages();
 
 app.Run();

@@ -1,0 +1,67 @@
+﻿@model Sediin.Core.WebUi.Models.Authentication
+
+@{
+    ViewData["Title"] = "Login";
+
+}
+
+<h2>Login</h2>
+
+<div id="loginResult"></div>
+
+<form asp-controller="Authentication"
+      asp-action="Login"
+      method="post"
+      data-ajax="true"
+      data-ajax-mode="replace"
+      data-ajax-update="#loginResult"
+      data-ajax-success="onLoginSuccess"
+      data-ajax-failure="onLoginFailed">
+
+    <div class="form-floating mb-3">
+        <input asp-for="Username" class="form-control" autocomplete="username" aria-required="true" placeholder="username" />
+        <label asp-for="Username">Username</label>
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" type="password" />
+        <label asp-for="Password">Password</label>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" asp-for="RememberMe" />
+        <label class="form-check-label" asp-for="RememberMe">
+            @Html.DisplayNameFor(m => m.RememberMe)
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Login</button>
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <!-- Validazione -->
+@*     <partial name="_ValidationScriptsPartial" />
+ *@
+    <script>
+        function onLoginSuccess(response) {
+            if (response.success) {
+                $('#loginResult').html('<div class="alert alert-success">Accesso effettuato con successo!</div>');
+                // Redirect se specificato
+                if (response.redirectUrl) {
+                    setTimeout(function () {
+                        window.location.href = response.redirectUrl;
+                    }, 1000);
+                }
+            } else {
+                $('#loginResult').html('<div class="alert alert-danger">' + response.message + '</div>');
+            }
+        }
+
+        function onLoginFailed(xhr) {
+            $('#loginResult').html('<div class="alert alert-danger">Errore durante l’invio della richiesta.</div>');
+        }
+    </script>
