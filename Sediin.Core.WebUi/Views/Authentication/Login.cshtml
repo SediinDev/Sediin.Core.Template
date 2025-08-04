@@ -15,10 +15,9 @@ onSuccess: "onLoginSuccess",
 onFailure: "handleError"))
 {
 
-    <div class="form-floating mb-3">
-        <input asp-for="Username" class="form-control" autocomplete="username" aria-required="true" placeholder="username" />
-        <label asp-for="Username">Username</label>
-        <span asp-validation-for="Username" class="text-danger"></span>
+                        @Html.TextBoxFor(model => model.Username,
+                        new { @class = "form-control col-md-12", placeholder = "Codice utente", autocomplete = "off", type = "search" })
+                    @Html.ValidationMessageFor(model => model.Username, "")
     </div>
 
     <div class="form-floating mb-3">
