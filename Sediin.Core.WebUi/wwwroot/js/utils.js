@@ -116,7 +116,7 @@ function alertClose() {
 function handleError(xhr) {
     try {
 
-        console.log("xhr.responseText: " + xhr.responseText);
+        //console.log("xhr.responseText: " + xhr.responseText);
 
         const res = JSON.parse(xhr.responseText);
         if (res && res.message) {

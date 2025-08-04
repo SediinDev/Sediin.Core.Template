@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Sediin.Core.Helpers.Html
 {
@@ -33,10 +35,10 @@ namespace Sediin.Core.Helpers.Html
             formTag.Attributes["data-ajax"] = "true";
             formTag.Attributes["data-ajax-method"] = method.ToUpper();
 
-            var urlHelper = htmlHelper.ViewContext.HttpContext.RequestServices
-                .GetService(typeof(Microsoft.AspNetCore.Mvc.IUrlHelper)) as Microsoft.AspNetCore.Mvc.IUrlHelper;
-
-            var url = urlHelper?.Action(action, controller, routeValues);
+            // ✅ Usa IUrlHelperFactory per ottenere l’URL corretto
+            var urlHelperFactory = htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IUrlHelperFactory>();
+            var urlHelper = urlHelperFactory.GetUrlHelper(htmlHelper.ViewContext);
+            var url = urlHelper.Action(action, controller, routeValues);
             if (!string.IsNullOrEmpty(url))
                 formTag.Attributes["action"] = url;
 

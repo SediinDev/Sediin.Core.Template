@@ -26,4 +26,24 @@ public abstract class BaseController : Controller
 
         base.OnActionExecuting(context);
     }
+
+    public IActionResult AjaxView(string viewName = null, object model = null)
+    {
+        try
+        {
+            bool isAjax = HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            // Se non è specificato il nome della view, usa il nome dell'azione corrente
+            viewName ??= ControllerContext.ActionDescriptor.ActionName;
+
+            return isAjax
+                ? PartialView(viewName, model)
+                : View(viewName, model);
+        }
+        catch
+        {
+            viewName ??= ControllerContext.ActionDescriptor.ActionName;
+            return View(viewName, model);
+        }
+    }
 }

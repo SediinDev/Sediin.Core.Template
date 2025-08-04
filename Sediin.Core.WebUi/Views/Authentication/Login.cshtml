@@ -1,61 +1,103 @@
 ﻿@model Sediin.Core.WebUi.Models.Authentication
 
-@{
-    ViewData["Title"] = "Login";
+<link href="~/css/hideshowpassword.css" rel="stylesheet" />
 
-}
+<div class="row border border-1" style="min-height:460px;">
+    <div class="col-md-6" style="margin:auto;">
 
-<h2>Login</h2>
-
-<div id="loginResult"></div>
-
-@using (Html.BeginAjaxForm("Login", "Authentication",
-onBegin: "alertWaid()",
-onSuccess: "onLoginSuccess",
-onFailure: "handleError"))
-{
-
-                        @Html.TextBoxFor(model => model.Username,
-                        new { @class = "form-control col-md-12", placeholder = "Codice utente", autocomplete = "off", type = "search" })
-                    @Html.ValidationMessageFor(model => model.Username, "")
+        sinistraaaaaaaaaaaaaaaaa
+        <img src="~/Content/images/logo.png" />
     </div>
 
-    <div class="form-floating mb-3">
-        <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" type="password" />
-        <label asp-for="Password">Password</label>
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+    <div class="col-md-6 mt-3 p-3">
 
-    <div class="form-check mb-3">
-        <input class="form-check-input" asp-for="RememberMe" />
-        <label class="form-check-label" asp-for="RememberMe">
-            @Html.DisplayNameFor(m => m.RememberMe)
-        </label>
-    </div>
+        <h4 class="card-title"><i class="fa fa-user-lock mr-2"></i>Accesso area riservata</h4>
+        <hr />
 
-    <button type="submit" class="btn btn-primary w-100">Login</button>
+        @using (Html.BeginAjaxForm("Login", "Authentication",
+                onBegin: "alertWaid()",
+                onSuccess: "onLoginSuccess",
+                onFailure: "handleError"))
+        {
+            @*             @Html.AntiForgeryToken()
+ *@
+            <div class="form-horizontal mt-4">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label" })
 
-}
+                        @Html.TextBoxFor(model => model.Username, new { @class = "form-control col-md-12", placeholder = "Codice utente", autocomplete = "off", type = "search" })
 
-<!-- Validazione -->
-<partial name="_ValidationScriptsPartial" />
+                        @Html.ValidationMessageFor(model => model.Username, "")
+                    </div>
+                </div>
+            </div>
 
-<script>
-    function onLoginSuccess(response) {
-        if (response.success) {
-            $('#loginResult').html('<div class="alert alert-success">Accesso effettuato con successo!</div>');
-            // Redirect se specificato
-            if (response.redirectUrl) {
+            <div class="form-group">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })
+
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Password" } })
+
+                    @Html.ValidationMessageFor(model => model.Password, "")
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group mt-4">
+                <div class="col-md-12 text-left">
+                    <button type="submit" class="btn btn-info form-control">Esegui accesso</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group row mt-4">
+                <div class="col-md-8">
+                    <i class="fas fa-key mr-1"></i>
+                    <a class="link-black" data-ajax="true" data-ajax-begin="alertWaid()" data-ajax-failure="handleError" data-ajax-success="showModal_NoFooter('Recupero Password', data); alertClose()" href="/Authentication/ForgotPassword">Hai dimenticato la password?</a>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    }
+
+</div>
+</div>
+
+@section Scripts {
+
+    <script src="~/js/hideshowpassword.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Password').hideShowPassword({
+                innerToggle: true
+            });
+        });
+
+        function onLoginSuccess(response) {
+            if (response.success) {
+
+                alertSuccessNoCloseButton("Utente autenticato. Redirect in corso...");
+
                 setTimeout(function () {
-                    window.location.href = response.redirectUrl;
+                    window.location.href = "/Backend/Home";
                 }, 1000);
-            }
-        } else {
-            $('#loginResult').html('<div class="alert alert-danger">' + response.message + '</div>');
-        }
-    }
 
-    function onLoginFailed(xhr) {
-        $('#loginResult').html('<div class="alert alert-danger">Errore durante l’invio della richiesta.</div>');
-    }
-</script>
+                ds
+            } else {
+                //vai a authenticazione due fattori
+
+               // $('#loginResult').html('<div class="alert alert-danger">' + response.message + '</div>');
+            }
+        }
+
+    </script>
+}
+
+

@@ -7,6 +7,8 @@ using Sediin.Core.DataAccess.Repository;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
 using Sediin.Core.Identity.Repository;
+using Sediin.Core.WebUi.Areas;
+using Sediin.Core.WebUi.Areas.Backend;
 using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Filters;
 using Serilog;
@@ -55,7 +57,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-    options.LoginPath = "/Identity/Account/Login";
+    //options.LoginPath = "/Identity/Account/Login";
+    options.LoginPath = "/Authentication/Login/";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
@@ -91,6 +94,11 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Conventions.Add(new AreaFolderConvention());
+});
+
 var app = builder.Build();
 
 // --- MIDDLEWARE ---
@@ -113,6 +121,10 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+
+//app.MapBackendArea();
+
 // --- ROUTING ---
 app.MapControllerRoute(
     name: "areas",
@@ -120,7 +132,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Authentication}/{action=Login}/{id?}");
 
 app.MapRazorPages();
 
