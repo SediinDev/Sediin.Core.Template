@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Logging;
 using Sediin.Core.Identity.Abstract;
 using System.Text;
 
@@ -10,8 +9,9 @@ public abstract class BaseController : Controller
     protected ILogger<BaseController> _logger;
     protected IUnitOfWorkIdentity _unitOfWorkIdentity;
     protected IEmailSender _emailSender;
+    protected IConfiguration _configuration;
 
-#pragma warning disable
+    #pragma warning disable
     public BaseController()
     {
     }
@@ -22,10 +22,15 @@ public abstract class BaseController : Controller
     {
         if (_logger == null)
             _logger = HttpContext.RequestServices.GetService<ILogger<BaseController>>();
+       
         if (_unitOfWorkIdentity == null)
             _unitOfWorkIdentity = HttpContext.RequestServices.GetService<IUnitOfWorkIdentity>();
+        
         if (_emailSender == null)
             _emailSender = HttpContext.RequestServices.GetService<IEmailSender>();
+        
+        if (_configuration == null)
+            _configuration = HttpContext.RequestServices.GetService<IConfiguration>();
 
         base.OnActionExecuting(context);
     }

@@ -63,17 +63,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
 // --- DEPENDENCY INJECTION ---
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
-
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-//builder.Services.AddTransient<EmailSender>();
-
 
 // --- LOGGING (Serilog) ---
 builder.Host.UseSerilog((ctx, cfg) =>

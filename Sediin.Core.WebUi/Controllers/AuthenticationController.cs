@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Sediin.Core.WebUi.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Sediin.Core.WebUi.Filters;
 using Sediin.Core.WebUi.Models;
 using System.Collections.Specialized;
 using System.Web;
 
 namespace Sediin.Core.WebUi.Controllers
 {
-
     public class AuthenticationController : BaseController
     {
         public IActionResult Login()
         {
-            return View();
+            return AjaxView();
         }
 
         [HttpPost]
+        [RedirectIfNotAjax(Url = "/")]
         public async Task<IActionResult> Login(Authentication model)
         {
             if (!ModelState.IsValid)
@@ -28,14 +26,12 @@ namespace Sediin.Core.WebUi.Controllers
 
             if (result.Succeeded)
             {
-                return Json(new { success = true/*, returnUrl = model.ReturnUrl*/ });
+                return Json(new { success = true });
             }
-
 
             if (result.RequiresTwoFactor)
             {
-                return Json(new { success = false  });
-
+                return Json(new { success = false });
                 //return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
             }
 
@@ -47,66 +43,63 @@ namespace Sediin.Core.WebUi.Controllers
             {
                 throw new Exception("Tentativo di accesso non valido.");
             }
-
-
         }
 
-        //[RedirectIsNotAjax]
+        [RedirectIfNotAjax(Url = "/")]
         public IActionResult ForgotPassword()
         {
             return AjaxView();
         }
-       
+
         [HttpPost]
-        //[RedirectIsNotAjax]
+        [RedirectIfNotAjax(Url = "/")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             try
             {
-                
                 if (!ModelState.IsValid)
                 {
                     throw new Exception(ModelStateErrorToString(ModelState));
                 }
 
+                _unitOfWorkIdentity.AuthService.OnSendMailConfermaEmail += AuthService_OnSendMailConfermaEmail;
+
+                _unitOfWorkIdentity.AuthService.OnSendMailRecoveryPassword += AuthService_OnSendMailRecoveryPassword;
+
                 await _unitOfWorkIdentity.AuthService.RecoveryPassword(model.Email);
 
-                await _emailSender.SendEmailAsync("c.galletti@sediin.it", "prova email", "html");
-
-
-
-                return Content("Le è stata inviata una email per il cambio della sua password.");
-
-                //// Inviare un messaggio di posta elettronica con questo collegamento
-                //string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                ////var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-
-                //NameValueCollection c = HttpUtility.ParseQueryString(string.Empty);
-                //c.Add("userId", user.Id);
-                //c.Add("code", code);
-
-                //var callbackUrl = $"{UriPortale("ResetPassword", "Account")}?{c.ToString()}";
-
-                //RecuperoPasswordConfermaModel _resultModel = new RecuperoPasswordConfermaModel
-                //{
-                //    UrlConferma = callbackUrl,
-                //    Email = user.Email,
-                //    Cognome = user.Cognome,
-                //    Nome = user.Nome,
-                //    Username = user.UserName
-                //};
-
-                //await UserManager.SendEmailAsync(user.Id, "Recupero Password", RenderTemplate("Account/ForgotPassword_Mail", _resultModel));
-
-                //var _html = RenderTemplate("Account/ForgotPassword", _resultModel);
-
-                //return Content(_html);
+                return Content("Le è stata inviata un'email per confermare la sua richiesta.");
             }
             catch (Exception ex)
             {
                 throw;
             }
+        }
+
+        private async Task AuthService_OnSendMailRecoveryPassword(string email, string userId, string token)
+        {
+            string _url = CreateUrl("RecoveryPassword", userId, token);
+            string subject = "Cambio password";
+            string body = "";
+            await _emailSender.SendEmailAsync(email, subject, body);
+        }
+
+        private async Task AuthService_OnSendMailConfermaEmail(string email, string userId, string token)
+        {
+            string _url = CreateUrl("ConfirmEmail", userId, token);
+            string subject = "";
+            string body = "Conferma account";
+            await _emailSender.SendEmailAsync(email, subject, body);
+        }
+
+        private string CreateUrl(string action, string userId, string token)
+        {
+            NameValueCollection c = HttpUtility.ParseQueryString(string.Empty);
+            c.Add("userId", userId);
+            c.Add("code", token);
+
+            return $"{_configuration["UrlPortale"]}/{Url.Action(action, "Authentication")}?{c.ToString()}";
         }
     }
 }

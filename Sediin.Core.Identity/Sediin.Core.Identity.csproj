@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Entitys\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>
