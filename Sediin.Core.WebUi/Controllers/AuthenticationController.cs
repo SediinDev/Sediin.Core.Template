@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Models;
 
-namespace Sediin.Core.WebUi
+namespace Sediin.Core.WebUi.Controllers
 {
 
     public class AuthenticationController : BaseController
