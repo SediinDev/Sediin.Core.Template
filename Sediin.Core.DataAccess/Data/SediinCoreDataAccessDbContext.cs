@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sediin.Core.DataAccess.Entitys;
+using Sediin.Core.DataAccess.Entities;
 
 namespace Sediin.Core.DataAccess.Data
 {

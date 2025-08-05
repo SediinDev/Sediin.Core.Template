@@ -1,4 +1,4 @@
-﻿namespace Sediin.Core.DataAccess.Entitys
+﻿namespace Sediin.Core.DataAccess.Entities
 {
     public class Azienda
     {

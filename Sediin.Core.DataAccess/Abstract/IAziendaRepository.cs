@@ -1,4 +1,4 @@
-﻿using Sediin.Core.DataAccess.Entitys;
+﻿using Sediin.Core.DataAccess.Entities;
 using Sediin.Core.DataAccess.Repository;
 
 namespace Sediin.Core.DataAccess.Abstract

@@ -24,7 +24,7 @@ namespace Sediin.Core.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Sediin.Core.DataAccess.Entitys.Aziende", b =>
+            modelBuilder.Entity("Sediin.Core.DataAccess.Entities.Aziende", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
