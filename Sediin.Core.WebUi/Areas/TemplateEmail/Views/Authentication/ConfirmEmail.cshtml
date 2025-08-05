@@ -1,0 +1,14 @@
+﻿@model Sediin.Core.WebUi.Areas.TemplateEmail.Models.ConfirmEmailModel
+
+Gentile <strong>@Model.Nome @Model.Cognome</strong>, conferma la tua utenza <a href="@Model.Url">cliccando qui</a>
+
+<br />
+
+<strong>
+    Una volta confermata la email, per il primo accesso è neccessario impostare la password andando alla pagin di Login, e cliccare su "Hai dimenticato la password?"
+</strong>
+<br />
+<br />
+In caso non si apra il link sopra, copiare ed incollare questa url in una nuova pagina del suo browser.
+<br />
+@Model.Url

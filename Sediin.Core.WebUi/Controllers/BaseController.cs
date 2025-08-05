@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using System.Text;
 
@@ -10,8 +11,9 @@ public abstract class BaseController : Controller
     protected IUnitOfWorkIdentity _unitOfWorkIdentity;
     protected IEmailSender _emailSender;
     protected IConfiguration _configuration;
+    protected IRazorViewToStringRenderer _razorViewRenderer;
 
-    #pragma warning disable
+#pragma warning disable
     public BaseController()
     {
     }
@@ -31,6 +33,9 @@ public abstract class BaseController : Controller
         
         if (_configuration == null)
             _configuration = HttpContext.RequestServices.GetService<IConfiguration>();
+
+        if (_razorViewRenderer == null)
+            _razorViewRenderer = HttpContext.RequestServices.GetService<IRazorViewToStringRenderer>();
 
         base.OnActionExecuting(context);
     }

@@ -12,6 +12,5 @@ namespace Sediin.Core.DataAccess.Data
         }
 
         public DbSet<Azienda> Aziende { get; set; }
-
     }
 }

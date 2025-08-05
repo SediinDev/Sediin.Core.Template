@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-       @{ Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString(); }
+       @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
     </title>
 
     <script type="importmap"></script>
@@ -41,9 +41,9 @@
 
 
                     <li>
-                        <a class="nav-link" href="#" target="_blank">
+                        <a class="nav-link" href="https://www.sediin.it" target="_blank">
                             <i class="fas fa-home marginMenuIcon"></i>
-                            Sito @{ Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString(); }
+                            Sito @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
                         </a>
                     </li>
 
@@ -64,9 +64,8 @@
 
     <footer class="container-fluid blurEffect">
         <div class="row">
-            <div class="col-md-4" style="text-align: left;">@{
-                        Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString();
-                        }
+            <div class="col-md-4" style="text-align: left;">
+                @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
             </div>
             <div class="col-md-4" style="text-align: center;">&nbsp;</div>
             <div class="col-md-4" style="text-align: right;">&copy; Sediin Spa</div>

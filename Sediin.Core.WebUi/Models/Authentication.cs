@@ -26,4 +26,59 @@ namespace Sediin.Core.WebUi.Models
         [EmailAddress]
         public string Email { get; set; }
     }
+
+    public class ResetPasswordViewModel
+    {
+        [MaxLength(35)]
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        [MaxLength(25)]
+        [Required]
+        [DataType(DataType.Password)]
+        //[PasswordStrong(RequiredLength = 8, RequireDigit = true, RequireLowercase = true, RequireUppercase = true, RequireNonLetterOrDigit = true)]
+        public string Password { get; set; }
+
+        [MaxLength(25)]
+        [Required]
+        [Compare("Password")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Conferma Password")]
+        public string ConfirmPassword { get; set; }
+
+        public string Code { get; set; }
+    }
+
+    public class RegisterViewModel
+    {
+        [MaxLength(256)]
+        [Required]
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
+
+        [MaxLength(256)]
+        [Required]
+        [Display(Name = "Nome")]
+        public string Nome { get; set; }
+
+        [MaxLength(256)]
+        [Required]
+        [Display(Name = "Cognome")]
+        public string Cognome { get; set; }
+
+        [EmailAddress]
+        [MaxLength(100)]
+        [Required]
+        [Display(Name = "Indirizzo E-Mail")]
+        public string Email { get; set; }
+
+        [EmailAddress]
+        [Required]
+        [Compare(otherProperty:"Email")]
+        [Display(Name = "Conferma Indirizzo E-Mail")]
+        public string ConfirmEmail { get; set; }
+
+    }
+
 }

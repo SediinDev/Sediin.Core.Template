@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
 using Sediin.Core.DataAccess.Repository;
+using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
+using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Repository;
 using Sediin.Core.WebUi.Areas;
-using Sediin.Core.WebUi.Areas.Backend;
 using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Filters;
 using Serilog;
@@ -29,7 +30,7 @@ builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // --- IDENTITY ---
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<SediinIdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
 })
@@ -70,6 +71,9 @@ builder.Services.Configure<EmailSettings>(
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
+
+
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddMemoryCache();

@@ -1,0 +1,16 @@
+﻿@model dynamic
+
+@if (@Model.isValid == true)
+{
+    <h2>Email Confermata</h2>
+    <div class="bd-callout bd-callout-info bg-light-gray mt-5">
+        La tua email è stata confermata. Reimpostare la password al primo accesso, alla <a href="@Url.Action("Login", "Authentication")">pagina di Login</a>.
+    </div>
+}
+else
+{
+    <h2 class="text-danger">Email non confermata</h2>
+    <div class="bd-callout bd-callout-danger bg-light-gray mt-5">
+        La tua email non è stata confermata. Token errato o scaduto.
+    </div>
+}

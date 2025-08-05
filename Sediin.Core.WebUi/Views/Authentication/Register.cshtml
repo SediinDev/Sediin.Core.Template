@@ -1,0 +1,88 @@
+﻿@model Sediin.Core.WebUi.Models.RegisterViewModel
+
+
+@using (Html.BeginAjaxForm("Register", "Authentication",
+                onBegin: "alertWaid()",
+                onSuccess: "onRegisterSuccess",
+                onFailure: "handleError"))
+{
+
+
+    <div class="form-horizontal row mt-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label" })
+
+                @Html.TextBoxFor(model => model.UserName, new { @class = "form-control col-md-12", placeholder = "Username", autocomplete = "off", type = "search" })
+
+                @Html.ValidationMessageFor(model => model.UserName, "")
+            </div>
+        </div>
+
+        <div class="col-md-6 ">
+        </div>
+
+        <div class="col-md-6 ">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome" } })
+
+                @Html.ValidationMessageFor(model => model.Nome, "")
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Cognome, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.Cognome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Cognome" } })
+
+                @Html.ValidationMessageFor(model => model.Cognome, "")
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Email" } })
+
+                @Html.ValidationMessageFor(model => model.Email, "")
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConfirmEmail, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.ConfirmEmail, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Conferma Email" } })
+
+                @Html.ValidationMessageFor(model => model.ConfirmEmail, "")
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="modal-footer" style="margin-top:40px">
+        <button type="submit" class="btn btn-info">Registrati</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="hideModal()">Chiudi la finestra</button>
+
+    </div>
+
+}
+
+
+<partial name="_ValidationScriptsPartial" />
+
+
+<script>
+
+    function onRegisterSuccess(data) {
+        if (data.success) {
+            hideModal();
+            alertSuccess(data.message);
+        }
+    }
+</script>

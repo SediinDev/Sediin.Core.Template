@@ -2,7 +2,7 @@
 
 namespace Sediin.Core.Identity.Abstract
 {
-    public delegate Task SendMail(string email, string userId, string token);
+    public delegate Task SendMail(string email, string userId, string token, string nome, string cognome);
 
     public interface IAuthService
     {
@@ -24,5 +24,10 @@ namespace Sediin.Core.Identity.Abstract
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         Task RecoveryPassword(string email);
+
+        Task ResetPassword(string username, string token, string password);
+
+        Task CreateUser(string username, string email, string nome, string cognome, string role);
+        Task ConfirmEmail(string userId, string code);
     }
 }

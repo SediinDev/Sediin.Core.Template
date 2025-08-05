@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Sediin.Core.WebUi.Areas.TemplateEmail.Models;
 using Sediin.Core.WebUi.Filters;
 using Sediin.Core.WebUi.Models;
 using System.Collections.Specialized;
@@ -26,7 +30,7 @@ namespace Sediin.Core.WebUi.Controllers
 
             if (result.Succeeded)
             {
-                return Json(new { success = true });
+                return Json(new { success = true, message = "Utente autenticato. Redirect in corso..." });
             }
 
             if (result.RequiresTwoFactor)
@@ -77,20 +81,127 @@ namespace Sediin.Core.WebUi.Controllers
             }
         }
 
-        private async Task AuthService_OnSendMailRecoveryPassword(string email, string userId, string token)
+
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string code)
         {
-            string _url = CreateUrl("RecoveryPassword", userId, token);
-            string subject = "Cambio password";
-            string body = "";
-            await _emailSender.SendEmailAsync(email, subject, body);
+            return code == null ? AjaxView("Error") : AjaxView();
         }
 
-        private async Task AuthService_OnSendMailConfermaEmail(string email, string userId, string token)
+        [HttpPost]
+        //[RedirectIsNotAjax]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(ModelStateErrorToString(ModelState));
+                }
+
+                await _unitOfWorkIdentity.AuthService.ResetPassword(model.Username, model.Code, model.Password);
+
+                return Content("Nuova Password e stata reimpostata, attendere verra reindirizzato alla login...");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return AjaxView();
+        }
+
+        [HttpPost]
+        //[RedirectIsNotAjax]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(ModelStateErrorToString(ModelState));
+                }
+
+                _unitOfWorkIdentity.AuthService.OnSendMailConfermaEmail += AuthService_OnSendMailConfermaEmail;
+
+                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, "Administrator");
+
+                return Json(new { success = true, message = "Utente registrato. Controlli la sua email." });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            try
+            {
+                await _unitOfWorkIdentity.AuthService.ConfirmEmail(userId, code);
+
+                return AjaxView(model:new { isValid=true });
+            }
+            catch (Exception ex)
+            {
+                return AjaxView(model: new { isValid = false });
+            }
+        }
+
+        #region helper
+        private async Task AuthService_OnSendMailRecoveryPassword(string email, string userId, string token, string nome, string cognome)
+        {
+            string _url = CreateUrl("ResetPassword", userId, token);
+            string subject = "Cambio password";
+            string htmlBody = string.Empty;
+            try
+            {
+                htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
+                    "Authentication/ResetPassword", new ResetPasswordModel
+                    {
+                        Url = _url,
+                        Nome = nome,
+                        Cognome = cognome,
+                        Email = email,
+                    });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            await _emailSender.SendEmailAsync(email, subject, htmlBody);
+        }
+
+        private async Task AuthService_OnSendMailConfermaEmail(string email, string userId, string token, string nome, string cognome)
         {
             string _url = CreateUrl("ConfirmEmail", userId, token);
-            string subject = "";
-            string body = "Conferma account";
-            await _emailSender.SendEmailAsync(email, subject, body);
+            string subject = "Conferma email";
+            string htmlBody = string.Empty;
+            try
+            {
+                htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
+                    "Authentication/ConfirmEmail", new ConfirmEmailModel
+                    {
+                        Url = _url,
+                        Cognome = cognome,
+                        Nome = nome,
+                        Email = email,
+                    });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            await _emailSender.SendEmailAsync(email, subject, htmlBody);
         }
 
         private string CreateUrl(string action, string userId, string token)
@@ -99,7 +210,12 @@ namespace Sediin.Core.WebUi.Controllers
             c.Add("userId", userId);
             c.Add("code", token);
 
-            return $"{_configuration["UrlPortale"]}/{Url.Action(action, "Authentication")}?{c.ToString()}";
+            var _url = _configuration["UrlPortale"]?.TrimEnd('/');
+
+            _url = _url + $"{Url.Action(action, "Authentication")}?{c.ToString()}";
+            return _url;
         }
+        #endregion
+
     }
 }
