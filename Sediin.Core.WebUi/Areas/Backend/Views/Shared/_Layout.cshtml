@@ -27,11 +27,11 @@
 <body>
     <div class="wrapper blurEffect">
         <nav id="sidebar" class="d-none d-md-block d-lg-block">
-            @await Html.PartialAsync("~/Areas/Backend/Views/Home/SideMenu.cshtml")
+            @await Component.InvokeAsync("Menu", new { tipo = "sidemenu" })
         </nav>
         <!-- Page Content -->
         <div id="content" style="margin-top:-30px">
-            @await Html.PartialAsync("~/Areas/Backend/Views/Home/NavMenu.cshtml")
+            @await Component.InvokeAsync("Menu", new { tipo = "navmenu" })
 
             <div id="contentrenderbody" class="ml-1 mt-4 mr-1 pt-2 p-4">
                 @RenderBody()
@@ -57,11 +57,12 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/font-awesome/js/all.min.js"></script>
     <script src="~/lib/font-awesome/js/all.js"></script>
-    <script src="~/js/sweetalert2.js"></script>
     <script src="~/js/utils.js"></script>
+    <script src="~/js/sweetalert2.js"></script>
     <script src="~/js/inputs.js"></script>
     <script src="~/js/customvalidator.js"></script>
     <script src="~/js/modale.js"></script>
+    <script src="~/js/onesidepage.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

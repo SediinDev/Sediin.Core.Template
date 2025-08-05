@@ -17,9 +17,9 @@ namespace Sediin.Core.DataAccess.Entities
 
         public int Codmenu { get; set; }
 
-        public string Ruolo { get; set; }
+        public string? Ruolo { get; set; }
 
         [ForeignKey("Codmenu")]
-        public virtual Menu Menu { get; set; }
+        public  Menu Menu { get; set; }
     }
 }

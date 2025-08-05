@@ -1,22 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sediin.Core.DataAccess.Entities;
 
 namespace Sediin.Core.WebUi.Areas.Backend.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        public IActionResult Index()
+        public async Task< IActionResult> Index()
         {
-            return View();
-        }
-        public IActionResult NavMenu()
-        {
-            return View();
-        }
-        public IActionResult SideMenu()
-        {
-            return View();
+            return AjaxView();
         }
     }
 }

@@ -9,10 +9,13 @@ namespace Sediin.Core.DataAccess.Repository
 
         public IAziendaRepository Aziende { get; private set; }
 
+        public IMenuRepository Menu { get; private set; }
+
         public UnitOfWorkDataAccess(SediinCoreDataAccessDbContext db)
         {
             _db = db;
             Aziende = new AziendaRepository(_db);
+            Menu = new MenuRepository(_db);
         }
 
         public void Save()

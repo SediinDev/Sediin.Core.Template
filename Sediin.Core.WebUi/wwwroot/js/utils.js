@@ -132,3 +132,28 @@ function handleError(xhr) {
         alertDanger(msg);
     }
 }
+
+
+
+function scrollToElement(e) {
+    try {
+        $('html, body').animate({
+            scrollTop: $(e).offset().top - 50
+        }, 800);
+    } catch (e) {
+
+    }
+}
+
+function scrollModalTop() {
+    $('.modal').animate({ scrollTop: 0 }, 'slow');
+}
+
+function scrollTop() {
+    try {
+        $('html, body').animate({
+            scrollTop: 0
+        }, 800);
+    } catch (e) {
+    }
+}

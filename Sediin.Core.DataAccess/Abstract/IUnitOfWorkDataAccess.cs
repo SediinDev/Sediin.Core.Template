@@ -9,6 +9,7 @@ namespace Sediin.Core.DataAccess.Abstract
     public interface IUnitOfWorkDataAccess
     {
         IAziendaRepository Aziende { get; }
+        IMenuRepository Menu{ get; }
         void Save();
 
     }
