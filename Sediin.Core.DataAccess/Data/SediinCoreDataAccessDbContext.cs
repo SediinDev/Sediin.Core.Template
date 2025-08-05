@@ -12,5 +12,7 @@ namespace Sediin.Core.DataAccess.Data
         }
 
         public DbSet<Azienda> Aziende { get; set; }
+        public DbSet<Menu> Menu { get; set; }
+        public DbSet<MenuRuoli> MenuRuoli { get; set; }
     }
 }

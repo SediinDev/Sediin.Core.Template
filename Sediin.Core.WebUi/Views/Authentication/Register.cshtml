@@ -1,13 +1,10 @@
 ﻿@model Sediin.Core.WebUi.Models.RegisterViewModel
 
-
 @using (Html.BeginAjaxForm("Register", "Authentication",
                 onBegin: "alertWaid()",
                 onSuccess: "onRegisterSuccess",
                 onFailure: "handleError"))
 {
-
-
     <div class="form-horizontal row mt-4">
         <div class="col-md-6">
             <div class="form-group">

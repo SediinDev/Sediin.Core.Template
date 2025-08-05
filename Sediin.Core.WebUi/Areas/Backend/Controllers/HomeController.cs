@@ -10,5 +10,13 @@ namespace Sediin.Core.WebUi.Areas.Backend.Controllers
         {
             return View();
         }
+        public IActionResult NavMenu()
+        {
+            return View();
+        }
+        public IActionResult SideMenu()
+        {
+            return View();
+        }
     }
 }
