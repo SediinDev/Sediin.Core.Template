@@ -3,7 +3,7 @@
 
 @if (Model.TotalRecords == 0)
 {
-
+    <div class="alert alert-warning">Nessun record trovato</div>
 }
 else
 {
@@ -30,35 +30,14 @@ else
         </table>
     </div>
 
+    <paging-ajax page-size="@Model.PageSize"
+                 page-index="@Model.CurrentPage"
+                 total-rows="@Model.TotalRecords"
+                 action="@Url.Action("Ricerca", "Utenti")"
+                 action-export="@Url.Action("RicercaExcel", "Utenti")"
+                 update-target-id="resultRicerca"
+                 http-method="Post">
+    </paging-ajax>
+
+
 }
-
-
-
-
-
-
-
-
-
-
-<paging-ajax page-size="@Model.PageSize"
-             page-index="@Model.CurrentPage"
-             total-rows="@Model.TotalRecords"
-             action="@Url.Action("Ricerca", "Utenti")"
-             action-export="@Url.Action("RicercaExcel", "Utenti")"
-             update-target-id="resultRicerca"
-             http-method="Post">
-</paging-ajax>
-
-
-
-@* <mvc-paging asp-action="Ricerca"
-            page-size="@Model.PageSize"
-            page-index="@Model.CurrentPage"
-            total-rows="@Model.TotalRecords"
-            asp-route="@Model.Filtri"
-            update-target-id="resultRicerca"
-            ajax-method="post"
-            on-failure="handleError">
-</mvc-paging>
- *@

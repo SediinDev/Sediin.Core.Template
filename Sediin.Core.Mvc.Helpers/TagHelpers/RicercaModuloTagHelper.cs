@@ -12,7 +12,11 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         public string RicercaAction { get; set; } = string.Empty;
         public bool ExecuteRicercaOnReady { get; set; } = true;
         public bool ResetButton { get; set; } = true;
-        public string SubmitText { get; set; } = "Cerca";
+
+        // Nuova proprietà per testo bottone reset
+        public string ResetButtonText { get; set; } = "Reset";
+
+        public string SubmitText { get; set; } = "Avvia ricerca";
         public IHtmlContent? PartialHtml { get; set; }
         public string ResultContainerId { get; set; } = "resultRicerca";
 
@@ -62,10 +66,11 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 sb.Append("   <hr />");
 
                 sb.Append(@"<div class=""d-flex justify-content-center gap-2 mt-3"">");
-                sb.Append($@"<button type=""submit"" onclick=""fadeCollapse_{uniqueId}();"" class=""btn btn-primary"" id=""submitBtn_{uniqueId}"">{SubmitText}</button>");
+                // submit button con validazione
+                sb.Append($@"<button type=""submit"" onclick=""return submitIfValid_{uniqueId}(event);"" class=""btn btn-primary"" id=""submitBtn_{uniqueId}"">{SubmitText}</button>");
                 if (ResetButton)
                 {
-                    sb.Append(@"<button type=""reset"" class=""btn btn-danger"">Reset</button>");
+                    sb.Append($@"<button type=""reset"" class=""btn btn-danger"">{ResetButtonText}</button>");
                 }
                 sb.Append("</div>");
 
@@ -85,6 +90,17 @@ function fadeCollapse_{uniqueId}() {{
     $('#{collapseId}').fadeTo(150, 0, function() {{
         $(this).collapse('hide').fadeTo(0, 1);
     }});
+}}
+
+function submitIfValid_{uniqueId}(event) {{
+    var form = document.getElementById('{formId}');
+    if (!form.checkValidity()) {{
+        event.preventDefault();
+        form.reportValidity();
+        return false;
+    }}
+    fadeCollapse_{uniqueId}();
+    return true;
 }}
 
 // aggiorna lista rimuovendo temporaneamente onbegin e rimettendolo subito dopo
