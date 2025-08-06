@@ -1,0 +1,13 @@
+﻿
+
+
+
+<mvc-paging asp-action="Ricerca"
+            page-size="@Model.PageSize"
+            page-index="@Model.CurrentPage"
+            total-rows="@Model.TotalRecords"
+            asp-route="@Model.Filtri"
+            update-target-id="resultRicerca"
+            ajax-method="post"
+            on-failure="handleError">
+</mvc-paging>

@@ -12,6 +12,12 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         public string RicercaAction { get; set; } = string.Empty;
         public bool ExecuteRicercaOnReady { get; set; } = true;
         public bool ResetButton { get; set; } = true;
+
+        /// <summary>
+        /// Id del contenitore dove inserire il risultato (default "resultRicerca")
+        /// </summary>
+        public string ResultContainerId { get; set; } = "resultRicerca";
+
         public IHtmlContent? PartialHtml { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -72,10 +78,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 sb.Append("</div>");
             }
 
-            sb.Append("</div>"); // accordion-item
-            sb.Append("</div>"); // accordion
-
-            sb.Append("<div id=\"resultRicerca\" class=\"mt-3\"></div>");
+            sb.Append($"<div id=\"{ResultContainerId}\" class=\"mt-3\"></div>");
 
             sb.Append("<script>");
             if (ResetButton)
@@ -86,7 +89,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 sb.Append("});");
             }
 
-            sb.Append($"{UpdateListRicercaScript(RicercaAction)}");
+            sb.Append($"{UpdateListRicercaScript(RicercaAction, ResultContainerId)}");
 
             if (ExecuteRicercaOnReady)
             {
@@ -130,9 +133,18 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             output.Content.SetHtmlContent(sb.ToString());
         }
 
-        private string UpdateListRicercaScript(string actionUrl)
+        private string UpdateListRicercaScript(string actionUrl, string targetId)
         {
-            return $"function updateListRicerca(ajaxCall) {{ $.ajax({{ url: '{actionUrl}', type: 'POST', success: function (result) {{ $('#resultRicerca').html(result); }} }}); }}";
+            return
+$@"function updateListRicerca(ajaxCall) {{
+    $.ajax({{
+        url: '{actionUrl}',
+        type: 'POST',
+        success: function (result) {{
+            $('#{targetId}').html(result);
+        }}
+    }});
+}}";
         }
     }
 }
