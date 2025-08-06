@@ -106,6 +106,8 @@ builder.Services.AddControllersWithViews(options =>
 var app = builder.Build();
 
 // --- MIDDLEWARE ---
+app.UseMiddleware<Sediin.Core.Mvc.Helpers.Middleware.QueryDecryptMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();

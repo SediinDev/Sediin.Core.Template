@@ -14,6 +14,11 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         public bool ResetButton { get; set; } = true;
         public IHtmlContent? PartialHtml { get; set; }
 
+        /// <summary>
+        /// ID del contenitore dei risultati. Default: "resultRicerca"
+        /// </summary>
+        public string ResultContainerId { get; set; } = "resultRicerca";
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             var sb = new StringBuilder();
@@ -44,7 +49,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 sb.Append("<div class=\"accordion-body\">");
 
                 var writer = new System.IO.StringWriter();
-                PartialHtml.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
+                PartialHtml!.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
                 var html = writer.ToString();
 
                 var doc = new HtmlDocument();
@@ -65,7 +70,10 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                         submitBtn.ParentNode?.InsertAfter(resetButton, submitBtn);
                     }
                 }
-                catch { }
+                catch
+                {
+                    // Silenzioso: se fallisce non blocca tutto
+                }
 
                 sb.Append(doc.DocumentNode.OuterHtml);
                 sb.Append("</div>");
@@ -75,8 +83,10 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             sb.Append("</div>"); // accordion-item
             sb.Append("</div>"); // accordion
 
-            sb.Append("<div id=\"resultRicerca\" class=\"mt-3\"></div>");
+            // ✅ Usa ID dinamico
+            sb.Append($"<div id=\"{ResultContainerId}\" class=\"mt-3\"></div>");
 
+            // ✅ Script dinamico
             sb.Append("<script>");
             if (ResetButton)
             {
@@ -86,13 +96,13 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 sb.Append("});");
             }
 
-            sb.Append($"{UpdateListRicercaScript(RicercaAction)}");
+            sb.Append(UpdateListRicercaScript(RicercaAction));
 
             if (ExecuteRicercaOnReady)
             {
                 sb.Append("$(document).ready(function() {");
                 sb.Append("alertWaid();");
-                sb.Append("updateListRicerca(true);");
+                sb.Append("updateListRicercaFromModuloRicerca(true);");
                 sb.Append("panelRicercaCollapse(false);");
                 sb.Append("});");
             }
@@ -120,7 +130,17 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
 
         private string UpdateListRicercaScript(string actionUrl)
         {
-            return $"function updateListRicerca(ajaxCall) {{ $.ajax({{ url: '{actionUrl}', type: 'POST', success: function (result) {{ $('#resultRicerca').html(result); }} }}); }}";
+            return $@"
+                function updateListRicercaFromModuloRicerca(ajaxCall) {{
+                    $.ajax({{
+                        url: '{actionUrl}',
+                        type: 'POST',
+                        success: function (result) {{
+                            $('#{ResultContainerId}').html(result);
+                            alertClose();
+                        }}
+                    }});
+                }}";
         }
     }
 }

@@ -17,27 +17,27 @@ public abstract class BaseController : Controller
     protected IConfiguration _configuration;
     protected IRazorViewToStringRenderer _razorViewRenderer;
 
-    #pragma warning disable
+#pragma warning disable
     public BaseController()
     {
     }
 
-    #pragma warning disable
+#pragma warning disable
     // Metodo eseguito prima di ogni azione, qui risolvi i servizi
     public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
     {
         if (_logger == null)
             _logger = HttpContext.RequestServices.GetService<ILogger<BaseController>>();
-       
+
         if (_unitOfWorkIdentity == null)
             _unitOfWorkIdentity = HttpContext.RequestServices.GetService<IUnitOfWorkIdentity>();
-        
+
         if (_unitOfWorkDataAccess == null)
             _unitOfWorkDataAccess = HttpContext.RequestServices.GetService<IUnitOfWorkDataAccess>();
-        
+
         if (_emailSender == null)
             _emailSender = HttpContext.RequestServices.GetService<IEmailSender>();
-        
+
         if (_configuration == null)
             _configuration = HttpContext.RequestServices.GetService<IConfiguration>();
 
@@ -91,5 +91,15 @@ public abstract class BaseController : Controller
         {
             return string.Empty;
         }
+    }
+
+    internal IActionResult ExportExcel<T>(IEnumerable<T> model, string fileName)
+    {
+        if (model == null || model?.ToList().Count == 0)
+            throw new Exception("Nessun record trovato");
+
+        var content = Sediin.Core.Mvc.Helpers.ExcelHelper.Excel.CreateExcelFromList(model);
+
+        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName + ".xlsx");
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
+using Sediin.Core.Identity.Models;
 using System.Text;
 
 namespace Sediin.Core.Identity.Repository
@@ -115,9 +116,30 @@ namespace Sediin.Core.Identity.Repository
                 throw new Exception("Token errato. Email non confermata.");
         }
 
-        public async Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(int pageNumber, int pageSize)
+        public async Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri, int pageNumber, int pageSize)
         {
             var query = _userManager.Users.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Username))
+            {
+                query = query.Where(x => x.UserName.Contains(filtri.UtentiRicercaVM_Username));
+            }
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Nome))
+            {
+                query = query.Where(x => x.Nome.Contains(filtri.UtentiRicercaVM_Nome));
+            }
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Cognome))
+            {
+                query = query.Where(x => x.Cognome.Contains(filtri.UtentiRicercaVM_Cognome));
+            }
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Email))
+            {
+                query = query.Where(x => x.Email.Contains(filtri.UtentiRicercaVM_Email));
+            }
+
             var totalCount = await query.CountAsync();
 
             var users = await query
@@ -126,6 +148,33 @@ namespace Sediin.Core.Identity.Repository
                 .ToListAsync();
 
             return (users, totalCount);
+        }
+
+        public async Task<IList<SediinIdentityUser>> GetAllUsersAsync(UtentiRicercaVM filtri)
+        {
+            var query = _userManager.Users.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Username))
+            {
+                query = query.Where(x => x.UserName.Contains(filtri.UtentiRicercaVM_Username));
+            }
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Nome))
+            {
+                query = query.Where(x => x.Nome.Contains(filtri.UtentiRicercaVM_Nome));
+            }
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Cognome))
+            {
+                query = query.Where(x => x.Cognome.Contains(filtri.UtentiRicercaVM_Cognome));
+            }
+
+            if (!string.IsNullOrEmpty(filtri.UtentiRicercaVM_Email))
+            {
+                query = query.Where(x => x.Email.Contains(filtri.UtentiRicercaVM_Email));
+            }
+
+            return await query.ToListAsync();
         }
     }
 }
