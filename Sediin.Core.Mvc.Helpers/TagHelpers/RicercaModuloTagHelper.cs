@@ -13,9 +13,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         public bool ExecuteRicercaOnReady { get; set; } = true;
         public bool ResetButton { get; set; } = true;
 
-        // Nuova proprietà per testo bottone reset
         public string ResetButtonText { get; set; } = "Reset";
-
         public string SubmitText { get; set; } = "Avvia ricerca";
         public IHtmlContent? PartialHtml { get; set; }
         public string ResultContainerId { get; set; } = "resultRicerca";
@@ -66,7 +64,6 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 sb.Append("   <hr />");
 
                 sb.Append(@"<div class=""d-flex justify-content-center gap-2 mt-3"">");
-                // submit button con validazione
                 sb.Append($@"<button type=""submit"" onclick=""return submitIfValid_{uniqueId}(event);"" class=""btn btn-primary"" id=""submitBtn_{uniqueId}"">{SubmitText}</button>");
                 if (ResetButton)
                 {
@@ -116,39 +113,43 @@ window.updateListRicerca = function(showalert) {{
         form.attr('data-ajax-begin', beginHandler);  // rimetti onbegin dopo submit
     }}, 100);
 }};
-");
 
-            sb.Append(@"
-(function waitForJQuery() {
-    if (window.jQuery) {
-        (function($) {
-            $(function() {");
-
-            if (ResetButton)
-            {
-                sb.Append($@"
+(function waitForJQuery() {{
+    if (window.jQuery) {{
+        (function($) {{
+            $(function() {{
+                {(ResetButton ? $@"
                 $('#{accordionId}').find('button[type=reset]').on('click', function() {{
                     $('#{accordionId}').find('input[type=hidden]').val('');
                     $('#{accordionId}').find('.field-validation-error').html('');
-                }});");
-            }
+                }});" : "")}
 
-            if (ExecuteRicercaOnReady)
-            {
-                sb.Append($@"
+                {(ExecuteRicercaOnReady ? $@"
                 setTimeout(function() {{
                     updateListRicerca(true);
                     fadeCollapse_{uniqueId}();
-                }}, 300);");
-            }
+                }}, 150);" : "")}
 
-            sb.Append(@"
-            });
-        })(window.jQuery);
-    } else {
+                // Disabilita autocomplete e svuota i campi
+                var form = document.getElementById('{formId}');
+                if (form) {{
+                    var inputs = form.querySelectorAll('input, select, textarea');
+                    inputs.forEach(function(input) {{
+                        input.setAttribute('autocomplete', 'off');
+                        var tag = input.tagName.toLowerCase();
+                        if(tag === 'input' || tag === 'textarea') {{
+                            input.value = '';
+                        }} else if(tag === 'select') {{
+                            input.selectedIndex = -1;
+                        }}
+                    }});
+                }}
+            }});
+        }})(window.jQuery);
+    }} else {{
         setTimeout(waitForJQuery, 50);
-    }
-})();
+    }}
+}})();
 ");
             sb.Append("</script>");
 
