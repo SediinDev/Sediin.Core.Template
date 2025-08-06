@@ -1,7 +1,6 @@
-﻿ADMINISTRATOR UTENTI RICERCA 
+﻿@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
 
-
-@using Sediin.Core.Helpers.Html
 
 @* <ricerca-modulo header-text="Cerca clienti"
                 ricerca-action="/Administrator/Utenti/Ricerca"
@@ -10,6 +9,13 @@
     @await Html.PartialAsync("RicercaModulo")
 </ricerca-modulo>
  *@
-<ricerca-modulo header-text="Test header" ricerca-action="/Test/Cerca">
-    <p>Contenuto statico</p>
+
+ <ricerca-modulo 
+    header-text="Ricerca Pratiche"
+    ricerca-action="/Pratiche/RisultatiRicerca"
+    execute-ricerca-on-ready="false"
+    reset-button="false"
+    partial-html="@await Html.PartialAsync("RicercaModulo", null)"
+ >
+
 </ricerca-modulo>

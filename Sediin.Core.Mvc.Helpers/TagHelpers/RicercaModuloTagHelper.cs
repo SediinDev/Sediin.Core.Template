@@ -1,107 +1,138 @@
-﻿using Microsoft.AspNetCore.Razor.TagHelpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using HtmlAgilityPack;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using HtmlAgilityPack;
 
 namespace Sediin.Core.Mvc.Helpers.TagHelpers
 {
     [HtmlTargetElement("ricerca-modulo")]
-    [HtmlTargetElement("RicercaModulo")]
     public class RicercaModuloTagHelper : TagHelper
     {
-        public string HeaderText { get; set; }
-        public string RicercaAction { get; set; }
-        public bool ExecuteOnReady { get; set; } = true;
-        public bool ShowResetButton { get; set; } = true;
+        public string HeaderText { get; set; } = string.Empty;
+        public string RicercaAction { get; set; } = string.Empty;
+        public bool ExecuteRicercaOnReady { get; set; } = true;
+        public bool ResetButton { get; set; } = true;
+        public IHtmlContent? PartialHtml { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            var content = output.GetChildContentAsync().Result;
-            var html = content.GetContent();
-
             var sb = new StringBuilder();
 
-            sb.Append("<div class=\"accordion\" id=\"accordionPanelsRicercae\">");
+            sb.Append("<div class=\"accordion shadow\" id=\"accordionPanelsRicercae\">");
             sb.Append("<div class=\"accordion-item\">");
+
+            bool hasPartial = PartialHtml != null;
+
             sb.Append("<h2 class=\"accordion-header\" id=\"panelRicerca-headingOne\">");
-            sb.Append("<button class=\"accordion-button text-dark\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#panelRicerca-collapseOne\" aria-expanded=\"true\" aria-controls=\"panelRicerca-collapseOne\">");
-            sb.Append("<h4>" + HeaderText + "</h4>");
-            sb.Append("</button>");
-            sb.Append("</h2>");
-            sb.Append("<div id=\"panelRicerca-collapseOne\" class=\"accordion-collapse collapse show\" aria-labelledby=\"panelRicerca-headingOne\">");
-            sb.Append("<div class=\"accordion-body\">");
 
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-
-            if (ShowResetButton)
+            if (hasPartial)
             {
-                try
-                {
-                    var buttons = htmlDoc.DocumentNode.Descendants("button")
-                        .Where(n => n.Attributes.Any(a => a.Value == "submit"))
-                        .ToList();
-
-                    var submitBtn = buttons.FirstOrDefault();
-                    if (submitBtn != null)
-                    {
-                        var resetBtn = htmlDoc.CreateElement("button");
-                        resetBtn.Attributes.Add("type", "reset");
-                        resetBtn.Attributes.Add("class", "btn btn-danger ml-1");
-                        resetBtn.InnerHtml = "Reset modulo";
-
-                        submitBtn.ParentNode?.InsertAfter(resetBtn, submitBtn);
-                    }
-                }
-                catch
-                {
-                    // gestione silenziosa
-                }
+                sb.Append("<button class=\"accordion-button text-dark\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#panelRicerca-collapseOne\" aria-expanded=\"true\" aria-controls=\"panelRicerca-collapseOne\">");
+                sb.Append($"<h4 class=\"m-0\">{HeaderText}</h4>");
+                sb.Append("</button>");
+            }
+            else
+            {
+                sb.Append($"<h4 class=\"m-3\">{HeaderText}</h4>");
             }
 
-            sb.Append(htmlDoc.DocumentNode.OuterHtml);
+            sb.Append("</h2>");
 
-            sb.Append("</div></div></div></div>"); // chiusure accordion
+            if (hasPartial)
+            {
+                sb.Append("<div id=\"panelRicerca-collapseOne\" class=\"accordion-collapse collapse show\" aria-labelledby=\"panelRicerca-headingOne\">");
+                sb.Append("<div class=\"accordion-body\">");
+
+                var writer = new System.IO.StringWriter();
+                PartialHtml.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
+                var html = writer.ToString();
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+
+                try
+                {
+                    var submitBtn = doc.DocumentNode.Descendants("button")
+                        .FirstOrDefault(btn => btn.Attributes["type"]?.Value == "submit");
+
+                    if (submitBtn != null && ResetButton)
+                    {
+                        var resetButton = doc.CreateElement("button");
+                        resetButton.Attributes.Add("type", "reset");
+                        resetButton.Attributes.Add("class", "btn btn-danger ms-2");
+                        resetButton.InnerHtml = "Reset modulo";
+
+                        submitBtn.ParentNode?.InsertAfter(resetButton, submitBtn);
+                    }
+                }
+                catch { }
+
+                sb.Append(doc.DocumentNode.OuterHtml);
+                sb.Append("</div>");
+                sb.Append("</div>");
+            }
+
+            sb.Append("</div>"); // accordion-item
+            sb.Append("</div>"); // accordion
+
             sb.Append("<div id=\"resultRicerca\" class=\"mt-3\"></div>");
 
-            // Script
             sb.Append("<script>");
-            if (ShowResetButton)
+            if (ResetButton)
             {
-                sb.Append(" $('#accordionPanelsRicercae').find(\"button[type='reset']\").on(\"click\", function () { ");
-                sb.Append("$('#accordionPanelsRicercae').find(\"input[type='hidden']\").val(''); ");
-                sb.Append("$('#accordionPanelsRicercae').find(\".field-validation-error\").html(''); ");
+                sb.Append("$(\"#accordionPanelsRicercae\").find(\"button[type='reset']\").on(\"click\", function () {");
+                sb.Append("$(\"#accordionPanelsRicercae\").find(\"input[type='hidden']\").val('');");
+                sb.Append("$(\"#accordionPanelsRicercae\").find(\".field-validation-error\").html('');");
                 sb.Append("});");
             }
 
-            sb.Append($"updateListRicercaFromAction('{RicercaAction}', false);");
+            sb.Append($"{UpdateListRicercaScript(RicercaAction)}");
 
-            if (ExecuteOnReady)
+            if (ExecuteRicercaOnReady)
             {
-                sb.Append("$(function() {");
+                sb.Append("$(document).ready(function() {");
                 sb.Append("alertWaid();");
-                sb.Append($"updateListRicercaFromAction('{RicercaAction}', true);");
+                sb.Append("updateListRicerca(true);");
                 sb.Append("panelRicercaCollapse(false);");
                 sb.Append("});");
             }
 
-            sb.Append(@"
-function panelRicercaCollapse(collapse) {
-    if (!collapse) {
-        $('#panelRicerca-collapseOne').collapse('hide').removeClass('show');
-    } else {
-        $('#panelRicerca-collapseOne').collapse('show').addClass('show');
-    }
-}
-");
+            if (hasPartial)
+            {
+                sb.Append(@"
+                    var panel = $('#panelRicerca-collapseOne');
+
+                    panel.on('shown.bs.collapse', function () {
+                        panel.addClass('shadow');
+                    });
+
+                    panel.on('hidden.bs.collapse', function () {
+                        panel.removeClass('shadow');
+                    });
+
+                    if(panel.hasClass('show')) {
+                        panel.addClass('shadow');
+                    }
+
+                    function panelRicercaCollapse(collapse) {
+                        if (!collapse) {
+                            panel.collapse('hide');
+                        } else {
+                            panel.collapse('show');
+                        }
+                    }
+                ");
+            }
+
             sb.Append("</script>");
 
-            output.TagName = null; // non vogliamo racchiuderlo in un <ricerca-modulo>
+            output.TagName = "div";
             output.Content.SetHtmlContent(sb.ToString());
+        }
+
+        private string UpdateListRicercaScript(string actionUrl)
+        {
+            return $"function updateListRicerca(ajaxCall) {{ $.ajax({{ url: '{actionUrl}', type: 'POST', success: function (result) {{ $('#resultRicerca').html(result); }} }}); }}";
         }
     }
 }
