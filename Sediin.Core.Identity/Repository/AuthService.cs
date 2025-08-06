@@ -1,171 +1,131 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
-using System.Collections.Specialized;
 using System.Text;
-using System.Web;
 
 namespace Sediin.Core.Identity.Repository
 {
     public class AuthService : IAuthService
     {
         private readonly SignInManager<SediinIdentityUser> _signInManager;
-
         private readonly UserManager<SediinIdentityUser> _userManager;
-
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public event SendMail OnSendMailRecoveryPassword;
-
         public event SendMail OnSendMailConfermaEmail;
 
-#pragma warning disable
-        public AuthService(SignInManager<SediinIdentityUser> signInManager, UserManager<SediinIdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthService(
+            SignInManager<SediinIdentityUser> signInManager,
+            UserManager<SediinIdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
+            _userManager = userManager;
             _roleManager = roleManager;
         }
 
-        public async Task<SignInResult> LoginAsync(string email, string password, bool rememberMe)
-        {
-            return await _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
-        }
+        public Task<SignInResult> LoginAsync(string email, string password, bool rememberMe) =>
+            _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
 
-        public async Task LogoutAsync()
-        {
-            await _signInManager.SignOutAsync();
-        }
+        public Task LogoutAsync() => _signInManager.SignOutAsync();
 
         public async Task RecoveryPassword(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new Exception("Indirizzo email non trovato");
 
-            if (user == null)
-            {
-                throw new Exception("Indirizzo email non trovato");
-            }
-
-            if (user.LockoutEnabled == false)
-            {
+            if (!user.LockoutEnabled)
                 throw new Exception("Utente bloccato, non è possibile recuperare la password. Rivolgersi al fondo.");
-            }
 
-            //se IsEmailConfirmed, viene mandata email per cambio password
             if (await IsEmailConfirmed(user))
             {
-                // Inviare un messaggio di posta elettronica
-                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
-
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 OnSendMailRecoveryPassword?.Invoke(user.Email, user.Id, code, user.Nome, user.Cognome);
             }
         }
 
-        /// <summary>
-        ///  verifica indirizzo email e confermato, se no, invia nuovo codice
-        ///  OnSendMailConfermaEmail
-        /// </summary>
-        /// <param name="user"></param>
-        /// <exception cref="Exception"></exception>
         private async Task<bool> IsEmailConfirmed(SediinIdentityUser user)
         {
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
-                string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 OnSendMailConfermaEmail?.Invoke(user.Email, user.Id, code, user.Nome, user.Cognome);
-
                 return false;
             }
-
             return true;
         }
 
         public async Task ResetPassword(string username, string token, string password)
         {
-            var user = await _userManager.FindByNameAsync(username);
-
-            if (user == null)
-            {
-                throw new Exception("Username o Token errato");
-            }
+            var user = await _userManager.FindByNameAsync(username)
+                ?? throw new Exception("Username o Token errato");
 
             var result = await _userManager.ResetPasswordAsync(user, token, password);
-
             if (!result.Succeeded)
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (var item in result.Errors)
-                {
-                    stringBuilder.Append(item.Description + ", ");
-                }
-
-                throw new Exception(stringBuilder.ToString());
+                var errors = new StringBuilder();
+                foreach (var err in result.Errors)
+                    errors.Append(err.Description).Append("; ");
+                throw new Exception(errors.ToString().TrimEnd(' ', ';'));
             }
-
         }
 
         public async Task CreateUser(string username, string email, string nome, string cognome, string rolename)
         {
-            var user = await _userManager.FindByNameAsync(username);
-
-            if (user != null)
-            {
+            if (await _userManager.FindByNameAsync(username) != null)
                 throw new Exception("Username già esistente");
-            }
 
-            var role = await _roleManager.FindByNameAsync(rolename);
+            var role = await _roleManager.FindByNameAsync(rolename)
+                ?? throw new Exception($"Il ruolo '{rolename}' non esiste.");
 
-            if (role == null)
+            var user = new SediinIdentityUser
             {
-                throw new Exception("Il ruolo " + rolename + " non esiste.");
-            }
+                UserName = username,
+                NormalizedUserName = username.ToUpperInvariant(),
+                Email = email,
+                NormalizedEmail = email.ToUpperInvariant(),
+                Nome = nome,
+                Cognome = cognome
+            };
 
-            SediinIdentityUser sediinIdentityUser = new SediinIdentityUser();
-            sediinIdentityUser.Email = email;
-            sediinIdentityUser.UserName = username;
-            sediinIdentityUser.NormalizedUserName = username;
-            sediinIdentityUser.NormalizedEmail = email;
-            sediinIdentityUser.Cognome = cognome;
-            sediinIdentityUser.Nome = nome;
+            // Genera password casuale
+            var parts = Guid.NewGuid().ToString().Split("-");
+            var password = parts.First().ToUpper() + "!." + parts.Last();
 
-            string[] _p = Guid.NewGuid().ToString().Split("-");
-            string password = _p.FirstOrDefault().ToUpper() + "!." + _p.LastOrDefault();
+            var createResult = await _userManager.CreateAsync(user, password);
+            if (!createResult.Succeeded)
+                throw new Exception("Non è stato possibile creare l'utente");
 
-            var _newuser = await _userManager.CreateAsync(sediinIdentityUser, password);
+            var roleResult = await _userManager.AddToRoleAsync(user, rolename);
+            if (!roleResult.Succeeded)
+                throw new Exception("Non è stato possibile assegnare il ruolo all'utente");
 
-            if (!_newuser.Succeeded)
-            {
-                throw new Exception("Non e stato possibile creare utente");
-            }
-
-            var _userole = await _userManager.AddToRoleAsync(sediinIdentityUser, rolename);
-
-            if (!_userole.Succeeded)
-            {
-                throw new Exception("Non e stato possibile aggiungere utente al ruolo");
-            }
-
-            var _usercreated = await _userManager.FindByNameAsync(username);
-
-            await IsEmailConfirmed(_usercreated);
-
+            // Conferma email: invia codice se non confermata
+            await IsEmailConfirmed(user);
         }
 
         public async Task ConfirmEmail(string userId, string code)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("Utente inesistente");
-            }
+            var user = await _userManager.FindByIdAsync(userId)
+                ?? throw new Exception("Utente inesistente");
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
-           
             if (!result.Succeeded)
-            {
                 throw new Exception("Token errato. Email non confermata.");
-            }
+        }
+
+        public async Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(int pageNumber, int pageSize)
+        {
+            var query = _userManager.Users.AsNoTracking();
+            var totalCount = await query.CountAsync();
+
+            var users = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (users, totalCount);
         }
     }
 }

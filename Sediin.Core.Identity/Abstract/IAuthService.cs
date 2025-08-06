@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Sediin.Core.Identity.Entities;
 
 namespace Sediin.Core.Identity.Abstract
 {
@@ -29,5 +30,7 @@ namespace Sediin.Core.Identity.Abstract
 
         Task CreateUser(string username, string email, string nome, string cognome, string role);
         Task ConfirmEmail(string userId, string code);
+
+        Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(int pageNumber, int pageSize);
     }
 }
