@@ -18,7 +18,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         {
             var sb = new StringBuilder();
 
-            sb.Append("<div class=\"accordion\" id=\"accordionPanelsRicercae\">");
+            sb.Append("<div class=\"accordion shadow\" id=\"accordionPanelsRicercae\">");
             sb.Append("<div class=\"accordion-item\">");
 
             bool hasPartial = PartialHtml != null;
@@ -101,18 +101,6 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             {
                 sb.Append(@"
                     var panel = $('#panelRicerca-collapseOne');
-
-                    panel.on('shown.bs.collapse', function () {
-                        panel.addClass('shadow');
-                    });
-
-                    panel.on('hidden.bs.collapse', function () {
-                        panel.removeClass('shadow');
-                    });
-
-                    if(panel.hasClass('show')) {
-                        panel.addClass('shadow');
-                    }
 
                     function panelRicercaCollapse(collapse) {
                         if (!collapse) {
