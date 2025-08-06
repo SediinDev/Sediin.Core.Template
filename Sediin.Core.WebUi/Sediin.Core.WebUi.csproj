@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack.NetCore" Version="1.5.0.1" />
     <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
@@ -33,6 +34,7 @@
     <ProjectReference Include="..\Sediin.Core.DataAccess\Sediin.Core.DataAccess.csproj" />
     <ProjectReference Include="..\Sediin.Core.Helpers\Sediin.Core.Helpers.csproj" />
     <ProjectReference Include="..\Sediin.Core.Identity\Sediin.Core.Identity.csproj" />
+    <ProjectReference Include="..\Sediin.Core.Mvc.Helpers\Sediin.Core.Mvc.Helpers.csproj" />
   </ItemGroup>
 
 </Project>

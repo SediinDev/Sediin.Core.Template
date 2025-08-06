@@ -5,11 +5,26 @@ namespace Sediin.Core.WebUi.Areas
 #pragma warning disable
     public class AreaFolderConvention : IControllerModelConvention
     {
+        private readonly Dictionary<string, string> _namespaceAreaMappings = new()
+        {
+            { ".Areas.Backend.", "Backend" },
+            { ".Areas.Administrator.", "Administrator" }
+        };
+
         public void Apply(ControllerModel controller)
         {
-            if (controller.ControllerType.Namespace.Contains(".Areas.Backend."))
+            string? controllerNamespace = controller.ControllerType.Namespace;
+
+            if (string.IsNullOrEmpty(controllerNamespace))
+                return;
+
+            foreach (var mapping in _namespaceAreaMappings)
             {
-                controller.RouteValues["area"] = "Backend";
+                if (controllerNamespace.Contains(mapping.Key))
+                {
+                    controller.RouteValues["area"] = mapping.Value;
+                    break;
+                }
             }
         }
     }

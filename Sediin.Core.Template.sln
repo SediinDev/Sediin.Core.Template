@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.Identity", "Sed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.Helpers", "Sediin.Core.Helpers\Sediin.Core.Helpers.csproj", "{A6301A83-09F8-4913-BC42-0997BF05D0FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.Mvc.Helpers", "Sediin.Core.Mvc.Helpers\Sediin.Core.Mvc.Helpers.csproj", "{6F619311-1624-4726-AF51-3ECE28A3B555}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A6301A83-09F8-4913-BC42-0997BF05D0FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6301A83-09F8-4913-BC42-0997BF05D0FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6301A83-09F8-4913-BC42-0997BF05D0FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F619311-1624-4726-AF51-3ECE28A3B555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F619311-1624-4726-AF51-3ECE28A3B555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F619311-1624-4726-AF51-3ECE28A3B555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F619311-1624-4726-AF51-3ECE28A3B555}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

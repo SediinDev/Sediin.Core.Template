@@ -40,10 +40,10 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
             switch (tipo.ToLower())
             {
                 case "sidemenu":
-                    return View("SideMenu", Menu);
+                    return View("~/Areas/Backend/Views/Shared/Components/Menu/SideMenu.cshtml", Menu);
 
                 case "navmenu":
-                    return View("NavMenu", Menu);
+                    return View("~/Areas/Backend/Views/Shared/Components/Menu/NavMenu.cshtml", Menu);
 
                 default:
                     menu = _unitOfWork.Menu.GetAll(includeProperts: "Ruoli");

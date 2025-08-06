@@ -8,7 +8,6 @@
     </div>
 
     <div class="col-md-6 mt-3 p-3">
-
         <h4 class="card-title"><i class="fa fa-user-lock mr-2"></i>Accesso area riservata</h4>
         <hr />
 
@@ -21,9 +20,7 @@
                 <div class="form-group">
                     <div class="col-md-12">
                         @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label" })
-
                         @Html.TextBoxFor(model => model.Username, new { @class = "form-control col-md-12", placeholder = "Codice utente", autocomplete = "off", type = "search" })
-
                         @Html.ValidationMessageFor(model => model.Username, "")
                     </div>
                 </div>
@@ -32,9 +29,7 @@
             <div class="form-group">
                 <div class="col-md-12">
                     @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })
-
                     @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Password" } })
-
                     @Html.ValidationMessageFor(model => model.Password, "")
                 </div>
             </div>

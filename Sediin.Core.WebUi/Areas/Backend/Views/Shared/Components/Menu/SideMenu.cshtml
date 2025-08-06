@@ -122,12 +122,12 @@
 
     <li class="sidebar-header text-center mt-4" style="min-height:100px">
 
-@*         <small class="text-enpaia-blue fw-bold">@Html.GetConfiguration().RagioneSociale.Nome</small>
- *@
+        <small class="fw-bold" style="color:darkblue;">@Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()</small>
+
         <div class="text-center">
-@*             <img id="sediinTemplateImageLogo" class="mt-2 mb-2" style="border-radius: 2%; width: 125px; mix-blend-mode: multiply;"
-                 src="@Html.GetConfiguration().LogoBase64" />
- *@        </div>
+            <img id="sediinTemplateImageLogo" class="mt-2 mb-2" style="border-radius: 2%; width: 125px; mix-blend-mode: multiply;"
+                 src="~/images/logo.png" />
+        </div>
 
     </li>
 
@@ -162,16 +162,16 @@
 }
 
 <script>
-    $(document).ready(function () {
-        $('#sidebarCollapse').on('click', function () {
-            $('#sidebar').toggleClass('active');
-            $(this).tooltip("hide");
-            if ($("#sidebar").hasClass("active")) {
-                $('#sidebarCollapseText').text("Apri menu");
-            }
-            else {
-                $('#sidebarCollapseText').text("Chiudi menu");
-            }
-        });
-    });
+    //$(document).ready(function () {
+        // $('#sidebarCollapse').on('click', function () {
+        //     $('#sidebar').toggleClass('active');
+        //     $(this).tooltip("hide");
+        //     if ($("#sidebar").hasClass("active")) {
+        //         $('#sidebarCollapseText').text("Apri menu");
+        //     }
+        //     else {
+        //         $('#sidebarCollapseText').text("Chiudi menu");
+        //     }
+        // });
+    //});
 </script>

@@ -157,3 +157,12 @@ function scrollTop() {
     } catch (e) {
     }
 }
+
+function updateListRicercaFromAction(actionUrl, trigger) {
+    // AJAX call alla tua action per popolare #resultRicerca
+    if (trigger) {
+        $.get(actionUrl, function (data) {
+            $("#resultRicerca").html(data);
+        });
+    }
+}

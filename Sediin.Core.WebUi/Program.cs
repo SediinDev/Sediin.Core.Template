@@ -126,10 +126,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-
-//app.MapBackendArea();
-
 // --- ROUTING ---
+//Importante, aggiungere in AreaFolderConvention.cs area a mano 
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

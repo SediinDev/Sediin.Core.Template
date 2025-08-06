@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
+using Sediin.Core.Identity.Entities;
 using System.Text;
 
 public abstract class BaseController : Controller
