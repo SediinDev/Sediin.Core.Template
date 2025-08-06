@@ -1,6 +1,6 @@
-﻿using HtmlAgilityPack;
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using System;
 using System.Text;
 
 namespace Sediin.Core.Mvc.Helpers.TagHelpers
@@ -12,27 +12,28 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         public string RicercaAction { get; set; } = string.Empty;
         public bool ExecuteRicercaOnReady { get; set; } = true;
         public bool ResetButton { get; set; } = true;
+        public string SubmitText { get; set; } = "Cerca";
         public IHtmlContent? PartialHtml { get; set; }
-
-        /// <summary>
-        /// ID del contenitore dei risultati. Default: "resultRicerca"
-        /// </summary>
         public string ResultContainerId { get; set; } = "resultRicerca";
+
+        private readonly string uniqueId = Guid.NewGuid().ToString("N");
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             var sb = new StringBuilder();
 
-            sb.Append("<div class=\"accordion shadow\" id=\"accordionPanelsRicercae\">");
+            string accordionId = $"accordionPanelsRicercae_{uniqueId}";
+            string collapseId = $"panelRicerca-collapseOne_{uniqueId}";
+            string headingId = $"panelRicerca-headingOne_{uniqueId}";
+            string formId = $"form_{uniqueId}";
+
+            sb.Append($"<div class=\"accordion shadow mb-4\" id=\"{accordionId}\">");
             sb.Append("<div class=\"accordion-item\">");
 
-            bool hasPartial = PartialHtml != null;
-
-            sb.Append("<h2 class=\"accordion-header\" id=\"panelRicerca-headingOne\">");
-
-            if (hasPartial)
+            sb.Append($"<h2 class=\"accordion-header\" id=\"{headingId}\">");
+            if (PartialHtml != null)
             {
-                sb.Append("<button class=\"accordion-button text-dark\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#panelRicerca-collapseOne\" aria-expanded=\"true\" aria-controls=\"panelRicerca-collapseOne\">");
+                sb.Append($@"<button class=""accordion-button text-dark"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#{collapseId}"" aria-expanded=""true"" aria-controls=""{collapseId}"">");
                 sb.Append($"<h4 class=\"m-0\">{HeaderText}</h4>");
                 sb.Append("</button>");
             }
@@ -40,107 +41,103 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             {
                 sb.Append($"<h4 class=\"m-3\">{HeaderText}</h4>");
             }
-
             sb.Append("</h2>");
 
-            if (hasPartial)
+            if (PartialHtml != null)
             {
-                sb.Append("<div id=\"panelRicerca-collapseOne\" class=\"accordion-collapse collapse show\" aria-labelledby=\"panelRicerca-headingOne\">");
+                sb.Append($@"<div id=""{collapseId}"" class=""accordion-collapse collapse show"" aria-labelledby=""{headingId}"">");
                 sb.Append("<div class=\"accordion-body\">");
 
+                sb.Append($@"<form id=""{formId}"" method=""post"" action=""{RicercaAction}""
+                                data-ajax=""true""
+                                data-ajax-mode=""replace""
+                                data-ajax-update=""#{ResultContainerId}""
+                                data-ajax-begin=""alertWaid()""
+                                data-ajax-complete=""alertClose()"">");
+
                 var writer = new System.IO.StringWriter();
-                PartialHtml!.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
-                var html = writer.ToString();
+                PartialHtml?.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
+                sb.Append(writer.ToString());
 
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
+                sb.Append("   <hr />");
 
-                try
+                sb.Append(@"<div class=""d-flex justify-content-center gap-2 mt-3"">");
+                sb.Append($@"<button type=""submit"" onclick=""fadeCollapse_{uniqueId}();"" class=""btn btn-primary"" id=""submitBtn_{uniqueId}"">{SubmitText}</button>");
+                if (ResetButton)
                 {
-                    var submitBtn = doc.DocumentNode.Descendants("button")
-                        .FirstOrDefault(btn => btn.Attributes["type"]?.Value == "submit");
-
-                    if (submitBtn != null && ResetButton)
-                    {
-                        var resetButton = doc.CreateElement("button");
-                        resetButton.Attributes.Add("type", "reset");
-                        resetButton.Attributes.Add("class", "btn btn-danger ms-2");
-                        resetButton.InnerHtml = "Reset modulo";
-
-                        submitBtn.ParentNode?.InsertAfter(resetButton, submitBtn);
-                    }
+                    sb.Append(@"<button type=""reset"" class=""btn btn-danger"">Reset</button>");
                 }
-                catch
-                {
-                    // Silenzioso: se fallisce non blocca tutto
-                }
+                sb.Append("</div>");
 
-                sb.Append(doc.DocumentNode.OuterHtml);
+                sb.Append("</form>");
                 sb.Append("</div>");
                 sb.Append("</div>");
             }
 
-            sb.Append("</div>"); // accordion-item
-            sb.Append("</div>"); // accordion
+            sb.Append("</div></div>");
+            sb.Append("<hr style=\"border: 0; height: 4px; background-image: linear-gradient(to right, #0d6efd, #6610f2); border-radius: 2px; opacity: 1; margin: 1rem 0;\" />\r\n");
 
-            // ✅ Usa ID dinamico
-            sb.Append($"<div id=\"{ResultContainerId}\" class=\"mt-3\"></div>");
+            sb.Append($@"<div id=""{ResultContainerId}"" class=""mt-3""></div>");
 
-            // ✅ Script dinamico
             sb.Append("<script>");
+            sb.Append($@"
+function fadeCollapse_{uniqueId}() {{
+    $('#{collapseId}').fadeTo(150, 0, function() {{
+        $(this).collapse('hide').fadeTo(0, 1);
+    }});
+}}
+
+// aggiorna lista rimuovendo temporaneamente onbegin e rimettendolo subito dopo
+window.updateListRicerca = function(showalert) {{
+    var form = $('#{formId}');
+    var beginHandler = form.attr('data-ajax-begin'); // salva onbegin
+    form.removeAttr('data-ajax-begin');             // rimuove onbegin per evitare trigger automatico
+    if (showalert) {{
+        alertWaid();  // fai partire manualmente alert
+    }}
+    form.submit();                                    // submit senza onbegin
+    setTimeout(function() {{
+        form.attr('data-ajax-begin', beginHandler);  // rimetti onbegin dopo submit
+    }}, 100);
+}};
+");
+
+            sb.Append(@"
+(function waitForJQuery() {
+    if (window.jQuery) {
+        (function($) {
+            $(function() {");
+
             if (ResetButton)
             {
-                sb.Append("$(\"#accordionPanelsRicercae\").find(\"button[type='reset']\").on(\"click\", function () {");
-                sb.Append("$(\"#accordionPanelsRicercae\").find(\"input[type='hidden']\").val('');");
-                sb.Append("$(\"#accordionPanelsRicercae\").find(\".field-validation-error\").html('');");
-                sb.Append("});");
+                sb.Append($@"
+                $('#{accordionId}').find('button[type=reset]').on('click', function() {{
+                    $('#{accordionId}').find('input[type=hidden]').val('');
+                    $('#{accordionId}').find('.field-validation-error').html('');
+                }});");
             }
-
-            sb.Append(UpdateListRicercaScript(RicercaAction));
 
             if (ExecuteRicercaOnReady)
             {
-                sb.Append("$(document).ready(function() {");
-                sb.Append("alertWaid();");
-                sb.Append("updateListRicercaFromModuloRicerca(true);");
-                sb.Append("panelRicercaCollapse(false);");
-                sb.Append("});");
+                sb.Append($@"
+                setTimeout(function() {{
+                    updateListRicerca(true);
+                    fadeCollapse_{uniqueId}();
+                }}, 300);");
             }
 
-            if (hasPartial)
-            {
-                sb.Append(@"
-                    var panel = $('#panelRicerca-collapseOne');
-
-                    function panelRicercaCollapse(collapse) {
-                        if (!collapse) {
-                            panel.collapse('hide');
-                        } else {
-                            panel.collapse('show');
-                        }
-                    }
-                ");
-            }
-
+            sb.Append(@"
+            });
+        })(window.jQuery);
+    } else {
+        setTimeout(waitForJQuery, 50);
+    }
+})();
+");
             sb.Append("</script>");
 
             output.TagName = "div";
             output.Content.SetHtmlContent(sb.ToString());
-        }
-
-        private string UpdateListRicercaScript(string actionUrl)
-        {
-            return $@"
-                function updateListRicercaFromModuloRicerca(ajaxCall) {{
-                    $.ajax({{
-                        url: '{actionUrl}',
-                        type: 'POST',
-                        success: function (result) {{
-                            $('#{ResultContainerId}').html(result);
-                            alertClose();
-                        }}
-                    }});
-                }}";
         }
     }
 }

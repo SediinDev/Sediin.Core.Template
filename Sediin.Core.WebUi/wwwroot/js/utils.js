@@ -112,6 +112,65 @@ function alertClose() {
     Swal.close();
 }
 
+
+function toastWarning(message, showDuration, position) {
+    toast("warning", message, showDuration, position);
+    playNotifyWarning();
+}
+
+function toastInfo(message, showDuration, position) {
+    toast("info", message, showDuration, position);
+    playNotifyInfo();
+}
+
+function toastSuccess(message, showDuration, position) {
+    toast("success", message, showDuration, position);
+    playNotifySuccess();
+}
+function toastError(message, showDuration, position) {
+    toast("error", message, showDuration, position);
+    playNotifyError();
+}
+
+function toast(tipo, message, showDuration, position) {
+
+    //toast-top-right
+    //toast-bottom-right
+    //toast-bottom-left
+    //toast-top-left
+    //toast-top-full-width
+    //toast-bottom-full-width
+    //toast-top-center
+    //toast-bottom-center
+
+    var _position = "toast-bottom-right";
+    if (position != undefined) {
+        _position = position;
+    }
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": false,
+        "positionClass": _position,
+        "preventDuplicates": true,
+        "onclick": null,
+        "closeDuration": false,
+        "showDuration": showDuration == undefined ? "10000" : showDuration,
+        "hideDuration": "1000",
+        "timeOut": "12000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+
+    toastr[tipo](message);
+}
+
+
 //handle ajax error, HandleAjaxErrorAttribute
 function handleError(xhr) {
     try {

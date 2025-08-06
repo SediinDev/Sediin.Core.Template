@@ -1,20 +1,11 @@
 ﻿@using Sediin.Core.Mvc.Helpers.TagHelpers
 @addTagHelper *, Sediin.Core.Mvc.Helpers
 
-
-@* <ricerca-modulo header-text="Cerca clienti"
-                ricerca-action="/Administrator/Utenti/Ricerca"
-                execute-on-ready="true"
-                show-reset-button="true">
-    @await Html.PartialAsync("RicercaModulo")
-</ricerca-modulo>
- *@
-
  <ricerca-modulo 
     header-text="Ricerca Utenti"
     ricerca-action="/Administrator/Utenti/Ricerca"
     execute-ricerca-on-ready="true"
-    reset-button="false"
+    reset-button="true"
     partial-html="@await Html.PartialAsync("RicercaModulo", null)"
  >
 

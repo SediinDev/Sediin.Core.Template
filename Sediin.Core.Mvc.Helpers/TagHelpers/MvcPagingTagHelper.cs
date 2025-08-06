@@ -164,7 +164,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
 
             sb.AppendLine("  function gotoPage_" + uniqueId + "() {");
             sb.AppendLine($"    var val = parseInt(document.getElementById('pagingInput_{uniqueId}').value);");
-            sb.AppendLine($"    if (isNaN(val) || val < 1 || val > {totalPages}) {{ alert('Inserire un numero pagina valido da 1 a {totalPages}.'); return; }}");
+            sb.AppendLine($"    if (isNaN(val) || val < 1 || val > {totalPages}) {{ toastInfo('Inserire un numero pagina valido da 1 a {totalPages}.'); return; }}");
 
             var jqMethod = (HttpMethod ?? "GET").ToUpperInvariant() == "POST" ? "post" : "get";
             var baseUrl = BuildUrl(Action);

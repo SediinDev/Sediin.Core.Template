@@ -22,6 +22,7 @@
     <link href="~/css/validation.css" rel="stylesheet" />
     <link href="~/css/modale.css" rel="stylesheet" />
     <link href="~/css/navmenu.css" rel="stylesheet" />
+    <link href="~/css/toastr.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -32,7 +33,6 @@
         <!-- Page Content -->
         <div id="content" style="margin-top:-30px">
             @await Component.InvokeAsync("Menu", new { tipo = "navmenu" })
-
             <div id="contentrenderbody" class="ml-1 mt-4 mr-1 pt-2 p-4">
                 @RenderBody()
 
@@ -63,7 +63,7 @@
     <script src="~/js/customvalidator.js"></script>
     <script src="~/js/modale.js"></script>
     <script src="~/js/onesidepage.js"></script>
-
+    <script src="~/js/toastr.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
