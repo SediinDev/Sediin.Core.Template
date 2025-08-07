@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
@@ -13,6 +14,7 @@ using Sediin.Core.WebUi.Areas;
 using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Filters;
 using Serilog;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,7 +53,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = false;
+    options.User.RequireUniqueEmail = true;
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -92,13 +94,19 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddRazorPages();
 
-// ??? Configurazione JSON extra
-builder.Configuration.AddJsonFile("Config/Menu.json", optional: true, reloadOnChange: true);
-
 // ------------------------------------
 // ??? BUILD APP
 // ------------------------------------
 var app = builder.Build();
+
+
+var supportedCultures = new[] { new CultureInfo("it-IT") };
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("it-IT"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 
 // ?? Middleware custom
 app.UseMiddleware<Sediin.Core.Mvc.Helpers.Middleware.QueryDecryptMiddleware>();

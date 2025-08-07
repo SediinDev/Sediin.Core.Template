@@ -33,6 +33,8 @@ namespace Sediin.Core.Identity.Abstract
         Task ConfirmEmail(string userId, string code);
 
         Task<string> GetUserRole(string userId);
+        Task<SediinIdentityUser> GetUser(string userName);
+        Task ChangePassword(string userName, string currentPassword, string newPassword);
 
         Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri , int pageNumber, int pageSize);
         Task<IList<SediinIdentityUser>> GetAllUsersAsync(UtentiRicercaVM filtri);

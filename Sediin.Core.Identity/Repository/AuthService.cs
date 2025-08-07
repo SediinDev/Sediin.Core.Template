@@ -217,5 +217,20 @@ namespace Sediin.Core.Identity.Repository
 
             return null;
         }
+
+        public async Task<SediinIdentityUser> GetUser(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
+        }
+
+        public async Task ChangePassword(string userName, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            var _result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!_result.Succeeded)
+            {
+                throw new Exception("Non è stato possibile cambiare la password.");
+            }
+        }
     }
 }

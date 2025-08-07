@@ -71,8 +71,9 @@
 </ajax-form>
 
 
-<partial name="_ValidationScriptsPartial" />
-
+@{
+    Html.RenderPartial("_ValidationScriptsPartial");
+}
 
 <script>
 

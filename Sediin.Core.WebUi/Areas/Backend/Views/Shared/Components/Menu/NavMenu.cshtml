@@ -1,6 +1,9 @@
 ﻿@inject IConfiguration Configuration
+@inject IUnitOfWorkIdentity UnitOfWorkIdentity
 @model IEnumerable<Sediin.Core.DataAccess.Entities.Menu>
 @using Microsoft.AspNetCore.Html
+@using Sediin.Core.Identity.Abstract
+@using Sediin.Core.Identity.Repository
 
 @functions
 {
@@ -84,8 +87,8 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link" style="color:white" @getUrl(item.Action, item.Controller, item.Area)>
-                                <i class="@item.IconFa marginMenuIcon"></i> @item.Descrizione
-                            </a>
+                                    <i class="@item.IconFa marginMenuIcon"></i> @item.Descrizione
+                                </a>
                             </li>
                         }
                         else
@@ -165,19 +168,19 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false" style="color:white">
                         @{
-                            // var _user = Html.GetUser();
+                            var _user = UnitOfWorkIdentity.AuthService.GetUser(User.Identity.Name).Result;
                         }
                         <span style="-webkit-text-stroke-width: 1px;" class="navtestobenvenuto">Benvenuto</span>&nbsp;
 
                         <span class="text-capitalize">
-                            @*<span>@_user.Nome @_user.Cognome</span>*@
+                            <span>@_user.Nome @_user.Cognome</span>
                         </span>
                         <div style="font-size: 12px; text-align: right; -webkit-text-stroke-width: 1px; -webkit-text-stroke-color: red; " class="text-info">altre opzioni</div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-gray" data-bs-theme="dark" aria-labelledby="navbarDropdown">
                         <li>
                             <a class="dropdown-item"
-                               href="@Url.Action("ModificaPassword", "Utenti", new { area = "Admin" })"
+                               href="@Url.Action("ChangePassword", "Utenti", new { area = "Administrator" })"
                                data-ajax="true"
                                data-ajax-begin="alertWaid()"
                                data-ajax-failure="handleError"

@@ -35,9 +35,11 @@ namespace Sediin.Core.WebUi.Models
         public string Username { get; set; }
 
         [MaxLength(25)]
-        [Required]
+        [Required(ErrorMessage = "La password è obbligatoria.")]
+        [StringLength(100, ErrorMessage = "La {0} deve contenere almeno {2} caratteri.", MinimumLength = 6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{6,}$",
+        ErrorMessage = "La password deve contenere almeno una lettera maiuscola, una minuscola, un numero e un carattere speciale.")]
         [DataType(DataType.Password)]
-        //[PasswordStrong(RequiredLength = 8, RequireDigit = true, RequireLowercase = true, RequireUppercase = true, RequireNonLetterOrDigit = true)]
         public string Password { get; set; }
 
         [MaxLength(25)]

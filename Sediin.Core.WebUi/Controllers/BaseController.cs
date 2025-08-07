@@ -7,8 +7,9 @@ using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
 using System.Text;
+using System.Threading.Tasks;
 
-public abstract class BaseController : Controller
+public class BaseController : Controller
 {
     protected ILogger<BaseController> _logger;
     protected IUnitOfWorkIdentity _unitOfWorkIdentity;
@@ -67,7 +68,7 @@ public abstract class BaseController : Controller
         }
     }
 
-    public string ModelStateErrorToString(ModelStateDictionary modelState)
+    internal string ModelStateErrorToString(ModelStateDictionary modelState)
     {
         try
         {
@@ -101,5 +102,10 @@ public abstract class BaseController : Controller
         var content = Sediin.Core.Mvc.Helpers.ExcelHelper.Excel.CreateExcelFromList(model);
 
         return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName + ".xlsx");
+    }
+
+    public async Task<SediinIdentityUser> GetUser()
+    {
+        return await _unitOfWorkIdentity.AuthService.GetUser(User.Identity.Name);
     }
 }
