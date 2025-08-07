@@ -45,17 +45,17 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             }
             sb.Append("</h2>");
 
-            if (PartialHtml != null)
-            {
-                sb.Append($@"<div id=""{collapseId}"" class=""accordion-collapse collapse show"" aria-labelledby=""{headingId}"">");
-                sb.Append("<div class=\"accordion-body\">");
-
-                sb.Append($@"<form id=""{formId}"" method=""post"" action=""{RicercaAction}""
+            sb.Append($@"<form id=""{formId}"" method=""post"" action=""{RicercaAction}""
                                 data-ajax=""true""
                                 data-ajax-mode=""replace""
                                 data-ajax-update=""#{ResultContainerId}""
                                 data-ajax-begin=""alertWaid()""
                                 data-ajax-complete=""alertClose()"">");
+            if (PartialHtml != null)
+            {
+                sb.Append($@"<div id=""{collapseId}"" class=""accordion-collapse collapse show"" aria-labelledby=""{headingId}"">");
+                sb.Append("<div class=\"accordion-body\">");
+
 
                 var writer = new System.IO.StringWriter();
                 PartialHtml?.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
@@ -71,10 +71,13 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 }
                 sb.Append("</div>");
 
-                sb.Append("</form>");
                 sb.Append("</div>");
                 sb.Append("</div>");
             }
+
+
+            sb.Append($@"<input data-ricercamodulo-page-number="" name=""page"" type=""text"">");
+            sb.Append("</form>");
 
             sb.Append("</div></div>");
             sb.Append("<hr style=\"border: 0; height: 4px; background-image: linear-gradient(to right, #0d6efd, #6610f2); border-radius: 2px; opacity: 1; margin: 1rem 0;\" />\r\n");
@@ -100,18 +103,43 @@ function submitIfValid_{uniqueId}(event) {{
     return true;
 }}
 
-// aggiorna lista rimuovendo temporaneamente onbegin e rimettendolo subito dopo
 window.updateListRicerca = function(showalert) {{
     var form = $('#{formId}');
-    var beginHandler = form.attr('data-ajax-begin'); // salva onbegin
-    form.removeAttr('data-ajax-begin');             // rimuove onbegin per evitare trigger automatico
+    var url = form.attr('action');
+    var method = form.attr('method') || 'post';
+    var data = form.serialize();
+
+    //var beginHandler = form.attr('data-ajax-begin');
+    //var completeHandler = form.attr('data-ajax-complete');
+
+    //if (typeof beginHandler === 'string' && typeof window[beginHandler] === 'function') {{
+    //    window[beginHandler]();
+    //}}
+
     if (showalert) {{
-        alertWaid();  // fai partire manualmente alert
+        alertWaid();
     }}
-    form.submit();                                    // submit senza onbegin
-    setTimeout(function() {{
-        form.attr('data-ajax-begin', beginHandler);  // rimetti onbegin dopo submit
-    }}, 100);
+
+    $.ajax({{
+        url: url,
+        type: method,
+        data: data,
+        success: function (response) {{
+            $('#{ResultContainerId}').html(response);
+
+        }},
+        complete: function () {{
+            //if (typeof completeHandler === 'string' && typeof window[completeHandler] === 'function') {{
+            //    window[completeHandler]();
+            //}}
+            if (showalert) {{
+                alertClose();
+            }}
+        }},
+        error: function (xhr, status, error) {{
+            console.error('Errore nella richiesta AJAX:', error);
+        }}
+    }});
 }};
 
 (function waitForJQuery() {{
@@ -130,7 +158,6 @@ window.updateListRicerca = function(showalert) {{
                     fadeCollapse_{uniqueId}();
                 }}, 150);" : "")}
 
-                // Disabilita autocomplete e svuota i campi
                 var form = document.getElementById('{formId}');
                 if (form) {{
                     var inputs = form.querySelectorAll('input, select, textarea');

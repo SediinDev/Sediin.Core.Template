@@ -3,7 +3,7 @@
 <ajax-form asp-action="ModificaUtente"
            asp-controller="Utenti"
            on-begin="alertWaid()"
-           on-success="hideModal(); alertSuccess(data); updateListRicerca()"
+           on-success="hideModal(); toastSuccess(data); updateListRicerca()"
            on-failure="handleError">
 
     <input type="hidden" name="Id" value="@Model.Id" />
