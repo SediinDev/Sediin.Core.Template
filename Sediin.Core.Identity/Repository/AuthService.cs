@@ -88,9 +88,6 @@ namespace Sediin.Core.Identity.Repository
 
         public async Task CreateUser(string username, string email, string nome, string cognome, string rolename)
         {
-            if (await _userManager.FindByNameAsync(username) != null)
-                throw new Exception("Username già esistente");
-
             if (Debugger.IsAttached)
             {
                 foreach (var _rolename in Enum.GetValues(typeof(Roles)))
@@ -101,6 +98,9 @@ namespace Sediin.Core.Identity.Repository
                     }
                 }
             }
+
+            if (await _userManager.FindByNameAsync(username) != null)
+                throw new Exception("Username già esistente");
 
             var role = await _roleManager.FindByNameAsync(rolename)
                 ?? throw new Exception($"Il ruolo '{rolename}' non esiste.");
