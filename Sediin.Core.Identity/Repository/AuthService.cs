@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Models;
+using System.Diagnostics;
 using System.Text;
 
 namespace Sediin.Core.Identity.Repository
@@ -77,6 +78,13 @@ namespace Sediin.Core.Identity.Repository
             if (await _userManager.FindByNameAsync(username) != null)
                 throw new Exception("Username già esistente");
 
+            if (Debugger.IsAttached)
+            {
+                if (_roleManager.FindByNameAsync(rolename).Result == null)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole { Name = rolename, NormalizedName = rolename });
+                }
+            }
             var role = await _roleManager.FindByNameAsync(rolename)
                 ?? throw new Exception($"Il ruolo '{rolename}' non esiste.");
 
