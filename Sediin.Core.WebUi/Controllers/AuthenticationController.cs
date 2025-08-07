@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Sediin.Core.WebUi.Areas.TemplateEmail.Models;
 using Sediin.Core.WebUi.Filters;
 using Sediin.Core.WebUi.Models;
@@ -138,7 +136,7 @@ namespace Sediin.Core.WebUi.Controllers
 
                 _unitOfWorkIdentity.AuthService.OnSendMailConfermaEmail += AuthService_OnSendMailConfermaEmail;
 
-                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, "Administrator");
+                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.Administrator.ToString());
 
                 return Json(new { success = true, message = "Utente registrato. Controlli la sua email." });
             }
