@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Text;
 
 namespace Sediin.Core.Identity.Repository
@@ -13,6 +16,7 @@ namespace Sediin.Core.Identity.Repository
         private readonly SignInManager<SediinIdentityUser> _signInManager;
         private readonly UserManager<SediinIdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public event SendMail OnSendMailRecoveryPassword;
         public event SendMail OnSendMailConfermaEmail;
@@ -20,17 +24,26 @@ namespace Sediin.Core.Identity.Repository
         public AuthService(
             SignInManager<SediinIdentityUser> signInManager,
             UserManager<SediinIdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public Task<SignInResult> LoginAsync(string email, string password, bool rememberMe) =>
             _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
 
-        public Task LogoutAsync() => _signInManager.SignOutAsync();
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+
+            _httpContextAccessor.HttpContext?.Session?.Clear();
+
+            // Cancella i cookie
+            _httpContextAccessor.HttpContext?.Response?.Cookies?.Delete(".AspNetCore.Identity.Application");
+        }
 
         public async Task RecoveryPassword(string email)
         {
@@ -183,6 +196,22 @@ namespace Sediin.Core.Identity.Repository
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<string> GetUserRole(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user != null)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                if (roles != null)
+                {
+                    return roles.FirstOrDefault();
+                }
+            }
+
+            return null;
         }
     }
 }

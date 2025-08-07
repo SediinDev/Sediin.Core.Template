@@ -126,8 +126,7 @@
                     </a>
                     <a class="nav-link" href="@Url.Action("LogOff", "Authentication", new { area = "" })">
                         <i class="fas fa-sign-out-alt marginMenuIcon"></i>
-                        LogOff
-
+                        Esci
                     </a>
 
                 </li>
@@ -184,7 +183,7 @@
                                data-ajax-failure="handleError"
                                data-ajax-success="showModal_NoFooter('Modifica Password',data); alertClose()">Modifica Password</a>
                         </li>
-                        <li><a class="dropdown-item" href="@Url.Action("LogOff", "Account", new { area = "" })">LogOff</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("LogOff", "Authentication", new { area = "" })">Esci</a></li>
                     </ul>
                 </li>
             </ul>

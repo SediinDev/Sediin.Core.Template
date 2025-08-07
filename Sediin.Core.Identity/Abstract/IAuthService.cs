@@ -32,6 +32,8 @@ namespace Sediin.Core.Identity.Abstract
         Task CreateUser(string username, string email, string nome, string cognome, string role);
         Task ConfirmEmail(string userId, string code);
 
+        Task<string> GetUserRole(string userId);
+
         Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri , int pageNumber, int pageSize);
         Task<IList<SediinIdentityUser>> GetAllUsersAsync(UtentiRicercaVM filtri);
     }

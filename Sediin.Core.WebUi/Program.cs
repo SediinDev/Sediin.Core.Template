@@ -16,11 +16,11 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- CONFIGURAZIONI CONNECTION STRING ---
+// ?? Connessioni DB
 var identityConn = builder.Configuration.GetConnectionString("SediinCoreIdentityConnection");
 var dataConn = builder.Configuration.GetConnectionString("SediinCoreDataAccessConnection");
 
-// --- DB CONTEXTS ---
+// ?? DbContexts
 builder.Services.AddDbContext<SediinCoreIdentityDbContext>(options =>
     options.UseSqlServer(identityConn));
 
@@ -29,7 +29,7 @@ builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// --- IDENTITY ---
+// ?? Identity
 builder.Services.AddDefaultIdentity<SediinIdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -58,56 +58,52 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-    //options.LoginPath = "/Identity/Account/Login";
     options.LoginPath = "/Authentication/Login/";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
 
+// ?? Email
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-// --- DEPENDENCY INJECTION ---
+// ?? Dependency Injection
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
-
-
-
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+// ?? Caching & Sessione
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 
-// --- LOGGING (Serilog) ---
+// ?? Logging Serilog
 builder.Host.UseSerilog((ctx, cfg) =>
     cfg.ReadFrom.Configuration(ctx.Configuration));
 
-// --- CONTROLLERS / VIEWS / RAZOR ---
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-
-// --- CONFIGURAZIONE FILE EXTRA ---
-builder.Configuration.AddJsonFile("Config/Menu.json", optional: true, reloadOnChange: true);
-
-
-// Aggiungi filtro globale
+// ?? Razor, MVC, Filtri
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<HandleAjaxErrorAttribute>();
-});
-
-
-builder.Services.AddControllersWithViews(options =>
-{
+    options.Filters.Add<NoCacheAttribute>();
     options.Conventions.Add(new AreaFolderConvention());
 });
 
+builder.Services.AddRazorPages();
+
+// ??? Configurazione JSON extra
+builder.Configuration.AddJsonFile("Config/Menu.json", optional: true, reloadOnChange: true);
+
+// ------------------------------------
+// ??? BUILD APP
+// ------------------------------------
 var app = builder.Build();
 
-// --- MIDDLEWARE ---
+// ?? Middleware custom
 app.UseMiddleware<Sediin.Core.Mvc.Helpers.Middleware.QueryDecryptMiddleware>();
 
+// ?? Errori
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -118,18 +114,18 @@ else
     app.UseHsts();
 }
 
+// ?? HTTPS, statici, routing
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
 
+// ?? Autenticazione & Autorizzazione
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-// --- ROUTING ---
-//Importante, aggiungere in AreaFolderConvention.cs area a mano 
+// ?? Routing
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

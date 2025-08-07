@@ -69,7 +69,10 @@ function loadContent(action, savestate = true) {
         cache: false,
         url: action,
         error: function (e) {
-            onErrorLoadContainer(e);
+            //$('#contentrenderbody').html(error.responseText);
+            alertClose();
+            scrollTop();
+            handleError(e);
         },
         beforeSend: function () {
             onBeginnLoadContainer();
@@ -81,13 +84,6 @@ function loadContent(action, savestate = true) {
         }
     });
 }
-
-function onErrorLoadContainer(error) {
-    alertClose();
-    $('#contentrenderbody').html(error.responseText);
-    scrollTop();
-}
-
 function onSuccessLoadContainer(data) {
     alertClose();
     $('#contentrenderbody').html(data);

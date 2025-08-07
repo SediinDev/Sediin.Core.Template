@@ -21,7 +21,7 @@ namespace Sediin.Core.Mvc.Helpers.Middleware
                 try
                 {
                     var encrypted = context.Request.Query["q"].ToString();
-                    var decrypted = CryptoHelper.Decrypt(HttpUtility.UrlDecode(encrypted));
+                    var decrypted = HttpUtility.UrlDecode(CryptoHelper.Decrypt(encrypted));
 
                     var queryCollection = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(decrypted);
 

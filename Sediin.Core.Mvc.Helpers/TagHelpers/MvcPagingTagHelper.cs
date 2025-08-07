@@ -24,7 +24,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         public string OnFailure { get; set; }
 
         [HtmlAttributeName("query-model")]
-        public object QueryModel { get; set; }
+        public object? QueryModel { get; set; }
 
         string uniqueId = Guid.NewGuid().ToString("N");
 

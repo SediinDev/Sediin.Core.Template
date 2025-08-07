@@ -49,6 +49,13 @@ namespace Sediin.Core.WebUi.Controllers
             }
         }
 
+        public async Task<IActionResult> LogOff()
+        {
+            await _unitOfWorkIdentity.AuthService.LogoutAsync();
+
+            return Redirect("/");
+        }
+
         [RedirectIfNotAjax(Url = "/")]
         public IActionResult ForgotPassword()
         {
@@ -147,7 +154,7 @@ namespace Sediin.Core.WebUi.Controllers
             {
                 await _unitOfWorkIdentity.AuthService.ConfirmEmail(userId, code);
 
-                return AjaxView(model:new { isValid=true });
+                return AjaxView(model: new { isValid = true });
             }
             catch (Exception ex)
             {

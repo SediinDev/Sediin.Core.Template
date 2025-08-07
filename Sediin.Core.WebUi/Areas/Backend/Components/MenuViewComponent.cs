@@ -2,28 +2,39 @@
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Entities;
 using Sediin.Core.Helpers.Cache;
+using Sediin.Core.Identity.Abstract;
 
 
 namespace Sediin.Core.WebUi.Areas.Backend.Components
 {
     public class MenuViewComponent : ViewComponent
     {
-        private readonly IUnitOfWorkDataAccess _unitOfWork;
+        private readonly IUnitOfWorkDataAccess _unitOfWorkDataAccess;
+        private readonly IUnitOfWorkIdentity _unitOfWorkIdentity;
 
-        public MenuViewComponent(IUnitOfWorkDataAccess unitOfWork)
+
+        public MenuViewComponent(IUnitOfWorkDataAccess unitOfWorkDataAccess, IUnitOfWorkIdentity unitOfWorkIdentity)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWorkDataAccess = unitOfWorkDataAccess;
+            _unitOfWorkIdentity = unitOfWorkIdentity;
         }
 
         public IEnumerable<Menu> Menu
         {
             get
             {
+                if (!User.Identity.IsAuthenticated)
+                {
+                    return null;
+                }
+
                 var cached = HttpContext.Session.GetObject<IEnumerable<Menu>>("Menu");
                 if (cached != null)
                     return cached;
 
-                var menu = _unitOfWork.Menu.GetAll(includeProperts: "Ruoli").ToList();
+                var role = _unitOfWorkIdentity.AuthService.GetUserRole(User.Identity.Name).Result;
+                var menu = _unitOfWorkDataAccess.Menu.GetAll(x => x.Ruoli
+                    .Where(a => a.Ruolo == role).Count() > 0, includeProperts: "Ruoli").ToList();
                 HttpContext.Session.SetObject("Menu", menu);
                 return menu;
             }
@@ -46,7 +57,7 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
                     return View("~/Areas/Backend/Views/Shared/Components/Menu/NavMenu.cshtml", Menu);
 
                 default:
-                    menu = _unitOfWork.Menu.GetAll(includeProperts: "Ruoli");
+                    menu = _unitOfWorkDataAccess.Menu.GetAll(includeProperts: "Ruoli");
                     return View("Default", menu);
             }
         }
