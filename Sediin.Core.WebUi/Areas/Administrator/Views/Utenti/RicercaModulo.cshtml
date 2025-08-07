@@ -3,24 +3,24 @@
 <div class="form-horizontal">
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 form-group">
             @Html.Label(null, "Username", htmlAttributes: new { @class = "control-label" })
             @Html.TextBoxFor(model => model.UtentiRicercaVM_Username, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.UtentiRicercaVM_Username, "", new { @class = "text-danger" })
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 form-group">
             @Html.Label(null, "Email", htmlAttributes: new { @class = "control-label" })
             @Html.TextBoxFor(model => model.UtentiRicercaVM_Email, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.UtentiRicercaVM_Email, "", new { @class = "text-danger" })
         </div>
 
 
-        <div class="col-md-6">
+        <div class="col-md-6 form-group">
             @Html.Label(null, "Nome", htmlAttributes: new { @class = "control-label" })
             @Html.TextBoxFor(model => model.UtentiRicercaVM_Nome, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.UtentiRicercaVM_Nome, "", new { @class = "text-danger" })
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 form-group">
             @Html.Label(null, "Cognome", htmlAttributes: new { @class = "control-label" })
             @Html.TextBoxFor(model => model.UtentiRicercaVM_Cognome, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.UtentiRicercaVM_Cognome, "", new { @class = "text-danger" })
