@@ -55,6 +55,8 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
 
                 case "navmenu":
                     return View("~/Areas/Backend/Views/Shared/Components/Menu/NavMenu.cshtml", Menu);
+                case "homemenu":
+                    return View("~/Areas/Backend/Views/Shared/Components/Menu/HomeMenu.cshtml", Menu);
 
                 default:
                     menu = _unitOfWorkDataAccess.Menu.GetAll(includeProperts: "Ruoli");

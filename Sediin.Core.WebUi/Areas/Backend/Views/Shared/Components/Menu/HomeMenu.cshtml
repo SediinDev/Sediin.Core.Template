@@ -1,0 +1,107 @@
+﻿@inject IConfiguration Configuration
+@model IEnumerable<Sediin.Core.DataAccess.Entities.Menu>
+
+@{
+    List<string> _renderedKeys = new List<string>();
+
+    void getDescPadre(int codmenu, List<string> desc)
+    {
+        var item = Model.FirstOrDefault(x => x.Codmenu == codmenu);
+        if (item != null)
+        {
+            desc.Add(item.Descrizione);
+            if (item.CodmenuPadre.HasValue)
+            {
+                getDescPadre(item.CodmenuPadre.Value, desc);
+            }
+        }
+    }
+
+    string card(string menu, string icon, string action, string controller, string area, string titolo = null)
+    {
+        var key = $"{menu}|{action}|{controller}|{area}";
+        if (_renderedKeys.Contains(key))
+            return "";
+
+        _renderedKeys.Add(key);
+        var url = Url.Action(action, controller, new { area = area });
+        var onclick = $"loadContent('{url}'); return false;";
+
+        var html = $@"
+        <div class='col-md-4 mb-2'>
+            <a href='{url}' onclick=""{onclick}"">
+                <div class='card h-100 myli' style='min-height:170px'>
+                    <div class='card-body text-center'>
+                        <h5 class='card-title'>{menu}</h5>
+                        <i class='{icon} mt-3 mb-3 fa-2x'></i>";
+
+        if (!string.IsNullOrWhiteSpace(titolo))
+        {
+            html += $"<br/><small>{titolo}</small>";
+        }
+
+        html += @"
+                    </div>
+                </div>
+            </a>
+        </div>";
+        return html;
+    }
+
+    string GetMenu(IEnumerable<Sediin.Core.DataAccess.Entities.Menu> model, int padre, string titolo = null)
+    {
+        var output = "";
+        var figli = model.Where(x => x.CodmenuPadre == padre).ToList();
+        var menu = model.FirstOrDefault(x => x.Codmenu == padre);
+
+        if (menu == null)
+            return "";
+
+        if (titolo == null)
+        {
+            var parent = model.FirstOrDefault(x => x.Codmenu == menu.CodmenuPadre);
+            if (parent != null)
+            {
+                var desc = new List<string>();
+                getDescPadre(parent.Codmenu, desc);
+                desc.Reverse();
+                titolo = string.Join(" > ", desc);
+            }
+        }
+
+        if (figli.Count == 0)
+        {
+            var htmlCard = card(menu.Descrizione, menu.IconFa, menu.Action, menu.Controller, menu.Area, titolo);
+            if (!string.IsNullOrEmpty(htmlCard))
+                output += htmlCard;
+        }
+
+        foreach (var figlio in figli.OrderBy(x => x.Descrizione))
+        {
+            output += GetMenu(model, figlio.Codmenu, menu.Descrizione);
+        }
+
+        return output;
+    }
+}
+
+@{
+    if (Model == null)
+    {
+        return;
+    }
+
+    var vociPrincipali = Model
+        .Where(x => x.CodmenuPadre != 0 && !string.IsNullOrWhiteSpace(x.Action))
+        .OrderBy(x => x.Descrizione)
+        .ToList();
+}
+
+<section class="mt-4">
+    <div class="row">
+        @foreach (var voce in vociPrincipali)
+        {
+            @Html.Raw(GetMenu(Model, voce.Codmenu))
+        }
+    </div>
+</section>
