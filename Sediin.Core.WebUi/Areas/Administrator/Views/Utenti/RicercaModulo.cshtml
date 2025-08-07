@@ -13,8 +13,8 @@
             @Html.TextBoxFor(model => model.UtentiRicercaVM_Email, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.UtentiRicercaVM_Email, "", new { @class = "text-danger" })
         </div>
-      
-        
+
+
         <div class="col-md-6">
             @Html.Label(null, "Nome", htmlAttributes: new { @class = "control-label" })
             @Html.TextBoxFor(model => model.UtentiRicercaVM_Nome, new { @class = "form-control" })
@@ -28,7 +28,6 @@
     </div>
 </div>
 
-<partial name="_ValidationScriptsPartial" />
-
-
-
+@{
+    Html.RenderPartial("_ValidationScriptsPartial");
+}

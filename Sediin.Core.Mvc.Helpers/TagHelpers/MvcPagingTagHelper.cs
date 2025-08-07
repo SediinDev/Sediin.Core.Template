@@ -177,6 +177,13 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             sb.AppendLine("  }");
             sb.AppendLine("</script>");
 
+            sb.AppendLine("<script>");
+            sb.AppendLine("  setTimeout(function() {");
+            sb.AppendLine("    var hiddenInput = document.querySelector('input[data-ricercamodulo-page-number]');");
+            sb.AppendLine($"    if(hiddenInput) hiddenInput.value = {pageIndex};");
+            sb.AppendLine("  }, 100);");
+            sb.AppendLine("</script>");
+
             output.TagName = null;
             output.Content.SetHtmlContent(sb.ToString());
         }

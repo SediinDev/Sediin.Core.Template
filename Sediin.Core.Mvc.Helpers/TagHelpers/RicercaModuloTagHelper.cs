@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Text;
 
@@ -76,7 +77,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             }
 
 
-            sb.Append($@"<input data-ricercamodulo-page-number="" name=""page"" type=""text"">");
+            sb.Append("<input data-ricercamodulo-page-number=\"\" name=\"page\" type=\"hidden\"/>");
             sb.Append("</form>");
 
             sb.Append("</div></div>");
