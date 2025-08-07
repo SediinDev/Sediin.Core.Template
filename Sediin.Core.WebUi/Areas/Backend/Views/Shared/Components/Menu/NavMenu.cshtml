@@ -168,7 +168,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false" style="color:white">
                         @{
-                            var _user = UnitOfWorkIdentity.AuthService.GetUser(User.Identity.Name).Result;
+                            var _user = UnitOfWorkIdentity.AuthService.GetUserByUsername(User.Identity.Name).Result;
                         }
                         <span style="-webkit-text-stroke-width: 1px;" class="navtestobenvenuto">Benvenuto</span>&nbsp;
 

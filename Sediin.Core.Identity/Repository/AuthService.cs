@@ -218,7 +218,7 @@ namespace Sediin.Core.Identity.Repository
             return null;
         }
 
-        public async Task<SediinIdentityUser> GetUser(string userName)
+        public async Task<SediinIdentityUser> GetUserByUsername(string userName)
         {
             return await _userManager.FindByNameAsync(userName);
         }
@@ -231,6 +231,11 @@ namespace Sediin.Core.Identity.Repository
             {
                 throw new Exception("Non è stato possibile cambiare la password.");
             }
+        }
+
+        public async Task<SediinIdentityUser> GetUserById(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
         }
     }
 }

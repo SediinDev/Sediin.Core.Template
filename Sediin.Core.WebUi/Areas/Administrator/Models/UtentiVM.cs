@@ -1,9 +1,10 @@
 ﻿using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Models;
+using Sediin.Core.Mvc.Helpers.PagingHelpers;
 
 namespace Sediin.Core.WebUi.Areas.Administrator.Models
 {
-    public class UtentiVM
+    public class UtentiVM : PagedResultViewModel<SediinIdentityUser, UtentiRicercaVM>
     {
         public IEnumerable<SediinIdentityUser> Result { get; set; } = new List<SediinIdentityUser>();
         public int TotalRecords { get; set; }

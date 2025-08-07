@@ -2,13 +2,13 @@
 
 namespace Sediin.Core.Mvc.Helpers.PagingHelpers
 {
-    public class PagedResultViewModel<TItem>
+    public interface PagedResultViewModel<TItem, TFiltri>
     {
         public int TotalRecords { get; set; }
         public int CurrentPage { get; set; }
         public int PageSize { get; set; }
-        public object? Filtri { get; set; }
-        public IEnumerable<TItem> Result { get; set; } = new List<TItem>();
+        public TFiltri? Filtri { get; set; }
+        public IEnumerable<TItem> Result { get; set; }
     }
 
     public static class PagingHelper

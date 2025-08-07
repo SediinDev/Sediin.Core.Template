@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -17,6 +18,7 @@ public class BaseController : Controller
     protected IEmailSender _emailSender;
     protected IConfiguration _configuration;
     protected IRazorViewToStringRenderer _razorViewRenderer;
+    protected IMapper _autoMapper;
 
 #pragma warning disable
     public BaseController()
@@ -44,6 +46,10 @@ public class BaseController : Controller
 
         if (_razorViewRenderer == null)
             _razorViewRenderer = HttpContext.RequestServices.GetService<IRazorViewToStringRenderer>();
+
+
+        if (_autoMapper == null)
+            _autoMapper = HttpContext.RequestServices.GetService<IMapper>();
 
         base.OnActionExecuting(context);
     }
@@ -106,6 +112,6 @@ public class BaseController : Controller
 
     public async Task<SediinIdentityUser> GetUser()
     {
-        return await _unitOfWorkIdentity.AuthService.GetUser(User.Identity.Name);
+        return await _unitOfWorkIdentity.AuthService.GetUserByUsername(User.Identity.Name);
     }
 }

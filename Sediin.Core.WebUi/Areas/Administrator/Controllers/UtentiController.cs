@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sediin.Core.Identity.Entities;
+using Sediin.Core.Identity.Entities.DTO;
 using Sediin.Core.Identity.Models;
 using Sediin.Core.Mvc.Helpers.PagingHelpers;
 using Sediin.Core.WebUi.Areas.Administrator.Models;
@@ -47,6 +48,23 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         {
             await _unitOfWorkIdentity.AuthService.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
             return Content("Password cambiata");
+        }
+
+        [RedirectIfNotAjax]
+        public async Task<IActionResult> ModificaUtente(string id)
+        {
+            var user = await _unitOfWorkIdentity.AuthService.GetUserById(id);
+
+            var model = _autoMapper.Map<SediinIdentityUser_DTO>(user);
+
+            return AjaxView(model : model);
+        }
+
+        [HttpPost]
+        [RedirectIfNotAjax]
+        public async Task<IActionResult> ModificaUtente(SediinIdentityUser_DTO model)
+        {
+            return AjaxView();
         }
     }
 }

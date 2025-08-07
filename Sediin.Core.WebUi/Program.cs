@@ -9,6 +9,7 @@ using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
 using Sediin.Core.Identity.Entities;
+using Sediin.Core.Identity.Mapping;
 using Sediin.Core.Identity.Repository;
 using Sediin.Core.WebUi.Areas;
 using Sediin.Core.WebUi.Controllers;
@@ -65,26 +66,26 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// ?? Email
+// Email
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-// ?? Dependency Injection
+// Dependency Injection
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
 builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-// ?? Caching & Sessione
+// Caching & Sessione
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 
-// ?? Logging Serilog
+// Logging Serilog
 builder.Host.UseSerilog((ctx, cfg) =>
     cfg.ReadFrom.Configuration(ctx.Configuration));
 
-// ?? Razor, MVC, Filtri
+// Razor, MVC, Filtri
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<HandleAjaxErrorAttribute>();
@@ -94,8 +95,12 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddRazorPages();
 
+// Registra profili AutoMapper dalla class library
+builder.Services.SediinIdentityAutoMapper();
+
+
 // ------------------------------------
-// ??? BUILD APP
+// BUILD APP
 // ------------------------------------
 var app = builder.Build();
 
