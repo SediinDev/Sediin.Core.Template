@@ -138,7 +138,11 @@ namespace Sediin.Core.WebUi.Controllers
 
                 await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.Administrator.ToString());
 
-                return Json(new { success = true, message = "Utente registrato. Controlli la sua email." });
+                return Json(new
+                {
+                    success = true,
+                    message = "Utente registrato correttamente. Controlla la tua email per confermare l'indirizzo."
+                });
             }
             catch (Exception ex)
             {
@@ -165,10 +169,8 @@ namespace Sediin.Core.WebUi.Controllers
         {
             string _url = CreateUrl("ResetPassword", userId, token);
             string subject = "Cambio password";
-            string htmlBody = string.Empty;
-            try
-            {
-                htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
+
+            string htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
                     "Authentication/ResetPassword", new ResetPasswordModel
                     {
                         Url = _url,
@@ -176,11 +178,6 @@ namespace Sediin.Core.WebUi.Controllers
                         Cognome = cognome,
                         Email = email,
                     });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
 
             await _emailSender.SendEmailAsync(email, subject, htmlBody);
         }
@@ -189,22 +186,15 @@ namespace Sediin.Core.WebUi.Controllers
         {
             string _url = CreateUrl("ConfirmEmail", userId, token);
             string subject = "Conferma email";
-            string htmlBody = string.Empty;
-            try
-            {
-                htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
-                    "Authentication/ConfirmEmail", new ConfirmEmailModel
-                    {
-                        Url = _url,
-                        Cognome = cognome,
-                        Nome = nome,
-                        Email = email,
-                    });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+
+            string htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
+                   "Authentication/ConfirmEmail", new ConfirmEmailModel
+                   {
+                       Url = _url,
+                       Cognome = cognome,
+                       Nome = nome,
+                       Email = email,
+                   });
 
             await _emailSender.SendEmailAsync(email, subject, htmlBody);
         }
