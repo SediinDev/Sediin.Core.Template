@@ -1,1 +1,78 @@
-﻿modifica utente
+﻿@model Sediin.Core.Identity.Entities.DTO.SediinIdentityUser_DTO
+
+<ajax-form asp-action="ModificaUtente"
+           asp-controller="Utenti"
+           on-begin="alertWaid()"
+           on-success="hideModal(); alertSuccess(data); updateListRicerca()"
+           on-failure="handleError">
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="form-horizontal row mt-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label" })
+                <div>@Model.Username</div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6 ">
+        </div>
+
+        <div class="col-md-6 ">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome" } })
+
+                @Html.ValidationMessageFor(model => model.Nome, "")
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Cognome, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.Cognome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Cognome" } })
+
+                @Html.ValidationMessageFor(model => model.Cognome, "")
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Email" } })
+
+                @Html.ValidationMessageFor(model => model.Email, "")
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConfirmEmail, htmlAttributes: new { @class = "control-label" })
+
+                @Html.EditorFor(model => model.ConfirmEmail, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Conferma Email" } })
+
+                @Html.ValidationMessageFor(model => model.ConfirmEmail, "")
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="modal-footer" style="margin-top:40px">
+        <button type="submit" class="btn btn-info">Aggiorna</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="hideModal()">Chiudi la finestra</button>
+
+    </div>
+
+</ajax-form>
+
+
+@{
+    Html.RenderPartial("_ValidationScriptsPartial");
+}
+

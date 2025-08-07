@@ -9,30 +9,31 @@ using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
 using Sediin.Core.Identity.Entities;
-using Sediin.Core.Identity.Mapping;
 using Sediin.Core.Identity.Repository;
+using Sediin.Core.Mvc.Helpers.Middleware;
 using Sediin.Core.WebUi.Areas;
 using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Filters;
 using Serilog;
 using System.Globalization;
+using Sediin.Core.Identity.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ?? Connessioni DB
-var identityConn = builder.Configuration.GetConnectionString("SediinCoreIdentityConnection");
-var dataConn = builder.Configuration.GetConnectionString("SediinCoreDataAccessConnection");
-
-// ?? DbContexts
+//--------------------------------------------------------
+//  DATABASE CONFIGURATION
+//--------------------------------------------------------
 builder.Services.AddDbContext<SediinCoreIdentityDbContext>(options =>
-    options.UseSqlServer(identityConn));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SediinCoreIdentityConnection")));
 
 builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options =>
-    options.UseSqlServer(dataConn));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SediinCoreDataAccessConnection")));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ?? Identity
+//--------------------------------------------------------
+//  IDENTITY
+//--------------------------------------------------------
 builder.Services.AddDefaultIdentity<SediinIdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -60,32 +61,54 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.LoginPath = "/Authentication/Login/";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
 
-// Email
-builder.Services.Configure<EmailSettings>(
-    builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-
-// Dependency Injection
+//--------------------------------------------------------
+//  DEPENDENCY INJECTION
+//--------------------------------------------------------
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
 builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-// Caching & Sessione
+//--------------------------------------------------------
+//  AUTO MAPPER
+//--------------------------------------------------------
+//builder.Services.SediinIdentityAutoMapper();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+//--------------------------------------------------------
+//  SESSION, CACHE, LOCALIZATION
+//--------------------------------------------------------
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 
-// Logging Serilog
-builder.Host.UseSerilog((ctx, cfg) =>
-    cfg.ReadFrom.Configuration(ctx.Configuration));
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
 
-// Razor, MVC, Filtri
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("it-IT") };
+    options.DefaultRequestCulture = new RequestCulture("it-IT");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
+//--------------------------------------------------------
+//  LOGGING
+//--------------------------------------------------------
+builder.Host.UseSerilog((ctx, lc) =>
+    lc.ReadFrom.Configuration(ctx.Configuration));
+
+//--------------------------------------------------------
+//  MVC, RAZOR, FILTERS, AREAS
+//--------------------------------------------------------
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<HandleAjaxErrorAttribute>();
@@ -95,28 +118,13 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddRazorPages();
 
-// Registra profili AutoMapper dalla class library
-builder.Services.SediinIdentityAutoMapper();
-
-
-// ------------------------------------
-// BUILD APP
-// ------------------------------------
+//--------------------------------------------------------
+//  APP BUILD
+//--------------------------------------------------------
 var app = builder.Build();
 
+app.UseRequestLocalization();
 
-var supportedCultures = new[] { new CultureInfo("it-IT") };
-app.UseRequestLocalization(new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture("it-IT"),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-});
-
-// ?? Middleware custom
-app.UseMiddleware<Sediin.Core.Mvc.Helpers.Middleware.QueryDecryptMiddleware>();
-
-// ?? Errori
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -127,18 +135,21 @@ else
     app.UseHsts();
 }
 
-// ?? HTTPS, statici, routing
+app.UseMiddleware<QueryDecryptMiddleware>();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseSession();
 
-// ?? Autenticazione & Autorizzazione
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ?? Routing
+app.UseSession();
+
+//--------------------------------------------------------
+//  ROUTING
+//--------------------------------------------------------
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

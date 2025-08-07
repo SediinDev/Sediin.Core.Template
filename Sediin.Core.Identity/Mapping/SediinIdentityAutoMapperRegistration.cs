@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Sediin.Core.Identity.Mapping
 {
@@ -7,8 +6,8 @@ namespace Sediin.Core.Identity.Mapping
     {
         public static void SediinIdentityAutoMapper(this IServiceCollection services)
         {
-            // Registra tutti i profili dell'assembly della libreria
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            // Usa l'assembly della libreria corrente
+            services.AddAutoMapper(typeof(SediinIdentityAutoMapperRegistration).Assembly);
         }
     }
 }

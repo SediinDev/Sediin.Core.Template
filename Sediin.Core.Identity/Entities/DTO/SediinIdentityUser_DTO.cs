@@ -14,6 +14,8 @@ namespace Sediin.Core.Identity.Entities.DTO
 
         [Required]
         public string Nome { get; set; }
+       
+        public string Username { get; set; }
 
         [Required]
         public string Cognome { get; set; }
@@ -21,6 +23,9 @@ namespace Sediin.Core.Identity.Entities.DTO
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Compare("Email")]
+        public string ConfirmEmail { get; set; }
 
     }
 }

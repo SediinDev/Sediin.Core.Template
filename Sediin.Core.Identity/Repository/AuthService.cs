@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
+using Sediin.Core.Identity.Entities.DTO;
 using Sediin.Core.Identity.Models;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -39,6 +40,7 @@ namespace Sediin.Core.Identity.Repository
         {
             await _signInManager.SignOutAsync();
 
+            // Cancella sessioni
             _httpContextAccessor.HttpContext?.Session?.Clear();
 
             // Cancella i cookie
@@ -108,9 +110,9 @@ namespace Sediin.Core.Identity.Repository
             var user = new SediinIdentityUser
             {
                 UserName = username,
-                NormalizedUserName = username.ToUpperInvariant(),
+                NormalizedUserName = _userManager.NormalizeName(username),
                 Email = email,
-                NormalizedEmail = email.ToUpperInvariant(),
+                NormalizedEmail = _userManager.NormalizeEmail(email),
                 Nome = nome,
                 Cognome = cognome
             };
@@ -236,6 +238,33 @@ namespace Sediin.Core.Identity.Repository
         public async Task<SediinIdentityUser> GetUserById(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task UpdateUser(SediinIdentityUser_DTO user)
+        {
+            var existingUser = await _userManager.FindByIdAsync(user.Id);
+
+            if (existingUser == null)
+                throw new Exception("Utente non trovato");
+
+            //  Aggiorna solo i campi ammessi
+            existingUser.Nome = user.Nome;
+            existingUser.Cognome = user.Cognome;
+            existingUser.Email = user.Email;
+            existingUser.NormalizedEmail = _userManager.NormalizeEmail(user.Email);
+
+            //  Conferma email, se richiesto
+            if (!existingUser.EmailConfirmed && user.Email == existingUser.Email)
+            {
+                existingUser.EmailConfirmed = true;
+            }
+
+            // Salva modifiche
+            var _result = await _userManager.UpdateAsync(existingUser);
+
+            if (!_result.Succeeded) {
+                throw new Exception("Dati utente non aggiornati");
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -8,7 +7,6 @@ using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
 using System.Text;
-using System.Threading.Tasks;
 
 public class BaseController : Controller
 {
@@ -20,12 +18,12 @@ public class BaseController : Controller
     protected IRazorViewToStringRenderer _razorViewRenderer;
     protected IMapper _autoMapper;
 
-#pragma warning disable
+    #pragma warning disable
     public BaseController()
     {
     }
 
-#pragma warning disable
+    #pragma warning disable
     // Metodo eseguito prima di ogni azione, qui risolvi i servizi
     public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
     {
@@ -46,7 +44,6 @@ public class BaseController : Controller
 
         if (_razorViewRenderer == null)
             _razorViewRenderer = HttpContext.RequestServices.GetService<IRazorViewToStringRenderer>();
-
 
         if (_autoMapper == null)
             _autoMapper = HttpContext.RequestServices.GetService<IMapper>();
