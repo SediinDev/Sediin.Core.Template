@@ -91,11 +91,14 @@ namespace Sediin.Core.Identity.Repository
             if (await _userManager.FindByNameAsync(username) != null)
                 throw new Exception("Username già esistente");
 
-            foreach (var _rolename in Enum.GetValues(typeof(Roles)))
+            if (Debugger.IsAttached)
             {
-                if (await _roleManager.FindByNameAsync(_rolename.ToString()) == null)
+                foreach (var _rolename in Enum.GetValues(typeof(Roles)))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole { Name = rolename, NormalizedName = _rolename.ToString() });
+                    if (await _roleManager.FindByNameAsync(_rolename.ToString()) == null)
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole { Name = rolename, NormalizedName = _rolename.ToString() });
+                    }
                 }
             }
 
