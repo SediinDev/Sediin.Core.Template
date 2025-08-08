@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
@@ -79,12 +80,21 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddSingleton<ISediinCoreConfiguration>(provider =>
 {
     var env = provider.GetRequiredService<IWebHostEnvironment>();
+    var memoryCache = provider.GetRequiredService<IMemoryCache>();
+
     var configPath = Path.Combine(env.ContentRootPath, "App_Data", "config.json");
-    return new SediinCoreConfiguration(configPath);
+
+    // Durata cache personalizzabile
+    var cacheDuration = TimeSpan.FromMinutes(20);
+
+    return new SediinCoreConfiguration(configPath, memoryCache, cacheDuration);
 });
+
 
 //--------------------------------------------------------
 //  AUTO MAPPER

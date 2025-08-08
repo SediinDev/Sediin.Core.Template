@@ -1,7 +1,5 @@
 {
   "UploadFolder": "C:\\Uploads",
-  "UriPortale": "https://portale.sediin.it",
-  "LogoBase64": "iVBORw0KGgoAAAANSUhEUgAA...",
   "RagioneSociale": {
     "Nome": "Sediin S.p.A.",
     "NomeBreve": "Sediin",
@@ -16,7 +14,9 @@
     "Pec": "sediin@pec.it",
     "CodiceFiscale": "12345678901",
     "PartitaIva": "01234567890",
-    "SitoWeb": "https://www.sediin.it"
+    "SitoWeb": "https://www.sediin.it",
+    "UriPortale": "https://portale.sediin.it",
+    "LogoBase64": "iVBORw0KGgoAAAANSUhEUgAA..."
   },
   "EmailSettings": {
     "SmtpServer": "smtp.sediin.it",

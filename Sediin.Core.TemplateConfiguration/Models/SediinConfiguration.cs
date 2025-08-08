@@ -3,8 +3,6 @@
     public class SediinConfiguration
     {
         public string? UploadFolder { get; set; }
-        public string? UriPortale { get; set; }
-        public string? LogoBase64 { get; set; }
         public RagioneSociale? RagioneSociale { get; set; }
         public EmailSettings? EmailSettings { get; set; }
     }
@@ -25,6 +23,9 @@
         public string? CodiceFiscale { get; set; }
         public string? PartitaIva { get; set; }
         public string? SitoWeb { get; set; }
+        public string? UriPortale { get; set; }
+        public string? LogoBase64 { get; set; }
+
     }
 
     public class EmailSettings
