@@ -1,7 +1,58 @@
 ﻿@model Sediin.Core.TemplateConfiguration.Models.RagioneSociale
 @using Sediin.Core.Mvc.Helpers.TagHelpers
 @addTagHelper *, Sediin.Core.Mvc.Helpers
+<style>
+    .custom-file {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: 2.5rem;
+        margin-bottom: 0;
+    }
 
+    .custom-file-input {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 2.5rem;
+        margin: 0;
+        opacity: 0; /* Nasconde l’input originale */
+        cursor: pointer;
+    }
+
+    .custom-file-label {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 2.5rem;
+        padding: 0.5rem 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* Cambia colore al passaggio del mouse */
+    .custom-file-input:focus ~ .custom-file-label {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Quando un file è selezionato */
+    .custom-file-input:lang(en) ~ .custom-file-label::after {
+        content: "Sfoglia";
+    }
+
+    /* Puoi personalizzare il testo "Sfoglia" o sostituirlo */
+
+</style>
 <ricerca-modulo header-text="Ragione Sociale"></ricerca-modulo>
 
 <ajax-form asp-action="RagioneSociale"
@@ -11,189 +62,185 @@
            on-failure="handleError">
 
     <div class="form-horizontal row mt-4">
+
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome" } })
-
-            @Html.ValidationMessageFor(model => model.Nome, "")
+            @Html.LabelFor(model => model.Nome)
+            @Html.TextBoxFor(model => model.Nome)
+            @Html.ValidationMessageFor(model => model.Nome)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.NomeBreve, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.NomeBreve, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome Breve" } })
-
-            @Html.ValidationMessageFor(model => model.NomeBreve, "")
+            @Html.LabelFor(model => model.NomeBreve)
+            @Html.TextBoxFor(model => model.NomeBreve)
+            @Html.ValidationMessageFor(model => model.NomeBreve)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Regione, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Regione, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Regione" } })
-
-            @Html.ValidationMessageFor(model => model.Regione, "")
+            @Html.LabelFor(model => model.Regione)
+            @Html.TextBoxFor(model => model.Regione)
+            @Html.ValidationMessageFor(model => model.Regione)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Provincia, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Provincia, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Provincia" } })
-
-            @Html.ValidationMessageFor(model => model.Provincia, "")
+            @Html.LabelFor(model => model.Provincia)
+            @Html.TextBoxFor(model => model.Provincia)
+            @Html.ValidationMessageFor(model => model.Provincia)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Indirizzo, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Indirizzo, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Indirizzo" } })
-
-            @Html.ValidationMessageFor(model => model.Indirizzo, "")
+            @Html.LabelFor(model => model.Indirizzo)
+            @Html.TextBoxFor(model => model.Indirizzo)
+            @Html.ValidationMessageFor(model => model.Indirizzo)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Citta, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Citta, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Citta" } })
-
-            @Html.ValidationMessageFor(model => model.Citta, "")
+            @Html.LabelFor(model => model.Citta)
+            @Html.TextBoxFor(model => model.Citta)
+            @Html.ValidationMessageFor(model => model.Citta)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Cap, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Cap, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Cap" } })
-
-            @Html.ValidationMessageFor(model => model.Cap, "")
+            @Html.LabelFor(model => model.Cap)
+            @Html.TextBoxFor(model => model.Cap)
+            @Html.ValidationMessageFor(model => model.Cap)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Telefono, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Telefono, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Telefono" } })
-
-            @Html.ValidationMessageFor(model => model.Telefono, "")
+            @Html.LabelFor(model => model.Telefono)
+            @Html.TextBoxFor(model => model.Telefono)
+            @Html.ValidationMessageFor(model => model.Telefono)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label" })
-            @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Fax" } })
+            @Html.LabelFor(model => model.Fax)
+            @Html.TextBoxFor(model => model.Fax)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Email" } })
-
-            @Html.ValidationMessageFor(model => model.Email, "")
+            @Html.LabelFor(model => model.Email)
+            @Html.TextBoxFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Pec, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Pec, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Pec" } })
-
-            @Html.ValidationMessageFor(model => model.Pec, "")
+            @Html.LabelFor(model => model.Pec)
+            @Html.TextBoxFor(model => model.Pec)
+            @Html.ValidationMessageFor(model => model.Pec)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.CodiceFiscale, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.CodiceFiscale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Codice Fiscale" } })
-
-            @Html.ValidationMessageFor(model => model.CodiceFiscale, "")
+            @Html.LabelFor(model => model.CodiceFiscale)
+            @Html.TextBoxFor(model => model.CodiceFiscale)
+            @Html.ValidationMessageFor(model => model.CodiceFiscale)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.PartitaIva, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.PartitaIva, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Partita IVA" } })
-
-            @Html.ValidationMessageFor(model => model.PartitaIva, "")
+            @Html.LabelFor(model => model.PartitaIva)
+            @Html.TextBoxFor(model => model.PartitaIva)
+            @Html.ValidationMessageFor(model => model.PartitaIva)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.SitoWeb, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.SitoWeb, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Sito Web" } })
-
-            @Html.ValidationMessageFor(model => model.SitoWeb, "")
+            @Html.LabelFor(model => model.SitoWeb)
+            @Html.TextBoxFor(model => model.SitoWeb)
+            @Html.ValidationMessageFor(model => model.SitoWeb)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.UriPortale, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.UriPortale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Uri Portale" } })
-
-            @Html.ValidationMessageFor(model => model.UriPortale, "")
+            @Html.LabelFor(model => model.UriPortale)
+            @Html.TextBoxFor(model => model.UriPortale)
+            @Html.ValidationMessageFor(model => model.UriPortale)
         </div>
+
 
         <div class="col-md-6">
-            @Html.Label(null, "Logo", htmlAttributes: new { @class = "control-label" })
+            @Html.Label("Logo")
+
+            @* <div class="custom-file">
+                <input type="file"  id="fileUpload" accept=".pdf">
+                <label class="custom-file-label" for="fileUpload">Seleziona file</label>
+            </div> *@
 
             <div class="custom-file">
-                <input type="file" class="form-control"
+                <input type="file"
+                    class="custom-file-input"
                        id="Logo"
                        name="Logo"
-                       accept=".png">
+                       accept=".png,.jpg,.jpeg,.pdf"
+                       onchange="handleFileChange(this, 'LogoBase64', 'imagelogo', 'LogoError')" />
+                <label class="custom-file-label" for="customFile">Scegli file</label>
+                <label class="badge bg-info">Formati: PNG, JPG, JPEG, PDF (max 2MB)</label>
 
-                <label class="badge bg-info"> in formato .png</label>
-                @Html.TextBoxFor(model => model.LogoBase64, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.LogoBase64, "", new { @class = "text-danger" })
-
+                @Html.TextBoxFor(model => model.LogoBase64, new { id = "LogoBase64" })
+                <span class="text-danger field-validation-error" id="LogoError" data-valmsg-for="LogoBase64"></span>
             </div>
 
-            <img id="imagelogo" class="img-fluid rounded col-md-6 mt-4" style="margin-bottom: 10px; mix-blend-mode: multiply; "
+            <img id="imagelogo"
+                 class="img-fluid rounded col-md-6 mt-4"
+                 style="margin-bottom: 10px; mix-blend-mode: multiply; display: @(string.IsNullOrEmpty(Model.LogoBase64) ? "none" : "block");"
                  src="@Model.LogoBase64" />
         </div>
-    </div>
 
-    <div class="text-center" style="margin-top:40px">
+    </div>
+    <div class="text-center mt-4">
         <button type="submit" class="btn btn-info">Aggiorna</button>
     </div>
 
 </ajax-form>
 
-<script type="text/javascript">
 
-    $('input[type=file]').on('change', function () {
-        debugger
-        var _span = $("span[data-valmsg-for='LogoBase64']");
+@section Scripts {
+    <script src="~/js/utilities.js"></script> <!-- definisce validateFileType, validateFileSize -->
 
-        const file = document.querySelector('input[type=file]').files[0];
-        const reader = new FileReader();
-        var tmppath = URL.createObjectURL(file);
+    <script>
+        function handleFileChange(input, hiddenInputId, imagePreviewId, errorSpanId) {
+            const allowedExtensions = [".png", ".jpg", ".jpeg", ".pdf"];
+            const maxSizeMB = 2;
 
-        reader.addEventListener("load", function () {
-            var myRe = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(['.png'])$", "gi");
+            const file = input.files[0];
+            const errorSpan = document.getElementById(errorSpanId);
+            errorSpan.textContent = "";
+            errorSpan.style.display = "none";
 
-            // if (!myRe.exec(getFileExtension(file.name))) {
-            //     _span.addClass("field-validation-error");
-            //     _span.html("Estensione non valida");
-            //     _span.show();
-            //     return;
-            // }
+            if (!file) {
+                document.getElementById(imagePreviewId).style.display = "none";
+                document.getElementById(hiddenInputId).value = "";
+                return;
+            }
 
-            // if (getFileSize(file.size) > 1) {
-            //     _span.addClass("field-validation-error");
-            //     _span.html("Dimensione massima 1MB");
-            //     _span.show();
-            //     return;
-            // }
+            const typeResult = validateFileType(file, allowedExtensions);
+            if (!typeResult.valid) {
+                errorSpan.textContent = typeResult.message;
+                errorSpan.style.display = "block";
+                input.value = "";
+                document.getElementById(imagePreviewId).style.display = "none";
+                document.getElementById(hiddenInputId).value = "";
+                return;
+            }
 
-            //$("#sediinTemplateImageLogo").attr("src", reader.result);
-            $("#imagelogo").attr("src", reader.result);
-            $("#LogoBase64").val(reader.result);
+            const sizeResult = validateFileSize(file, maxSizeMB);
+            if (!sizeResult.valid) {
+                errorSpan.textContent = sizeResult.message;
+                errorSpan.style.display = "block";
+                input.value = "";
+                document.getElementById(imagePreviewId).style.display = "none";
+                document.getElementById(hiddenInputId).value = "";
+                return;
+            }
 
-            _span.hide();
-            _span.html("");
-        }, false);
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById(hiddenInputId).value = e.target.result;
 
-        if (file) {
+                const img = document.getElementById(imagePreviewId);
+                if (file.type.startsWith("image/")) {
+                    img.src = e.target.result;
+                    img.style.display = "block";
+                } else {
+                    img.style.display = "none";
+                }
+            };
             reader.readAsDataURL(file);
         }
-        //$(this).val('');
-
-    });
-
-</script>
+    </script>
+}

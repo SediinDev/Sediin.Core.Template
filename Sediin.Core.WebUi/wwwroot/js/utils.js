@@ -217,11 +217,26 @@ function scrollTop() {
     }
 }
 
-function updateListRicercaFromAction(actionUrl, trigger) {
-    // AJAX call alla tua action per popolare #resultRicerca
-    if (trigger) {
-        $.get(actionUrl, function (data) {
-            $("#resultRicerca").html(data);
-        });
+//.jpg, .png, .pdf
+function validateFileType(file, allowedExtensions) {
+    const fileName = file.name.toLowerCase();
+    const isValid = allowedExtensions.some(ext => fileName.endsWith(ext.toLowerCase()));
+    if (!isValid) {
+        return {
+            valid: false,
+            message: `Il file deve essere uno dei seguenti tipi: ${allowedExtensions.join(', ')}.`
+        };
     }
+    return { valid: true };
+}
+
+function validateFileSize(file, maxSizeMB) {
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+        return {
+            valid: false,
+            message: `La dimensione dell'file non deve superare ${maxSizeMB}MB.`
+        };
+    }
+    return { valid: true };
 }

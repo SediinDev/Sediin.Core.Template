@@ -1,6 +1,5 @@
 ﻿@model Sediin.Core.WebUi.Models.Authentication
 
-
 <link href="~/css/hideshowpassword.css" rel="stylesheet" />
 
 <div class="login-container">
@@ -20,15 +19,15 @@
                    on-failure="handleError">
 
             <div class="form-group">
-                @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label" })
-                @Html.TextBoxFor(model => model.Username, new { @class = "form-control", placeholder = "Codice utente", autocomplete = "off", type = "search" })
-                @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                @Html.LabelFor(model => model.Username)
+                @Html.TextBoxFor(model => model.Username)
+                @Html.ValidationMessageFor(model => model.Username)
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "Password" } })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                @Html.LabelFor(model => model.Password)
+                @Html.PasswordFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
             </div>
 
             <div class="text-end">
@@ -57,8 +56,6 @@
     </div>
 </div>
 
-
-
 @section Scripts {
     <script src="~/js/hideshowpassword.js"></script>
 
@@ -77,11 +74,8 @@
                 }, 1000);
             }
             else {
-                //vai a authenticazione due fattori
-
-               // $('#loginResult').html('<div class="alert alert-danger">' + response.message + '</div>');
+                // gestione autenticazione a due fattori
             }
-
         }
     </script>
 }

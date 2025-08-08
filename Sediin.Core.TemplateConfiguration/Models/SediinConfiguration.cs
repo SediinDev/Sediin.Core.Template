@@ -12,42 +12,57 @@ namespace Sediin.Core.TemplateConfiguration.Models
 
     public class RagioneSociale
     {
-        [Required] 
+        [Required]
         public string? Nome { get; set; }
-        
+
         [Required]
         [DisplayName("Nome Breve")]
         public string? NomeBreve { get; set; }
+
         [Required]
         public string? Regione { get; set; }
+
         [Required]
         public string? Provincia { get; set; }
+
         [Required]
         public string? Indirizzo { get; set; }
+
         [Required]
+        [DisplayName("Città")]
         public string? Citta { get; set; }
+
         [Required]
         public string? Cap { get; set; }
+
         [Required]
         public string? Telefono { get; set; }
 
         public string? Fax { get; set; }
+
         [Required]
+        [EmailAddress]
         public string? Email { get; set; }
+
         [Required]
         public string? Pec { get; set; }
+
         [Required]
         [DisplayName("Codice Fiscale")]
         public string? CodiceFiscale { get; set; }
+
         [Required]
         [DisplayName("Partita IVA")]
         public string? PartitaIva { get; set; }
+
         [Required]
         [DisplayName("Sito Web")]
         public string? SitoWeb { get; set; }
+
         [Required]
         [DisplayName("Uri Portale")]
         public string? UriPortale { get; set; }
+
         [Required]
         [DisplayName("Logo")]
         public string? LogoBase64 { get; set; }
@@ -57,20 +72,26 @@ namespace Sediin.Core.TemplateConfiguration.Models
     {
         [Required]
         public string? SmtpServer { get; set; }
-        [Required] 
+
+        [Required]
         public int SmtpPort { get; set; }
+
         [Required]
         public string? SmtpUsername { get; set; }
-        [Required] 
+
+        [Required]
         public string? SmtpPassword { get; set; }
-        [Required] 
+
+        [Required]
         public bool SmtpServerAutentication { get; set; }
+
         [Required]
         public bool SmtpServerUseSSL { get; set; }
+
         [Required]
         public string? FromName { get; set; }
+
         [Required]
         public string? FromEmail { get; set; }
     }
-
 }

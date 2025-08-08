@@ -7,46 +7,36 @@
 
     <div class="form-horizontal row mt-4">
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label" })
-
-            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control col-md-12", placeholder = "Username", autocomplete = "off", type = "search" })
-
-            @Html.ValidationMessageFor(model => model.UserName, "")
+            @Html.LabelFor(model => model.UserName)
+            @Html.TextBoxFor(model => model.UserName)
+            @Html.ValidationMessageFor(model => model.UserName)
         </div>
 
         <div class="col-md-6">
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome" } })
-
-            @Html.ValidationMessageFor(model => model.Nome, "")
+            @Html.LabelFor(model => model.Nome)
+            @Html.TextBoxFor(model => model.Nome)
+            @Html.ValidationMessageFor(model => model.Nome)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Cognome, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Cognome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Cognome" } })
-
-            @Html.ValidationMessageFor(model => model.Cognome, "")
+            @Html.LabelFor(model => model.Cognome)
+            @Html.TextBoxFor(model => model.Cognome)
+            @Html.ValidationMessageFor(model => model.Cognome)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Email" } })
-
-            @Html.ValidationMessageFor(model => model.Email, "")
+            @Html.LabelFor(model => model.Email)
+            @Html.TextBoxFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.ConfirmEmail, htmlAttributes: new { @class = "control-label" })
-
-            @Html.EditorFor(model => model.ConfirmEmail, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Conferma Email" } })
-
-            @Html.ValidationMessageFor(model => model.ConfirmEmail, "")
+            @Html.LabelFor(model => model.ConfirmEmail)
+            @Html.TextBoxFor(model => model.ConfirmEmail)
+            @Html.ValidationMessageFor(model => model.ConfirmEmail)
         </div>
     </div>
 

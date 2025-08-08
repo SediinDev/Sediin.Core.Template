@@ -1,6 +1,54 @@
 ﻿$(document).ready(function () {
+    customValidatorOnBegin();
 
-    // Funzione per tradurre messaggi comuni in italiano con nome campo dinamico
+    // MutationObserver per intercettare modifiche ai messaggi di errore e tradurli in italiano
+    const observer = new MutationObserver(function (mutationsList) {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                const target = mutation.target;
+                if ($(target).hasClass('field-validation-error')) {
+                    const id = $(target).attr('data-valmsg-for');
+                    if (id) {
+                        const input = $("#" + id);
+                        const label = $("label[for='" + id + "']").text().replace("*", "").trim();
+                        const requiredMsg = input.attr("data-val-required");
+                        const emailMsg = input.attr("data-val-email");
+                        const lengthMsg = input.attr("data-val-length");
+                        const regexMsg = input.attr("data-val-regex");
+                        // ... aggiungi altre traduzioni se vuoi
+
+                        // Sostituisco solo se il messaggio attuale è in inglese o diverso
+                        let newMessage = null;
+                        const currentMsg = $(target).text();
+
+                        if (requiredMsg && currentMsg.toLowerCase().includes("required")) {
+                            newMessage = requiredMsg;
+                        } else if (emailMsg && currentMsg.toLowerCase().includes("email")) {
+                            newMessage = emailMsg;
+                        } else if (lengthMsg && currentMsg.toLowerCase().includes("length")) {
+                            newMessage = lengthMsg;
+                        } else if (regexMsg && currentMsg.toLowerCase().includes("format")) {
+                            newMessage = regexMsg;
+                        }
+
+                        if (newMessage && newMessage !== currentMsg) {
+                            $(target).text(newMessage);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Osservo tutti i messaggi di errore nel form
+    $("[data-valmsg-for]").each(function () {
+        observer.observe(this, { childList: true });
+    });
+});
+
+
+function customValidatorOnBegin() {
+    // Traduci messaggi data-val in italiano dinamicamente
     function translateDataValMessages($el, labelText) {
         const translations = {
             "data-val-required": `Il campo ${labelText} è obbligatorio.`,
@@ -12,7 +60,7 @@
             "data-val-minlength": `Il campo ${labelText} è troppo corto.`,
             "data-val-maxlength": `Il campo ${labelText} è troppo lungo.`,
             "data-val-range": `Il campo ${labelText} è fuori dall'intervallo consentito.`,
-            "data-val-equalto": null // lo gestiamo dopo
+            "data-val-equalto": null // gestito dopo
         };
 
         Object.keys(translations).forEach(function (attr) {
@@ -24,11 +72,11 @@
         // Gestione speciale per data-val-equalto
         if ($el.attr("data-val-equalto") !== undefined) {
             const thisId = $el.attr("id");
-            const otherSelector = $el.attr("data-val-equalto-other"); // es: "*.Email"
+            const otherSelector = $el.attr("data-val-equalto-other");
             let otherId = null;
 
             if (otherSelector && otherSelector.startsWith("*.")) {
-                otherId = otherSelector.substring(2); // prendo "Email"
+                otherId = otherSelector.substring(2);
             }
 
             let otherLabel = otherId;
@@ -42,18 +90,15 @@
         }
     }
 
-    // Assegna classi form-control e col-md-12 se mancanti
-    $("form .form-group").find("input[type='text'], textarea").each(function () {
+    // Assegna classi e traduci messaggi ai campi text, password, textarea
+    $("form .form-group").find("input[type='text'], input[type='password'], textarea").each(function () {
         if (!$(this).attr("class") || $(this).attr("class").trim() === "") {
             $(this).addClass("form-control col-md-12");
         }
-
         const id = $(this).attr("id");
         if (id) {
             const label = $("label[for='" + id + "']").text().replace("*", "").trim();
-            if (label) {
-                translateDataValMessages($(this), label);
-            }
+            if (label) translateDataValMessages($(this), label);
         }
     });
 
@@ -64,16 +109,34 @@
         }
     });
 
-    setWarningValidation();
-    applyLabelPlaceholder();
-});
+    // Applica placeholder dal testo della prima label del form-group se non presente (anche su password)
+    $("form .form-group").each(function () {
+        const $group = $(this);
+        const input = $group.find("input[type='text'], input[type='password'], input[type='search'], input:not([type]), textarea").first();
+        if (!input.length || input.attr("placeholder")) return;
 
-// Nasconde gli errori nel summary
+        const label = $group.find("label").first();
+        if (label.length > 0) {
+            const labelText = label.text().replace("*", "").trim();
+            if (labelText) input.attr("placeholder", labelText);
+        }
+    });
+
+    // Validazione iniziale di tutti i campi (text, password, textarea)
+    setWarningValidation();
+
+    // Valida ogni volta che cambia il valore di un campo text, password, textarea
+    $("form .form-group").find("input[type='text'], input[type='password'], textarea").on("input change", function () {
+        validateInputField($(this).attr("id"));
+    });
+}
+
+// FUNZIONI DI VALIDAZIONE
+
 function clearValidationSummaryErrors() {
     $(".validation-summary-errors").hide();
 }
 
-// Aggiunge warning (campo obbligatorio non compilato)
 function addValidationWarning(id) {
     try {
         clearFieldClasses(id);
@@ -82,7 +145,6 @@ function addValidationWarning(id) {
     } catch (e) { }
 }
 
-// Aggiunge errore di validazione (vuoto)
 function addValidationError(id) {
     try {
         if (!id) return;
@@ -92,7 +154,6 @@ function addValidationError(id) {
     } catch (e) { }
 }
 
-// Aggiunge errore con messaggio custom
 function addValidationErrorMessage(id, error) {
     try {
         if (!id) return;
@@ -102,7 +163,6 @@ function addValidationErrorMessage(id, error) {
     } catch (e) { }
 }
 
-// Rimuove tutti gli stati di errore e mostra successo
 function removeValidationError(id) {
     try {
         clearFieldClasses(id);
@@ -111,113 +171,27 @@ function removeValidationError(id) {
     } catch (e) { }
 }
 
-// Validazione semplice per un singolo campo
 function validateInputField(id) {
-    if (requiredElement(id) && $("#" + id).val() === "") {
-        addValidationWarning(id);
+    if (!requiredElement(id)) {
+        removeValidationError(id);
+        return;
+    }
+    const val = $("#" + id).val();
+    if (val === "") {
+        addValidationError(id); // se vuoto, mostra errore rosso
     } else {
         removeValidationError(id);
     }
 }
 
-// Controlla se il campo è obbligatorio secondo data-val
 function requiredElement(id) {
     const el = $("#" + id);
     return el.data("val") && el.data("val-required") && el.data("val") === true;
 }
 
-// Verifica se ha errori visivi
-function hashFieldErrorClass(id) {
-    const el = $("#" + id);
-    return el.length > 0 && !el.prop("disabled") && el.hasClass("field-error");
-}
-
-// Valida tutti i campi di un form
-function setWarningValidation() {
-    $("form .form-group").each(function () {
-        const $group = $(this);
-        const input = $group.find("input,textarea,select").first();
-        const id = input.attr("id");
-
-        if (!id) return;
-
-        clearFieldMessage(id);
-
-        if (!requiredElement(id)) {
-            removeValidationError(id);
-            return;
-        }
-
-        if (!input.prop("disabled")) {
-            addAsteriskToLabel(id);
-
-            if (input.val() === "") {
-                addValidationWarning(id);
-                resetButtonsState($group);
-            } else {
-                removeValidationError(id);
-                resetButtonsState($group);
-            }
-        }
-    });
-}
-
-// Applica il placeholder automatico leggendo dal <label> associato
-function applyLabelPlaceholder() {
-    $("form .form-group").each(function () {
-        const $group = $(this);
-        const input = $group.find("input[type='text'], input[type='search'], input:not([type]), textarea").first();
-
-        if (!input.length || input.attr("placeholder")) return;
-
-        const label = $group.find("label").first();
-        if (label.length > 0) {
-            const labelText = label.text().replace("*", "").trim();
-            if (labelText) {
-                input.attr("placeholder", labelText);
-            }
-        }
-    });
-}
-
-//function applyLabelPlaceholder() {
-//    $("form .form-group").each(function () {
-//        const $group = $(this);
-//        const input = $group.find("input[type='text'], input[type='search'], input:not([type]), textarea").first();
-//        if (!input.length || input.attr("placeholder")) return;
-
-//        let id = input.attr("id");
-//        let labelText = "";
-
-//        // Primo caso: cerca <label for="id">
-//        if (id) {
-//            const label = $group.find("label[for='" + id + "']");
-//            if (label.length > 0) {
-//                labelText = label.text().replace("*", "").trim();
-//            }
-//        }
-
-//        // Secondo caso: nessun for, prendi il primo <label> nel form-group
-//        if (!labelText) {
-//            const label = $group.find("label").first();
-//            if (label.length > 0) {
-//                labelText = label.text().replace("*", "").trim();
-//            }
-//        }
-
-//        // Applica il placeholder se trovato
-//        if (labelText) {
-//            input.attr("placeholder", labelText);
-//        }
-//    });
-//}
-
-// Helpers
-
 function clearFieldClasses(id) {
     const sel = $("#" + id);
     const group = sel.closest(".form-group");
-
     sel.removeClass("input-validation-error form-control-warning form-control-success field-error field-warning field-success");
     group.removeClass("has-danger has-warning has-success");
 }
@@ -241,9 +215,32 @@ function clearFieldMessage(id) {
     msgEl.removeClass("field-validation-error");
 }
 
-function resetButtonsState($group) {
-    $group.find("input[type='submit'], input[type='button'], button")
-        .removeClass("form-control-warning input-validation-error form-control-success");
+function setWarningValidation() {
+    $("form .form-group").each(function () {
+        const $group = $(this);
+        const input = $group.find("input,textarea,select").first();
+        const id = input.attr("id");
+        if (!id) return;
+
+        clearFieldMessage(id);
+
+        if (!requiredElement(id)) {
+            removeValidationError(id);
+            return;
+        }
+
+        if (!input.prop("disabled")) {
+            addAsteriskToLabel(id);
+
+            if (input.val() === "") {
+                addValidationError(id); // mostra errore rosso se vuoto
+                resetButtonsState($group);
+            } else {
+                removeValidationError(id);
+                resetButtonsState($group);
+            }
+        }
+    });
 }
 
 function addAsteriskToLabel(id) {
@@ -251,4 +248,9 @@ function addAsteriskToLabel(id) {
     if (label.length && !label.html().includes("*")) {
         label.append("<span class='text-danger'> *</span>");
     }
+}
+
+function resetButtonsState($group) {
+    $group.find("input[type='submit'], input[type='button'], button")
+        .removeClass("form-control-warning input-validation-error form-control-success");
 }

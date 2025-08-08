@@ -37,6 +37,18 @@
                 @RenderBody()
 
             </div>
+            <script>
+                (function() {
+                  // Aggiunge subito le classi agli input text e textarea dentro form-group
+                  var inputs = document.querySelectorAll("form .form-group input[type='password'],input[type='text'], form .form-group textarea");
+                  for (var i = 0; i < inputs.length; i++) {
+                    var el = inputs[i];
+                    if (!el.classList.contains("form-control")) el.classList.add("form-control");
+                    if (!el.classList.contains("col-md-12")) el.classList.add("col-md-12");
+                  }
+                })();
+            </script>
+
         </div>
     </div>
     <footer class="container-fluid blurEffect">

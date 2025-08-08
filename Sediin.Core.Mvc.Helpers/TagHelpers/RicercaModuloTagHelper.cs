@@ -62,6 +62,18 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 PartialHtml?.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
                 sb.Append(writer.ToString());
 
+                sb.AppendLine("<script>");
+                sb.AppendLine("$(function () {");
+                sb.AppendLine("  $(\"input[type='text'], input[type='password'], textarea\").each(function () {");
+                sb.AppendLine("    if (!$(this).hasClass(\"form-control\")) {");
+                sb.AppendLine("      $(this).addClass(\"form-control\");");
+                sb.AppendLine("    }");
+                sb.AppendLine("    if (!$(this).hasClass(\"col-md-12\")) {");
+                sb.AppendLine("      $(this).addClass(\"col-md-12\");");
+                sb.AppendLine("    }");
+                sb.AppendLine("  });");
+                sb.AppendLine("});");
+                sb.AppendLine("</script>");
                 sb.Append("   <hr />");
 
                 sb.Append(@"<div class=""d-flex justify-content-center gap-2 mt-3"">");
@@ -84,6 +96,9 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             sb.Append("<hr style=\"border: 0; height: 4px; background-image: linear-gradient(to right, #0d6efd, #6610f2); border-radius: 2px; opacity: 1; margin: 1rem 0;\" />\r\n");
 
             sb.Append($@"<div id=""{ResultContainerId}"" class=""mt-3""></div>");
+
+            // Includo qui il file customvalidation.js dalla cartella wwwroot/js/
+
 
             sb.Append("<script>");
             sb.Append($@"
@@ -158,6 +173,8 @@ window.updateListRicerca = function(showalert) {{
                     updateListRicerca(true);
                     fadeCollapse_{uniqueId}();
                 }}, 150);" : "")}
+                
+                customValidatorOnBegin();
 
                 var form = document.getElementById('{formId}');
                 if (form) {{
@@ -180,6 +197,10 @@ window.updateListRicerca = function(showalert) {{
 }})();
 ");
             sb.Append("</script>");
+
+            //sb.AppendLine(@"<script src=""/js/customvalidation.js""></script>");
+
+
 
             output.TagName = "div";
             output.Content.SetHtmlContent(sb.ToString());
