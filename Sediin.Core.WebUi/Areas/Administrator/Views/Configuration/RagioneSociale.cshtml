@@ -22,7 +22,7 @@
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.NomeBreve, htmlAttributes: new { @class = "control-label" })
 
-            @Html.EditorFor(model => model.NomeBreve, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "NomeBreve" } })
+            @Html.EditorFor(model => model.NomeBreve, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome Breve" } })
 
             @Html.ValidationMessageFor(model => model.NomeBreve, "")
         </div>
@@ -99,7 +99,7 @@
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.CodiceFiscale, htmlAttributes: new { @class = "control-label" })
 
-            @Html.EditorFor(model => model.CodiceFiscale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "CodiceFiscale" } })
+            @Html.EditorFor(model => model.CodiceFiscale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Codice Fiscale" } })
 
             @Html.ValidationMessageFor(model => model.CodiceFiscale, "")
         </div>
@@ -107,7 +107,7 @@
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.PartitaIva, htmlAttributes: new { @class = "control-label" })
 
-            @Html.EditorFor(model => model.PartitaIva, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "PartitaIva" } })
+            @Html.EditorFor(model => model.PartitaIva, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Partita IVA" } })
 
             @Html.ValidationMessageFor(model => model.PartitaIva, "")
         </div>
@@ -115,7 +115,7 @@
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.SitoWeb, htmlAttributes: new { @class = "control-label" })
 
-            @Html.EditorFor(model => model.SitoWeb, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "SitoWeb" } })
+            @Html.EditorFor(model => model.SitoWeb, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Sito Web" } })
 
             @Html.ValidationMessageFor(model => model.SitoWeb, "")
         </div>
@@ -123,19 +123,29 @@
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.UriPortale, htmlAttributes: new { @class = "control-label" })
 
-            @Html.EditorFor(model => model.UriPortale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "UriPortale" } })
+            @Html.EditorFor(model => model.UriPortale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Uri Portale" } })
 
             @Html.ValidationMessageFor(model => model.UriPortale, "")
         </div>
 
-        <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.LogoBase64, htmlAttributes: new { @class = "control-label" })
+        <div class="col-md-6">
+            @Html.Label(null, "Logo", htmlAttributes: new { @class = "control-label" })
 
-            @Html.EditorFor(model => model.LogoBase64, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "LogoBase64" } })
+            <div class="custom-file">
+                <input type="file" class="form-control"
+                       id="Logo"
+                       name="Logo"
+                       accept=".png">
 
-            @Html.ValidationMessageFor(model => model.LogoBase64, "")
+                <label class="badge bg-info"> in formato .png</label>
+                @Html.TextBoxFor(model => model.LogoBase64, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.LogoBase64, "", new { @class = "text-danger" })
+
+            </div>
+
+            <img id="imagelogo" class="img-fluid rounded col-md-6 mt-4" style="margin-bottom: 10px; mix-blend-mode: multiply; "
+                 src="@Model.LogoBase64" />
         </div>
-
     </div>
 
     <div class="text-center" style="margin-top:40px">
@@ -143,3 +153,47 @@
     </div>
 
 </ajax-form>
+
+<script type="text/javascript">
+
+    $('input[type=file]').on('change', function () {
+        debugger
+        var _span = $("span[data-valmsg-for='LogoBase64']");
+
+        const file = document.querySelector('input[type=file]').files[0];
+        const reader = new FileReader();
+        var tmppath = URL.createObjectURL(file);
+
+        reader.addEventListener("load", function () {
+            var myRe = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(['.png'])$", "gi");
+
+            // if (!myRe.exec(getFileExtension(file.name))) {
+            //     _span.addClass("field-validation-error");
+            //     _span.html("Estensione non valida");
+            //     _span.show();
+            //     return;
+            // }
+
+            // if (getFileSize(file.size) > 1) {
+            //     _span.addClass("field-validation-error");
+            //     _span.html("Dimensione massima 1MB");
+            //     _span.show();
+            //     return;
+            // }
+
+            //$("#sediinTemplateImageLogo").attr("src", reader.result);
+            $("#imagelogo").attr("src", reader.result);
+            $("#LogoBase64").val(reader.result);
+
+            _span.hide();
+            _span.html("");
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+        //$(this).val('');
+
+    });
+
+</script>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sediin.Core.TemplateConfiguration.Models
 {
@@ -13,7 +14,9 @@ namespace Sediin.Core.TemplateConfiguration.Models
     {
         [Required] 
         public string? Nome { get; set; }
+        
         [Required]
+        [DisplayName("Nome Breve")]
         public string? NomeBreve { get; set; }
         [Required]
         public string? Regione { get; set; }
@@ -34,14 +37,19 @@ namespace Sediin.Core.TemplateConfiguration.Models
         [Required]
         public string? Pec { get; set; }
         [Required]
+        [DisplayName("Codice Fiscale")]
         public string? CodiceFiscale { get; set; }
         [Required]
+        [DisplayName("Partita IVA")]
         public string? PartitaIva { get; set; }
         [Required]
+        [DisplayName("Sito Web")]
         public string? SitoWeb { get; set; }
         [Required]
+        [DisplayName("Uri Portale")]
         public string? UriPortale { get; set; }
         [Required]
+        [DisplayName("Logo")]
         public string? LogoBase64 { get; set; }
     }
 
