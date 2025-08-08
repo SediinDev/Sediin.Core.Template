@@ -27,6 +27,7 @@
     <Folder Include="Areas\Backend\Views\Data\" />
     <Folder Include="Areas\TemplateEmail\Controllers\" />
     <Folder Include="Areas\TemplateEmail\Data\" />
+    <Folder Include="wwwroot\Json\" />
     <Folder Include="wwwroot\lib\jquery-unobtrusive\" />
   </ItemGroup>
 

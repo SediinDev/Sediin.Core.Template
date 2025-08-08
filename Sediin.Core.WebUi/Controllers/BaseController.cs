@@ -18,7 +18,7 @@ public class BaseController : Controller
     protected IConfiguration _configuration;
     protected IRazorViewToStringRenderer _razorViewRenderer;
     protected IMapper _autoMapper;
-    protected IBaseConfiguration _baseConfiguration;
+    protected ISediinCoreConfiguration _sediinConfiguration;
 
     #pragma warning disable
     public BaseController()
@@ -50,8 +50,8 @@ public class BaseController : Controller
         if (_autoMapper == null)
             _autoMapper = HttpContext.RequestServices.GetService<IMapper>();
 
-        if (_baseConfiguration == null)
-            _baseConfiguration = HttpContext.RequestServices.GetService<IBaseConfiguration>();
+        if (_sediinConfiguration == null)
+            _sediinConfiguration = HttpContext.RequestServices.GetService<ISediinCoreConfiguration>();
 
         base.OnActionExecuting(context);
     }

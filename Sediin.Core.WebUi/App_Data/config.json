@@ -1,0 +1,31 @@
+{
+  "UploadFolder": "C:\\Uploads",
+  "UriPortale": "https://portale.sediin.it",
+  "LogoBase64": "iVBORw0KGgoAAAANSUhEUgAA...",
+  "RagioneSociale": {
+    "Nome": "Sediin S.p.A.",
+    "NomeBreve": "Sediin",
+    "Regione": "Lazio",
+    "Provincia": "RM",
+    "Indirizzo": "Via Roma 123",
+    "Citta": "Roma",
+    "Cap": "00100",
+    "Telefono": "+39 06 123456",
+    "Fax": "+39 06 654321",
+    "Email": "info@sediin.it",
+    "Pec": "sediin@pec.it",
+    "CodiceFiscale": "12345678901",
+    "PartitaIva": "01234567890",
+    "SitoWeb": "https://www.sediin.it"
+  },
+  "EmailSettings": {
+    "SmtpServer": "smtp.sediin.it",
+    "SmtpPort": 587,
+    "SmtpUsername": "noreply@sediin.it",
+    "SmtpPassword": "password123",
+    "SmtpServerAutentication": true,
+    "SmtpServerUseSSL": true,
+    "FromName": "Sediin Notifiche",
+    "FromEmail": "noreply@sediin.it"
+  }
+}

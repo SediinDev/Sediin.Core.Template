@@ -65,7 +65,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.LoginPath = "/Authentication/Login/";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.AccessDeniedPath = "/Authentication/AccessDenied";
     options.SlidingExpiration = true;
 });
 
@@ -79,11 +79,11 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.Services.AddSingleton<IBaseConfiguration>(provider =>
+builder.Services.AddSingleton<ISediinCoreConfiguration>(provider =>
 {
     var env = provider.GetRequiredService<IWebHostEnvironment>();
-    var pathToJson = Path.Combine(env.WebRootPath, "json", "config.json");
-    return new BaseConfiguration(pathToJson);
+    var configPath = Path.Combine(env.ContentRootPath, "App_Data", "config.json");
+    return new SediinCoreConfiguration(configPath);
 });
 
 //--------------------------------------------------------
