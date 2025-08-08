@@ -11,7 +11,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
     {
         public string HeaderText { get; set; } = string.Empty;
         public string RicercaAction { get; set; } = string.Empty;
-        public bool ExecuteRicercaOnReady { get; set; } = true;
+        public bool ExecuteRicercaOnReady { get; set; } = false;
         public bool ResetButton { get; set; } = true;
 
         public string ResetButtonText { get; set; } = "Reset";

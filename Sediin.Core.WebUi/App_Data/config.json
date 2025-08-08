@@ -3,13 +3,13 @@
   "RagioneSociale": {
     "Nome": "Sediin S.p.A.",
     "NomeBreve": "Sediin",
-    "Regione": "Lazio",
+    "Regione": "Forza Roma",
     "Provincia": "RM",
     "Indirizzo": "Via Roma 123",
     "Citta": "Roma",
-    "Cap": "00100",
-    "Telefono": "+39 06 123456",
-    "Fax": "+39 06 654321",
+    "Cap": "00000",
+    "Telefono": "\u002B39 06 123456",
+    "Fax": "\u002B39 06 654321",
     "Email": "info@sediin.it",
     "Pec": "sediin@pec.it",
     "CodiceFiscale": "12345678901",
@@ -25,7 +25,7 @@
     "SmtpPassword": "password123",
     "SmtpServerAutentication": true,
     "SmtpServerUseSSL": true,
-    "FromName": "Sediin Notifiche",
+    "FromName": "pippo",
     "FromEmail": "noreply@sediin.it"
   }
 }

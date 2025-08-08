@@ -16,6 +16,7 @@ namespace Sediin.Core.Mvc.Helpers.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
+
             if (context.Request.Query.ContainsKey("q"))
             {
                 try

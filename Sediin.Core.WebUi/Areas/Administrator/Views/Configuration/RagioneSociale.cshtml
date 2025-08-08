@@ -1,0 +1,199 @@
+﻿@model Sediin.Core.TemplateConfiguration.Models.RagioneSociale
+@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
+
+<ricerca-modulo header-text="Ragione Sociale"></ricerca-modulo>
+
+<ajax-form asp-action="RagioneSociale"
+           asp-controller="Configuration"
+           on-begin="alertWaid()"
+           on-success="toastSuccess(data); alertClose();"
+           on-failure="handleError">
+
+    <div class="form-horizontal row mt-4">
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome" } })
+
+            @Html.ValidationMessageFor(model => model.Nome, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.NomeBreve, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.NomeBreve, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome Breve" } })
+
+            @Html.ValidationMessageFor(model => model.NomeBreve, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Regione, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Regione, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Regione" } })
+
+            @Html.ValidationMessageFor(model => model.Regione, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Provincia, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Provincia, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Provincia" } })
+
+            @Html.ValidationMessageFor(model => model.Provincia, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Indirizzo, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Indirizzo, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Indirizzo" } })
+
+            @Html.ValidationMessageFor(model => model.Indirizzo, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Citta, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Citta, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Citta" } })
+
+            @Html.ValidationMessageFor(model => model.Citta, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Cap, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Cap, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Cap" } })
+
+            @Html.ValidationMessageFor(model => model.Cap, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Telefono, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Telefono, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Telefono" } })
+
+            @Html.ValidationMessageFor(model => model.Telefono, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Fax" } })
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Email" } })
+
+            @Html.ValidationMessageFor(model => model.Email, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Pec, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Pec, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Pec" } })
+
+            @Html.ValidationMessageFor(model => model.Pec, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.CodiceFiscale, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.CodiceFiscale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Codice Fiscale" } })
+
+            @Html.ValidationMessageFor(model => model.CodiceFiscale, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.PartitaIva, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.PartitaIva, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Partita IVA" } })
+
+            @Html.ValidationMessageFor(model => model.PartitaIva, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.SitoWeb, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.SitoWeb, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Sito Web" } })
+
+            @Html.ValidationMessageFor(model => model.SitoWeb, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.UriPortale, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.UriPortale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Uri Portale" } })
+
+            @Html.ValidationMessageFor(model => model.UriPortale, "")
+        </div>
+
+        <div class="col-md-6">
+            @Html.Label(null, "Logo", htmlAttributes: new { @class = "control-label" })
+
+            <div class="custom-file">
+                <input type="file" class="form-control"
+                       id="Logo"
+                       name="Logo"
+                       accept=".png">
+
+                <label class="badge bg-info"> in formato .png</label>
+                @Html.TextBoxFor(model => model.LogoBase64, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.LogoBase64, "", new { @class = "text-danger" })
+
+            </div>
+
+            <img id="imagelogo" class="img-fluid rounded col-md-6 mt-4" style="margin-bottom: 10px; mix-blend-mode: multiply; "
+                 src="@Model.LogoBase64" />
+        </div>
+    </div>
+
+    <div class="text-center" style="margin-top:40px">
+        <button type="submit" class="btn btn-info">Aggiorna</button>
+    </div>
+
+</ajax-form>
+
+<script type="text/javascript">
+
+    $('input[type=file]').on('change', function () {
+        debugger
+        var _span = $("span[data-valmsg-for='LogoBase64']");
+
+        const file = document.querySelector('input[type=file]').files[0];
+        const reader = new FileReader();
+        var tmppath = URL.createObjectURL(file);
+
+        reader.addEventListener("load", function () {
+            var myRe = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(['.png'])$", "gi");
+
+            // if (!myRe.exec(getFileExtension(file.name))) {
+            //     _span.addClass("field-validation-error");
+            //     _span.html("Estensione non valida");
+            //     _span.show();
+            //     return;
+            // }
+
+            // if (getFileSize(file.size) > 1) {
+            //     _span.addClass("field-validation-error");
+            //     _span.html("Dimensione massima 1MB");
+            //     _span.show();
+            //     return;
+            // }
+
+            //$("#sediinTemplateImageLogo").attr("src", reader.result);
+            $("#imagelogo").attr("src", reader.result);
+            $("#LogoBase64").val(reader.result);
+
+            _span.hide();
+            _span.html("");
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+        //$(this).val('');
+
+    });
+
+</script>
