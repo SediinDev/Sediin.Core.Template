@@ -1,5 +1,10 @@
 ﻿var _modalArray = new Array();
 
+/////////////////////////////////////////////////////////////////////////////////////
+// Helper ///////////////////////////////////////////////////////////////////////////
+// no usare direttamente ////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 function showModalFullscreenOverModal(title, html, id) {
     var _id = "modalOverModal_" + id;
     var _modaleHtml = "";
@@ -36,6 +41,76 @@ function closeModalOverModal(id) {
     //    $("#modalOverModal").removeAttr("style");
     //    $("#modalOverModal").removeClass("show");
 }
+
+function showModalNoFooter_FullScreen(title, html) {
+
+    dynamicModal_CreateModal(modalGenerateUUID(), "modal-fullscreen", title, html, true, false, true);
+    //enableAllBtn();
+}
+
+function showModalNoHeaderFooter_FullScreen(html) {
+    showDynamicModal_FullScreen_NoHeaderFooter(modalGenerateUUID(), "Informazioni", html);
+    //enableAllBtn();
+}
+
+function showModalNoHeader_FullScreen(html) {
+    showDynamicModal_FullScreen(modalGenerateUUID(), "Informazioni", html, false, true);
+    //enableAllBtn();
+}
+
+function showModal(title, html) {
+    showDynamicModal(modalGenerateUUID(), title, html, true, true);
+    //enableAllBtn();
+}
+
+function showModal_NoHeaderFooter(html) {
+    showDynamicModal(modalGenerateUUID(), "", html, false, false);
+    //enableAllBtn();
+}
+
+function showModal_NoHeader(html) {
+    showDynamicModal(modalGenerateUUID(), "", html, false, true);
+    //enableAllBtn();
+}
+
+function showModal_NoFooter(title, html) {
+    showDynamicModal(modalGenerateUUID(), title, html, true, false);
+    //enableAllBtn();
+}
+
+function hideModal() {
+    //enableAllBtn();
+    var _id = getModalGenerateUUID();
+    dynamicModal_RemovewModal(_id);
+    $("#" + _id).remove();
+    $("body").attr("style", "");
+    $('.blurEffect').removeClass('blur');
+    $("#waidModalshowWaidModal").remove();
+    alertClose();
+
+}
+
+function showModalFullScreen(title, html, showHeader, showFooter, showDismissButton) {
+    showHeader = showHeader == undefined ? true : showHeader;
+    showFooter = showFooter == undefined ? true : showFooter;
+    showDismissButton = showDismissButton == undefined ? true : showDismissButton;
+
+    dynamicModal_CreateModal(modalGenerateUUID(), "modal-fullscreen", title, html, showHeader, showFooter, showDismissButton);
+    //enableAllBtn();
+}
+
+function showModal_IsOpen() {
+    if ($("[role='dialog']").hasClass("modal")) {
+        return true;
+    }
+    return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Helper ///////////////////////////////////////////////////////////////////////////
+// no usare direttamente ////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 function dynamicModal_PushNewModal(id, modalHtml) {
 
@@ -311,12 +386,9 @@ function showDynamicModal_FullScreen(id, title, html, showHeader, showFooter) {
     dynamicModal_CreateModal(id, "modal-fullscreen", title, html, showHeader, showFooter, true);
 }
 
-
 function getModalGenerateUUID() {
     return $("[role='dialog']").attr("id");
 }
-
-
 
 function modalGenerateUUID() {
     var d = new Date().getTime();
@@ -330,66 +402,4 @@ function modalGenerateUUID() {
     });
     return uuid;
 }
-function hideModal() {
-    //enableAllBtn();
-    var _id = getModalGenerateUUID();
-    dynamicModal_RemovewModal(_id);
-    $("#" + _id).remove();
-    $("body").attr("style", "");
-    $('.blurEffect').removeClass('blur');
-    $("#waidModalshowWaidModal").remove();
-    alertClose();
 
-}
-function showModalFullScreen(title, html, showHeader, showFooter, showDismissButton) {
-    showHeader = showHeader == undefined ? true : showHeader;
-    showFooter = showFooter == undefined ? true : showFooter;
-    showDismissButton = showDismissButton == undefined ? true : showDismissButton;
-
-    dynamicModal_CreateModal(modalGenerateUUID(), "modal-fullscreen", title, html, showHeader, showFooter, showDismissButton);
-    //enableAllBtn();
-}
-
-function showModalFullScreen_NoFooter(title, html) {
-
-    dynamicModal_CreateModal(modalGenerateUUID(), "modal-fullscreen", title, html, true, false, true);
-    //enableAllBtn();
-}
-
-function showModalFullScreen_NoHeaderFooter(html) {
-    showDynamicModal_FullScreen_NoHeaderFooter(modalGenerateUUID(), "Informazioni", html);
-    //enableAllBtn();
-}
-
-function showModalFullScreen_NoHeader(html) {
-    showDynamicModal_FullScreen(modalGenerateUUID(), "Informazioni", html, false, true);
-    //enableAllBtn();
-}
-
-function showModal(title, html) {
-    showDynamicModal(modalGenerateUUID(), title, html, true, true);
-    //enableAllBtn();
-}
-
-function showModal_NoHeaderFooter(html) {
-    showDynamicModal(modalGenerateUUID(), "", html, false, false);
-    //enableAllBtn();
-}
-
-function showModal_NoHeader(html) {
-    showDynamicModal(modalGenerateUUID(), "", html, false, true);
-    //enableAllBtn();
-}
-
-function showModal_NoFooter(title, html) {
-    showDynamicModal(modalGenerateUUID(), title, html, true, false);
-    //enableAllBtn();
-}
-
-
-function showModal_IsOpen() {
-    if ($("[role='dialog']").hasClass("modal")) {
-        return true;
-    }
-    return false;
-}
