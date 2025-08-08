@@ -1,318 +1,254 @@
-﻿$(function () {
-    $('form').submit(function () {
+﻿$(document).ready(function () {
 
-        if (!$(this).valid()) {
-            return false;
-        }
+    // Funzione per tradurre messaggi comuni in italiano con nome campo dinamico
+    function translateDataValMessages($el, labelText) {
+        const translations = {
+            "data-val-required": `Il campo ${labelText} è obbligatorio.`,
+            "data-val-email": `Il campo ${labelText} deve contenere un indirizzo email valido.`,
+            "data-val-length": `Il campo ${labelText} deve rispettare la lunghezza richiesta.`,
+            "data-val-regex": `Il campo ${labelText} ha un formato non valido.`,
+            "data-val-date": `Il campo ${labelText} deve essere una data valida.`,
+            "data-val-number": `Il campo ${labelText} deve essere un numero.`,
+            "data-val-minlength": `Il campo ${labelText} è troppo corto.`,
+            "data-val-maxlength": `Il campo ${labelText} è troppo lungo.`,
+            "data-val-range": `Il campo ${labelText} è fuori dall'intervallo consentito.`,
+            "data-val-equalto": null // lo gestiamo dopo
+        };
 
-        $('.validation-summary-errors').each(function () {
-            $(this).show();
-
-            $(this).addClass('alert');
-            $(this).addClass('alert-danger');
-            return;
-
-            var $_parent = $(this).parent();
-
-            var $_ul = $(this).find("ul");
-            $(this).remove();
-
-            var resultArray = new Array();
-
-            $_ul.find("li").each(function () {
-
-                if (resultArray.indexOf($(this).text()) == -1)
-                    resultArray.push($(this).text());
-
-            });
-
-            var _result = "";
-
-            for (var i = 0; i < resultArray.length; i++) {
-                _result += "<li>" + resultArray[i] + "</li>";
-            }
-
-            if (_result != "") {
-                $("<div class='validation-summary-errors'><ul>" + _result + "</ul></div>").appendTo($_parent);
+        Object.keys(translations).forEach(function (attr) {
+            if ($el.attr(attr) !== undefined && translations[attr] !== null) {
+                $el.attr(attr, translations[attr]);
             }
         });
 
-        if ($(this).valid()) {
-            $(this).find('.form-group').each(function () {
+        // Gestione speciale per data-val-equalto
+        if ($el.attr("data-val-equalto") !== undefined) {
+            const thisId = $el.attr("id");
+            const otherSelector = $el.attr("data-val-equalto-other"); // es: "*.Email"
+            let otherId = null;
 
-                if ($(this).find('span.field-validation-error').length == 0) {
-                    $(this).removeClass('has-danger');
-                    $(this).addClass('has-success');
-                }
-            });
+            if (otherSelector && otherSelector.startsWith("*.")) {
+                otherId = otherSelector.substring(2); // prendo "Email"
+            }
+
+            let otherLabel = otherId;
+            if (otherId) {
+                otherLabel = $("label[for='" + otherId + "']").text().replace("*", "").trim() || otherId;
+            }
+
+            const thisLabel = labelText || thisId;
+
+            $el.attr("data-val-equalto", `Il campo ${thisLabel} deve corrispondere al campo ${otherLabel}.`);
+        }
+    }
+
+    // Assegna classi form-control e col-md-12 se mancanti
+    $("form .form-group").find("input[type='text'], textarea").each(function () {
+        if (!$(this).attr("class") || $(this).attr("class").trim() === "") {
+            $(this).addClass("form-control col-md-12");
+        }
+
+        const id = $(this).attr("id");
+        if (id) {
+            const label = $("label[for='" + id + "']").text().replace("*", "").trim();
+            if (label) {
+                translateDataValMessages($(this), label);
+            }
         }
     });
 
-    // check each form-group for errors on ready
-    $('form').each(function () {
-        
-        $(this).find('.form-group').each(function () {
-            var _id = $(this).find("input,textarea,select").attr("id");
-
-            if (_id == undefined) {
-                return;
-            }
-
-            if (!requiredElement(_id)) {
-                removeValidationError(_id);
-                return;
-            }
-
-            if ($(this).find("input,textarea,select").prop("disabled") != true) {
-
-                if (requiredElement(_id)) {
-                    var label = $("label[for='" + _id + "']").html();
-
-                    if (label != undefined) {
-                        if (label.indexOf("*") == -1)
-                            $("label[for='" + _id + "']").append("<span class='text-danger'> *</span>");
-                    }
-                }
-
-                if ($("#" + _id).val() != "") {
-                    removeValidationError(_id);
-                    return;
-                }
-
-                if (requiredElement(_id) && $("#" + _id).val() == "") {
-
-                    $(this).find("input,textarea,select").removeClass("field-warning");
-                    $(this).find("input,textarea,select").removeClass("field-success");
-                    $(this).find("input,textarea,select").addClass("field-warning");
-
-                    $(this).addClass('has-warning');
-                    $(this).find("input,textarea,select").addClass("form-control-warning");
-
-                    $(this).find("input[type='submit']").removeClass("form-control-warning");
-                    $(this).find("input[type='submit']").removeClass("input-validation-error");
-                    $(this).find("input[type='submit']").removeClass("form-control-success");
-
-                    $(this).find("input[type='button']").removeClass("form-control-warning");
-                    $(this).find("input[type='button']").removeClass("input-validation-error");
-                    $(this).find("input[type='button']").removeClass("form-control-success");
-
-                    $(this).find("button").removeClass("form-control-warning");
-                    $(this).find("button").removeClass("input-validation-error");
-                    $(this).find("button").removeClass("form-control-success");
-
-                }
-                else {
-                    $(this).find("input[type='submit']").removeClass("form-control-warning");
-                    $(this).find("input[type='submit']").removeClass("input-validation-error");
-                    $(this).find("input[type='submit']").removeClass("form-control-success");
-
-                    $(this).find("input[type='button']").removeClass("form-control-warning");
-                    $(this).find("input[type='button']").removeClass("input-validation-error");
-                    $(this).find("input[type='button']").removeClass("form-control-success");
-
-                    $(this).find("button").removeClass("form-control-warning");
-                    $(this).find("button").removeClass("input-validation-error");
-                    $(this).find("button").removeClass("form-control-success");
-
-                    $(this).addClass("has-success");
-                    $(this).find("input,textarea,select").addClass("form-control-success");
-                }
-            }
-
-        });
+    // Assegna classe control-label a label senza classe
+    $("form .form-group").find("label").each(function () {
+        if (!$(this).attr("class") || $(this).attr("class").trim() === "") {
+            $(this).addClass("control-label");
+        }
     });
+
+    setWarningValidation();
+    applyLabelPlaceholder();
 });
 
-var page = function () {
-    //Update the validator
-    $.validator.setDefaults({
-        highlight: function (element) {
-            addValidationError(element.id);
-        },
-        unhighlight: function (element) {
-            removeValidationError(element.id);
-        }
-    });
-}();
-
+// Nasconde gli errori nel summary
 function clearValidationSummaryErrors() {
     $(".validation-summary-errors").hide();
 }
 
+// Aggiunge warning (campo obbligatorio non compilato)
 function addValidationWarning(id) {
     try {
-        $("#" + id).closest("input,textarea,select").removeClass("input-validation-error");
-        $("#" + id).closest("input,textarea,select").removeClass("form-control-success");
-        $("#" + id).closest(".form-group").removeClass("has-danger");
-        $("#" + id).closest(".form-group").removeClass("has-success");
-        $("#" + id).closest("input,textarea,select").removeClass("field-error");
-        $("#" + id).closest("input,textarea,select").removeClass("field-success");
-
-        $("#" + id).closest(".form-group").addClass("has-warning");
-        $("#" + id).closest("input,textarea,select").addClass("form-control-warning");
-        $("#" + id).closest("input,textarea,select").addClass("field-warning");
-
-        $("[data-valmsg-for='" + id + "']").html("");
-        $("[data-valmsg-for='" + id + "']").removeClass("field-validation-error");
-
-    } catch (e) {
-
-    }
+        clearFieldClasses(id);
+        addClasses(id, "has-warning", ["form-control-warning", "field-warning"]);
+        clearFieldMessage(id);
+    } catch (e) { }
 }
 
+// Aggiunge errore di validazione (vuoto)
 function addValidationError(id) {
     try {
-        if (id == "") {
-            return;
-        }
-        $("#" + id).closest("input,textarea,select").removeClass("form-control-warning");
-        $("#" + id).closest("input,textarea,select").removeClass("form-control-success");
-        $("#" + id).closest(".form-group").removeClass("has-warning");
-        $("#" + id).closest(".form-group").removeClass("has-success");
-        $("#" + id).closest("input,textarea,select").removeClass("field-warning");
-        $("#" + id).closest("input,textarea,select").removeClass("field-success");
-
-        $("#" + id).closest(".form-group").addClass("has-danger");
-        $("#" + id).closest("input,textarea,select").addClass("input-validation-error");
-        $("#" + id).closest("input,textarea,select").addClass("field-error");
-
-        $("[data-valmsg-for='" + id + "']").html($("#" + id).attr("data-val-required"));
-        $("[data-valmsg-for='" + id + "']").addClass("field-validation-error");
-
-    } catch (e) {
-    }
+        if (!id) return;
+        clearFieldClasses(id);
+        addClasses(id, "has-danger", ["input-validation-error", "field-error"]);
+        setFieldMessage(id, $("#" + id).attr("data-val-required"));
+    } catch (e) { }
 }
 
+// Aggiunge errore con messaggio custom
 function addValidationErrorMessage(id, error) {
     try {
-        if (id == "") {
-            return;
-        }
-        $("#" + id).closest("input,textarea,select").removeClass("form-control-warning");
-        $("#" + id).closest("input,textarea,select").removeClass("form-control-success");
-        $("#" + id).closest(".form-group").removeClass("has-warning");
-        $("#" + id).closest(".form-group").removeClass("has-success");
-        $("#" + id).closest("input,textarea,select").removeClass("field-warning");
-        $("#" + id).closest("input,textarea,select").removeClass("field-success");
-
-        $("#" + id).closest(".form-group").addClass("has-danger");
-        $("#" + id).closest("input,textarea,select").addClass("input-validation-error");
-        $("#" + id).closest("input,textarea,select").addClass("field-error");
-
-        $("[data-valmsg-for='" + id + "']").html(error);
-        $("[data-valmsg-for='" + id + "']").addClass("field-validation-error");
-
-    } catch (e) {
-    }
+        if (!id) return;
+        clearFieldClasses(id);
+        addClasses(id, "has-danger", ["input-validation-error", "field-error"]);
+        setFieldMessage(id, error);
+    } catch (e) { }
 }
 
+// Rimuove tutti gli stati di errore e mostra successo
 function removeValidationError(id) {
     try {
-        $("#" + id).closest("input,textarea,select").removeClass("input-validation-error");
-        $("#" + id).closest("input,textarea,select").removeClass("form-control-warning");
-        $("#" + id).closest(".form-group").removeClass("has-danger");
-        $("#" + id).closest(".form-group").removeClass("has-warning");
-        $("#" + id).closest("input,textarea,select").removeClass("field-warning");
-        $("#" + id).closest("input,textarea,select").removeClass("field-error");
-
-        $("#" + id).closest("input,textarea,select").addClass("form-control-success");
-        $("#" + id).closest("input,textarea,select").addClass("field-success");
-        $("#" + id).closest(".form-group").addClass("has-success");
-
-        $("[data-valmsg-for='" + id + "']").html("");
-        $("[data-valmsg-for='" + id + "']").removeClass("field-validation-error");
-    } catch (e) {
-
-    }
+        clearFieldClasses(id);
+        addClasses(id, "has-success", ["form-control-success", "field-success"]);
+        clearFieldMessage(id);
+    } catch (e) { }
 }
 
+// Validazione semplice per un singolo campo
 function validateInputField(id) {
-    if (requiredElement(id) && $("#" + id).val() == "") {
+    if (requiredElement(id) && $("#" + id).val() === "") {
         addValidationWarning(id);
-    }
-    else {
+    } else {
         removeValidationError(id);
     }
 }
 
+// Controlla se il campo è obbligatorio secondo data-val
 function requiredElement(id) {
-    if ($("#" + id).data("val") != undefined &&
-        $("#" + id).data("val-required") != undefined &&
-        //$("#" + id).data("val-email") != undefined &&
-        $("#" + id).data("val") == true) {
-        return true;
-    }
-
-    return false;
+    const el = $("#" + id);
+    return el.data("val") && el.data("val-required") && el.data("val") === true;
 }
 
+// Verifica se ha errori visivi
 function hashFieldErrorClass(id) {
-    if ($("#" + id).length > 0 && $("#" + id).attr("disabled") == undefined) {
-        return $("#" + id).hasClass("field-error");
-    }
+    const el = $("#" + id);
+    return el.length > 0 && !el.prop("disabled") && el.hasClass("field-error");
 }
 
+// Valida tutti i campi di un form
 function setWarningValidation() {
-    $("form").find('.form-group').each(function () {
+    $("form .form-group").each(function () {
+        const $group = $(this);
+        const input = $group.find("input,textarea,select").first();
+        const id = input.attr("id");
 
-        var _id = $(this).find("input,textarea,select").attr("id");
-        $("[data-valmsg-for='" + _id + "']").html("");
-        $("[data-valmsg-for='" + _id + "']").removeClass("field-validation-error");
+        if (!id) return;
 
-        if (!requiredElement(_id)) {
-            removeValidationError(_id);
+        clearFieldMessage(id);
+
+        if (!requiredElement(id)) {
+            removeValidationError(id);
             return;
         }
 
-        if ($(this).find("input,textarea,select").prop("disabled") != true) {
+        if (!input.prop("disabled")) {
+            addAsteriskToLabel(id);
 
-            if (requiredElement(_id)) {
-                var label = $("label[for='" + _id + "']").html();
-
-                if (label != undefined) {
-                    if (label.indexOf("*") == -1)
-                        $("label[for='" + _id + "']").append("<span class='text-danger'> *</span>");
-                }
-            }
-
-            if ($("#" + _id).val() != "") {
-                removeValidationError(_id);
-                return;
-            }
-
-            if (requiredElement(_id) && $("#" + _id).val() == "") {
-
-                addValidationWarning(_id);
-
-                $(this).find("input[type='submit']").removeClass("form-control-warning");
-                $(this).find("input[type='submit']").removeClass("input-validation-error");
-                $(this).find("input[type='submit']").removeClass("form-control-success");
-
-                $(this).find("input[type='button']").removeClass("form-control-warning");
-                $(this).find("input[type='button']").removeClass("input-validation-error");
-                $(this).find("input[type='button']").removeClass("form-control-success");
-
-                $(this).find("button").removeClass("form-control-warning");
-                $(this).find("button").removeClass("input-validation-error");
-                $(this).find("button").removeClass("form-control-success");
-
-            }
-            else {
-                $(this).find("input[type='submit']").removeClass("form-control-warning");
-                $(this).find("input[type='submit']").removeClass("input-validation-error");
-                $(this).find("input[type='submit']").removeClass("form-control-success");
-
-                $(this).find("input[type='button']").removeClass("form-control-warning");
-                $(this).find("input[type='button']").removeClass("input-validation-error");
-                $(this).find("input[type='button']").removeClass("form-control-success");
-
-                $(this).find("button").removeClass("form-control-warning");
-                $(this).find("button").removeClass("input-validation-error");
-                $(this).find("button").removeClass("form-control-success");
-
-                $(this).addClass("has-success");
-                $(this).find("input,textarea,select").addClass("form-control-success");
+            if (input.val() === "") {
+                addValidationWarning(id);
+                resetButtonsState($group);
+            } else {
+                removeValidationError(id);
+                resetButtonsState($group);
             }
         }
     });
+}
+
+// Applica il placeholder automatico leggendo dal <label> associato
+function applyLabelPlaceholder() {
+    $("form .form-group").each(function () {
+        const $group = $(this);
+        const input = $group.find("input[type='text'], input[type='search'], input:not([type]), textarea").first();
+
+        if (!input.length || input.attr("placeholder")) return;
+
+        const label = $group.find("label").first();
+        if (label.length > 0) {
+            const labelText = label.text().replace("*", "").trim();
+            if (labelText) {
+                input.attr("placeholder", labelText);
+            }
+        }
+    });
+}
+
+//function applyLabelPlaceholder() {
+//    $("form .form-group").each(function () {
+//        const $group = $(this);
+//        const input = $group.find("input[type='text'], input[type='search'], input:not([type]), textarea").first();
+//        if (!input.length || input.attr("placeholder")) return;
+
+//        let id = input.attr("id");
+//        let labelText = "";
+
+//        // Primo caso: cerca <label for="id">
+//        if (id) {
+//            const label = $group.find("label[for='" + id + "']");
+//            if (label.length > 0) {
+//                labelText = label.text().replace("*", "").trim();
+//            }
+//        }
+
+//        // Secondo caso: nessun for, prendi il primo <label> nel form-group
+//        if (!labelText) {
+//            const label = $group.find("label").first();
+//            if (label.length > 0) {
+//                labelText = label.text().replace("*", "").trim();
+//            }
+//        }
+
+//        // Applica il placeholder se trovato
+//        if (labelText) {
+//            input.attr("placeholder", labelText);
+//        }
+//    });
+//}
+
+// Helpers
+
+function clearFieldClasses(id) {
+    const sel = $("#" + id);
+    const group = sel.closest(".form-group");
+
+    sel.removeClass("input-validation-error form-control-warning form-control-success field-error field-warning field-success");
+    group.removeClass("has-danger has-warning has-success");
+}
+
+function addClasses(id, groupClass, controlClasses) {
+    const sel = $("#" + id);
+    const group = sel.closest(".form-group");
+    group.addClass(groupClass);
+    controlClasses.forEach(c => sel.addClass(c));
+}
+
+function setFieldMessage(id, message) {
+    const msgEl = $("[data-valmsg-for='" + id + "']");
+    msgEl.html(message);
+    msgEl.addClass("field-validation-error");
+}
+
+function clearFieldMessage(id) {
+    const msgEl = $("[data-valmsg-for='" + id + "']");
+    msgEl.html("");
+    msgEl.removeClass("field-validation-error");
+}
+
+function resetButtonsState($group) {
+    $group.find("input[type='submit'], input[type='button'], button")
+        .removeClass("form-control-warning input-validation-error form-control-success");
+}
+
+function addAsteriskToLabel(id) {
+    const label = $("label[for='" + id + "']");
+    if (label.length && !label.html().includes("*")) {
+        label.append("<span class='text-danger'> *</span>");
+    }
 }
