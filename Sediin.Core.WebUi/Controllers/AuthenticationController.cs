@@ -12,6 +12,8 @@ namespace Sediin.Core.WebUi.Controllers
     {
         public IActionResult Login()
         {
+
+var c =            _baseConfiguration.Get();
             return AjaxView();
         }
 

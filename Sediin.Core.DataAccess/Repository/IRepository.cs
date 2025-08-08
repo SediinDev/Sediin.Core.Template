@@ -2,6 +2,13 @@
 
 namespace Sediin.Core.DataAccess.Repository
 {
+    /// <summary>
+    /// Repo Pattern Interface per le operazioni CRUD
+    /// non neccessario implementare, Create, Read, Update, Delete
+    /// esempio implementazione su repo:
+    /// public class MenuRepository : Repository<Menu>, IMenuRepository
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IRepository<T> where T : class
     {
         IEnumerable<T> GetAll(Expression<Func<T, bool>>? predicate = null, string? includeProperts = null, bool tracked = false);

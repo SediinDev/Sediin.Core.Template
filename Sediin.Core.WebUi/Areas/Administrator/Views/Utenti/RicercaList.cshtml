@@ -14,7 +14,7 @@ else
                     <th>Nome</th>
                     <th>Cognome</th>
                     <th>Email</th>
-                    <th style="width:200px"></th>
+                    <th style="width:100px;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -25,13 +25,33 @@ else
                         <td>@item.Cognome</td>
                         <td>@item.Email</td>
                         <td>
-                            <a class="btn btn-primary btn-sm w-100" data-ajax="true"
-                               data-ajax-begin="alertWaid()"
-                               data-ajax-failure="handleError"
-                               data-ajax-success="showModal_NoFooter('Modifica utente', data); alertClose()"
-                               href="@Url.Action("ModificaUtente", "Utenti", new { item.Id })">
-                                Modifica utente
-                            </a>
+
+                            <div class="dropdown">
+                                <button class="btn btn-primary btn-sm dropdown-toggle w-100" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                    Azioni
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+
+                                        <a class="dropdown-item" data-ajax="true"
+                                           data-ajax-begin="alertWaid()"
+                                           data-ajax-failure="handleError"
+                                           data-ajax-success="showModalFullScreen('Modifica utente', data); alertClose()"
+                                           href="@Url.Action("ModificaUtente", "Utenti", new { item.Id })">
+                                            Modifica utente
+                                        </a>
+
+                                    </li>
+                                    <li>
+
+                                        <a class="dropdown-item" href="#">Elimina utente</a>
+
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">Blocca utente</a></li>
+                                </ul>
+                            </div>
+                           
                         </td>
                     </tr>
                 }

@@ -247,6 +247,12 @@ namespace Sediin.Core.Identity.Repository
             if (existingUser == null)
                 throw new Exception("Utente non trovato");
 
+            var email = _userManager.Users.Where(u => (u.NormalizedEmail != null) && (u.NormalizedEmail == user.Email.ToUpper()));
+            if(email != null && email.Count() > 1)
+            {
+                throw new Exception("Email già registrata nel sistema.");
+            }
+
             //  Aggiorna solo i campi ammessi
             existingUser.Nome = user.Nome;
             existingUser.Cognome = user.Cognome;

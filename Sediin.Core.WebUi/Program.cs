@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
 using Sediin.Core.DataAccess.Repository;
@@ -9,14 +10,15 @@ using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Data;
 using Sediin.Core.Identity.Entities;
+using Sediin.Core.Identity.Mapping;
 using Sediin.Core.Identity.Repository;
 using Sediin.Core.Mvc.Helpers.Middleware;
+using Sediin.Core.TemplateConfiguration;
 using Sediin.Core.WebUi.Areas;
 using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Filters;
 using Serilog;
 using System.Globalization;
-using Sediin.Core.Identity.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +78,13 @@ builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddSingleton<IBaseConfiguration>(provider =>
+{
+    var env = provider.GetRequiredService<IWebHostEnvironment>();
+    var pathToJson = Path.Combine(env.WebRootPath, "json", "config.json");
+    return new BaseConfiguration(pathToJson);
+});
 
 //--------------------------------------------------------
 //  AUTO MAPPER

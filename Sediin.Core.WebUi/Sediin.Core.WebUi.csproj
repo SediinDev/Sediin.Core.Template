@@ -35,6 +35,7 @@
     <ProjectReference Include="..\Sediin.Core.Helpers\Sediin.Core.Helpers.csproj" />
     <ProjectReference Include="..\Sediin.Core.Identity\Sediin.Core.Identity.csproj" />
     <ProjectReference Include="..\Sediin.Core.Mvc.Helpers\Sediin.Core.Mvc.Helpers.csproj" />
+    <ProjectReference Include="..\Sediin.Core.TemplateConfiguration\Sediin.Core.TemplateConfiguration.csproj" />
   </ItemGroup>
 
 </Project>
