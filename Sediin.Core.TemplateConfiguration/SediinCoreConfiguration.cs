@@ -32,7 +32,7 @@ namespace Sediin.Core.TemplateConfiguration
             _jsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                //PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
         }
 

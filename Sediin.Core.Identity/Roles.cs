@@ -2,7 +2,9 @@
 {
     public enum Roles
     {
-        Administrator = 0,
+        SuperAdmin,
+        Admin,
+        Operatore,
     };
 
 }

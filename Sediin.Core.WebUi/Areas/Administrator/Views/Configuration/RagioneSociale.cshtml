@@ -1,0 +1,145 @@
+﻿@model Sediin.Core.TemplateConfiguration.Models.RagioneSociale
+@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
+
+<ricerca-modulo header-text="Ragione Sociale"></ricerca-modulo>
+
+<ajax-form asp-action="RagioneSociale"
+           asp-controller="Configuration"
+           on-begin="alertWaid()"
+           on-success="toastSuccess(data); alertClose();"
+           on-failure="handleError">
+
+    <div class="form-horizontal row mt-4">
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Nome" } })
+
+            @Html.ValidationMessageFor(model => model.Nome, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.NomeBreve, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.NomeBreve, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "NomeBreve" } })
+
+            @Html.ValidationMessageFor(model => model.NomeBreve, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Regione, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Regione, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Regione" } })
+
+            @Html.ValidationMessageFor(model => model.Regione, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Provincia, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Provincia, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Provincia" } })
+
+            @Html.ValidationMessageFor(model => model.Provincia, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Indirizzo, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Indirizzo, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Indirizzo" } })
+
+            @Html.ValidationMessageFor(model => model.Indirizzo, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Citta, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Citta, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Citta" } })
+
+            @Html.ValidationMessageFor(model => model.Citta, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Cap, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Cap, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Cap" } })
+
+            @Html.ValidationMessageFor(model => model.Cap, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Telefono, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Telefono, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Telefono" } })
+
+            @Html.ValidationMessageFor(model => model.Telefono, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Fax" } })
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Email" } })
+
+            @Html.ValidationMessageFor(model => model.Email, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Pec, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.Pec, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "Pec" } })
+
+            @Html.ValidationMessageFor(model => model.Pec, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.CodiceFiscale, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.CodiceFiscale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "CodiceFiscale" } })
+
+            @Html.ValidationMessageFor(model => model.CodiceFiscale, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.PartitaIva, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.PartitaIva, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "PartitaIva" } })
+
+            @Html.ValidationMessageFor(model => model.PartitaIva, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.SitoWeb, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.SitoWeb, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "SitoWeb" } })
+
+            @Html.ValidationMessageFor(model => model.SitoWeb, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.UriPortale, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.UriPortale, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "UriPortale" } })
+
+            @Html.ValidationMessageFor(model => model.UriPortale, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.LogoBase64, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.LogoBase64, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "LogoBase64" } })
+
+            @Html.ValidationMessageFor(model => model.LogoBase64, "")
+        </div>
+
+    </div>
+
+    <div class="text-center" style="margin-top:40px">
+        <button type="submit" class="btn btn-info">Aggiorna</button>
+    </div>
+
+</ajax-form>

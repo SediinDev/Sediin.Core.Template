@@ -11,14 +11,14 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
     [AuthorizeSediin]
     public class UtentiController : BaseController
     {
-        [AuthorizeSediin(Roles = [Identity.Roles.Administrator])]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin] )]
         public IActionResult Ricerca()
         {
             return AjaxView();
         }
 
         [HttpPost]
-        [AuthorizeSediin(Roles = [Identity.Roles.Administrator])]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> Ricerca(UtentiRicercaVM filtri, int? page = 1)
         {
             var _result = await _unitOfWorkIdentity.AuthService.GetUsersPagedAsync(filtri, page.GetValueOrDefault(), 10);
@@ -28,7 +28,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
             return AjaxView("RicercaList", resultModel);
         }
 
-        [AuthorizeSediin(Roles = [Identity.Roles.Administrator])]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> RicercaExcel(UtentiRicercaVM filtri)
         {
             var _result = await _unitOfWorkIdentity.AuthService.GetAllUsersAsync(filtri);
@@ -36,7 +36,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         }
 
         [RedirectIfNotAjax]
-        [AuthorizeSediin(Roles = [Identity.Roles.Administrator])]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> ModificaUtente(string id)
         {
             var user = await _unitOfWorkIdentity.AuthService.GetUserById(id);
@@ -50,7 +50,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
 
         [HttpPost]
         [RedirectIfNotAjax]
-        [AuthorizeSediin(Roles = [Identity.Roles.Administrator])]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> ModificaUtente(SediinIdentityUser_DTO model)
         {
             await _unitOfWorkIdentity.AuthService.UpdateUser(model);

@@ -1,0 +1,99 @@
+﻿@model Sediin.Core.TemplateConfiguration.Models.EmailSettings
+@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
+
+<ricerca-modulo header-text="Email Settings"></ricerca-modulo>
+
+
+<ajax-form asp-action="EmailSettings"
+           asp-controller="Configuration"
+           on-begin="alertWaid()"
+           on-success="toastSuccess(data); alertClose();"
+           on-failure="handleError">
+
+    <div class="form-horizontal row mt-4">
+
+        <div class="col-md-6 form-group">
+
+            @Html.LabelFor(model => model.FromName, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.FromName, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "FromName" } })
+
+            @Html.ValidationMessageFor(model => model.FromName, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+
+            @Html.LabelFor(model => model.FromEmail, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.FromEmail, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "FromEmail" } })
+
+            @Html.ValidationMessageFor(model => model.FromEmail, "")
+        </div>
+
+        <div class="col-md-6  form-group">
+            @Html.LabelFor(model => model.SmtpServer, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.SmtpServer, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "SmtpServer" } })
+
+            @Html.ValidationMessageFor(model => model.SmtpServer, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.SmtpPort, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.SmtpPort, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "SmtpPort" } })
+
+            @Html.ValidationMessageFor(model => model.SmtpPort, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+
+            @Html.LabelFor(model => model.SmtpUsername, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.SmtpUsername, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "SmtpUsername" } })
+
+            @Html.ValidationMessageFor(model => model.SmtpUsername, "")
+        </div>
+
+        <div class="col-md-6 form-group">
+
+            @Html.LabelFor(model => model.SmtpPassword, htmlAttributes: new { @class = "control-label" })
+
+            @Html.EditorFor(model => model.SmtpPassword, new { htmlAttributes = new { @class = "form-control col-md-12", placeholder = "SmtpPassword" } })
+
+            @Html.ValidationMessageFor(model => model.SmtpPassword, "")
+        </div>
+        
+        <div class="col-md-6">
+
+            <div class="form-check form-switch">
+                @Html.CheckBoxFor(model => model.SmtpServerAutentication, new { @class = "form-check-input" })
+                <label class="form-check-label fw-bold ml-2" for="SmtpServerAutentication">Smtp Server authentication</label>
+            </div>
+            @Html.ValidationMessageFor(model => model.SmtpServerAutentication, "")
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="form-check form-switch">
+                @Html.CheckBoxFor(model => model.SmtpServerUseSSL, new { @class = "form-check-input" })
+                <label class="form-check-label fw-bold ml-2" for="SmtpServerUseSSL">Smtp Server use SSL</label>
+            </div>
+
+            @Html.ValidationMessageFor(model => model.SmtpServerUseSSL, "")
+        </div>
+
+    </div>
+
+    <div class="text-center" style="margin-top:40px">
+        <button type="submit" class="btn btn-info">Aggiorna</button>
+    </div>
+
+</ajax-form>
+
+
+
+
+

@@ -136,7 +136,7 @@ namespace Sediin.Core.WebUi.Controllers
 
                 _unitOfWorkIdentity.AuthService.OnSendMailConfermaEmail += AuthService_OnSendMailConfermaEmail;
 
-                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.Administrator.ToString());
+                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.SuperAdmin.ToString());
 
                 return Json(new
                 {
