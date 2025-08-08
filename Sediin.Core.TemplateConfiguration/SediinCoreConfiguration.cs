@@ -7,7 +7,7 @@ namespace Sediin.Core.TemplateConfiguration
     public interface ISediinCoreConfiguration
     {
         /// <summary>
-        /// Prende da MemoryCache (TTL 15 minuti)
+        /// Prende da MemoryCache
         /// </summary>
         Task<SediinConfiguration> Get();
         Task Save(SediinConfiguration config);
