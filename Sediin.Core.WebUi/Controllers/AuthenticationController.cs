@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Sediin.Core.WebUi.Areas.TemplateEmail.Models;
 using Sediin.Core.WebUi.Filters;
 using Sediin.Core.WebUi.Models;
@@ -136,7 +137,7 @@ namespace Sediin.Core.WebUi.Controllers
 
                 _unitOfWorkIdentity.AuthService.OnSendMailConfermaEmail += AuthService_OnSendMailConfermaEmail;
 
-                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.SuperAdmin.ToString());
+                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.SuperAdmin);
 
                 return Json(new
                 {
@@ -170,7 +171,7 @@ namespace Sediin.Core.WebUi.Controllers
             string _url = CreateUrl("ResetPassword", userId, token);
             string subject = "Cambio password";
 
-            string htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
+            string htmlBody = await RenderViewToStringAsync(
                     "Authentication/ResetPassword", new ResetPasswordModel
                     {
                         Url = _url,
@@ -187,7 +188,7 @@ namespace Sediin.Core.WebUi.Controllers
             string _url = CreateUrl("ConfirmEmail", userId, token);
             string subject = "Conferma email";
 
-            string htmlBody = await _razorViewRenderer.RenderViewToStringAsync(
+            string htmlBody = await RenderViewToStringAsync(
                    "Authentication/ConfirmEmail", new ConfirmEmailModel
                    {
                        Url = _url,

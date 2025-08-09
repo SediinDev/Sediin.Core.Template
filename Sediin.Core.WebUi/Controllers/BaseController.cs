@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
-using Sediin.Core.Identity.Entities;
+using Sediin.Core.Mvc.Helpers.PagingHelpers;
 using Sediin.Core.TemplateConfiguration;
 using System.Text;
 
@@ -20,12 +20,12 @@ public class BaseController : Controller
     protected IMapper _autoMapper;
     protected ISediinCoreConfiguration _sediinConfiguration;
 
-    #pragma warning disable
+#pragma warning disable
     public BaseController()
     {
     }
 
-    #pragma warning disable
+#pragma warning disable
     // Metodo eseguito prima di ogni azione, qui risolvi i servizi
     public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
     {
@@ -112,8 +112,18 @@ public class BaseController : Controller
         return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName + ".xlsx");
     }
 
-    public async Task<SediinIdentityUser> GetUser()
+    internal T GetModelWithPaging<T, TItem>(int? page, IEnumerable<TItem>? query, object? filtri, int totalCount, int pageSize) where T : new()
     {
-        return await _unitOfWorkIdentity.AuthService.GetUserByUsername(User.Identity.Name);
+        return (T)PagingHelper.GetModelWithPaging<T, TItem>(page, query, filtri, totalCount, pageSize);
+    }
+
+    internal T GetModelWithPaging<T, TItem>(int? page, IEnumerable<TItem>? query, object? filtri, int pageSize) where T : new()
+    {
+        return (T)PagingHelper.GetModelWithPaging<T, TItem>(page, query, filtri, pageSize);
+    }
+
+    internal async Task<string> RenderViewToStringAsync(string view, object model)
+    {
+        return await _razorViewRenderer.RenderViewToStringAsync(view, model);
     }
 }

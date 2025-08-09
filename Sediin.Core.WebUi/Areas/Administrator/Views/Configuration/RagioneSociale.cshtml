@@ -2,55 +2,7 @@
 @using Sediin.Core.Mvc.Helpers.TagHelpers
 @addTagHelper *, Sediin.Core.Mvc.Helpers
 <style>
-    .custom-file {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: 2.5rem;
-        margin-bottom: 0;
-    }
-
-    .custom-file-input {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-        height: 2.5rem;
-        margin: 0;
-        opacity: 0; /* Nasconde l’input originale */
-        cursor: pointer;
-    }
-
-    .custom-file-label {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 2.5rem;
-        padding: 0.5rem 1rem;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    /* Cambia colore al passaggio del mouse */
-    .custom-file-input:focus ~ .custom-file-label {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    }
-
-    /* Quando un file è selezionato */
-    .custom-file-input:lang(en) ~ .custom-file-label::after {
-        content: "Sfoglia";
-    }
-
-    /* Puoi personalizzare il testo "Sfoglia" o sostituirlo */
+   
 
 </style>
 <ricerca-modulo header-text="Ragione Sociale"></ricerca-modulo>
@@ -168,6 +120,7 @@
                        name="Logo"
                        accept=".png,.jpg,.jpeg,.pdf"
                        onchange="handleFileChange(this, 'LogoBase64', 'imagelogo', 'LogoError')" />
+
                 <label class="custom-file-label" for="customFile">Scegli file</label>
                 <label class="badge bg-info">Formati: PNG, JPG, JPEG, PDF (max 2MB)</label>
 

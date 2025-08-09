@@ -30,7 +30,7 @@ namespace Sediin.Core.Identity.Abstract
 
         Task ResetPassword(string username, string token, string password);
 
-        Task CreateUser(string username, string email, string nome, string cognome, string role);
+        Task CreateUser(string username, string email, string nome, string cognome, Roles role);
         
         Task ConfirmEmail(string userId, string code);
 

@@ -10,14 +10,13 @@
                     const id = $(target).attr('data-valmsg-for');
                     if (id) {
                         const input = $("#" + id);
-                        const label = $("label[for='" + id + "']").text().replace("*", "").trim();
+                        const labelText = getCleanLabelText(id);
+
                         const requiredMsg = input.attr("data-val-required");
                         const emailMsg = input.attr("data-val-email");
                         const lengthMsg = input.attr("data-val-length");
                         const regexMsg = input.attr("data-val-regex");
-                        // ... aggiungi altre traduzioni se vuoi
 
-                        // Sostituisco solo se il messaggio attuale è in inglese o diverso
                         let newMessage = null;
                         const currentMsg = $(target).text();
 
@@ -46,9 +45,46 @@
     });
 });
 
+// Funzione per leggere testo pulito del label (senza figli, asterisco e duplicati consecutivi)
+//function getCleanLabelText(id) {
+//    const label = $("label[for='" + id + "']");
+//    if (!label.length) return "";
+//    let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
+//    // Rimuove duplicati consecutivi, tipo CognomeCognome → Cognome
+//    text = text.replace(/(\b\w+\b)\1+/gi, "$1");
+//    return text;
+//}
+
+function getCleanLabelText(id) {
+    const label = $("label[for='" + id + "']");
+    if (!label.length) return "";
+    let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
+
+    // Se la lunghezza è pari, prova a dividere a metà e confrontare le due metà
+    if (text.length % 2 === 0) {
+        const half = text.length / 2;
+        const part1 = text.substring(0, half);
+        const part2 = text.substring(half);
+        if (part1 === part2) {
+            text = part1; // rimuovo la seconda metà duplicata
+        }
+    }
+
+    // Rimuove duplicati consecutivi di parole (es. CognomeCognome -> Cognome)
+    text = text.replace(/(\b\w+\b)\1+/gi, "$1");
+
+    return text;
+}
+
+
+// Rimuove parole duplicate consecutive in una stringa
+function removeDuplicateWords(str) {
+    if (!str) return str;
+    return str.replace(/(\b\w+\b)\1+/gi, "$1");
+}
 
 function customValidatorOnBegin() {
-    // Traduci messaggi data-val in italiano dinamicamente
+    // Traduci messaggi data-val in italiano dinamicamente, solo se diverso da quello già presente
     function translateDataValMessages($el, labelText) {
         const translations = {
             "data-val-required": `Il campo ${labelText} è obbligatorio.`,
@@ -65,7 +101,15 @@ function customValidatorOnBegin() {
 
         Object.keys(translations).forEach(function (attr) {
             if ($el.attr(attr) !== undefined && translations[attr] !== null) {
-                $el.attr(attr, translations[attr]);
+                let currentVal = $el.attr(attr);
+                let newVal = translations[attr];
+
+                currentVal = removeDuplicateWords(currentVal);
+                newVal = removeDuplicateWords(newVal);
+
+                if (currentVal !== newVal) {
+                    $el.attr(attr, newVal);
+                }
             }
         });
 
@@ -81,12 +125,15 @@ function customValidatorOnBegin() {
 
             let otherLabel = otherId;
             if (otherId) {
-                otherLabel = $("label[for='" + otherId + "']").text().replace("*", "").trim() || otherId;
+                otherLabel = getCleanLabelText(otherId) || otherId;
             }
 
             const thisLabel = labelText || thisId;
+            const equalToMsg = `Il campo ${thisLabel} deve corrispondere al campo ${otherLabel}.`;
 
-            $el.attr("data-val-equalto", `Il campo ${thisLabel} deve corrispondere al campo ${otherLabel}.`);
+            if ($el.attr("data-val-equalto") !== equalToMsg) {
+                $el.attr("data-val-equalto", equalToMsg);
+            }
         }
     }
 
@@ -97,8 +144,12 @@ function customValidatorOnBegin() {
         }
         const id = $(this).attr("id");
         if (id) {
-            const label = $("label[for='" + id + "']").text().replace("*", "").trim();
-            if (label) translateDataValMessages($(this), label);
+            const labelText = getCleanLabelText(id);
+            if (labelText) translateDataValMessages($(this), labelText);
+
+            if ($(this).attr("type") === "password") {
+                $(this).val("");
+            }
         }
     });
 
@@ -115,11 +166,8 @@ function customValidatorOnBegin() {
         const input = $group.find("input[type='text'], input[type='password'], input[type='search'], input:not([type]), textarea").first();
         if (!input.length || input.attr("placeholder")) return;
 
-        const label = $group.find("label").first();
-        if (label.length > 0) {
-            const labelText = label.text().replace("*", "").trim();
-            if (labelText) input.attr("placeholder", labelText);
-        }
+        const labelText = getCleanLabelText(input.attr("id"));
+        if (labelText) input.attr("placeholder", labelText);
     });
 
     // Validazione iniziale di tutti i campi (text, password, textarea)
@@ -225,6 +273,7 @@ function setWarningValidation() {
         clearFieldMessage(id);
 
         if (!requiredElement(id)) {
+            // Non richiesto → stato success (verde)
             removeValidationError(id);
             return;
         }
@@ -233,9 +282,11 @@ function setWarningValidation() {
             addAsteriskToLabel(id);
 
             if (input.val() === "") {
-                addValidationError(id); // mostra errore rosso se vuoto
+                // Campo richiesto vuoto → stato warning (giallo)
+                addValidationWarning(id);
                 resetButtonsState($group);
             } else {
+                // Campo richiesto con valore → stato success (verde)
                 removeValidationError(id);
                 resetButtonsState($group);
             }
@@ -245,8 +296,15 @@ function setWarningValidation() {
 
 function addAsteriskToLabel(id) {
     const label = $("label[for='" + id + "']");
-    if (label.length && !label.html().includes("*")) {
-        label.append("<span class='text-danger'> *</span>");
+    if (label.length) {
+        // controlla se c'è già uno span con classe text-danger e testo esatto "*"
+        const hasAsterisk = label.children("span.text-danger").filter(function () {
+            return $(this).text().trim() === "*";
+        }).length > 0;
+
+        if (!hasAsterisk) {
+            label.append("<span class='text-danger'> *</span>");
+        }
     }
 }
 

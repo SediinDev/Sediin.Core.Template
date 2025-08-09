@@ -2,7 +2,6 @@
 using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Entities.DTO;
 using Sediin.Core.Identity.Models;
-using Sediin.Core.Mvc.Helpers.PagingHelpers;
 using Sediin.Core.WebUi.Areas.Administrator.Models;
 using Sediin.Core.WebUi.Filters;
 
@@ -23,10 +22,11 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         {
             var _result = await _unitOfWorkIdentity.AuthService.GetUsersPagedAsync(filtri, page.GetValueOrDefault(), 10);
 
-            var resultModel = PagingHelper.GetModelWithPaging<UtentiVM, SediinIdentityUser>(page, _result.Users, filtri, _result.TotalCount, 10);
+            var resultModel = GetModelWithPaging<UtentiVM, SediinIdentityUser>(page, _result.Users, filtri, _result.TotalCount, 10);
 
             return AjaxView("RicercaList", resultModel);
         }
+
 
         [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> RicercaExcel(UtentiRicercaVM filtri)

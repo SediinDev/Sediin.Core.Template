@@ -88,7 +88,7 @@ namespace Sediin.Core.Identity.Repository
             }
         }
 
-        public async Task CreateUser(string username, string email, string nome, string cognome, string rolename)
+        public async Task CreateUser(string username, string email, string nome, string cognome, Roles rolename)
         {
             if (Debugger.IsAttached)
             {
@@ -96,7 +96,7 @@ namespace Sediin.Core.Identity.Repository
                 {
                     if (await _roleManager.FindByNameAsync(_rolename.ToString()) == null)
                     {
-                        await _roleManager.CreateAsync(new IdentityRole { Name = rolename, NormalizedName = _rolename.ToString() });
+                        await _roleManager.CreateAsync(new IdentityRole { Name = rolename.ToString(), NormalizedName = _rolename.ToString() });
                     }
                 }
             }
@@ -104,7 +104,7 @@ namespace Sediin.Core.Identity.Repository
             if (await _userManager.FindByNameAsync(username) != null)
                 throw new Exception("Username già esistente");
 
-            var role = await _roleManager.FindByNameAsync(rolename)
+            var role = await _roleManager.FindByNameAsync(rolename.ToString())
                 ?? throw new Exception($"Il ruolo '{rolename}' non esiste.");
 
             var user = new SediinIdentityUser
@@ -125,7 +125,7 @@ namespace Sediin.Core.Identity.Repository
             if (!createResult.Succeeded)
                 throw new Exception("Non è stato possibile creare l'utente");
 
-            var roleResult = await _userManager.AddToRoleAsync(user, rolename);
+            var roleResult = await _userManager.AddToRoleAsync(user, rolename.ToString());
             if (!roleResult.Succeeded)
                 throw new Exception("Non è stato possibile assegnare il ruolo all'utente");
 
