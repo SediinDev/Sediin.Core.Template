@@ -493,8 +493,8 @@ a.link-black {
 
 
 .dropdown-menu-gray {
-    --bs-dropdown-color: #98999a;
-    --bs-dropdown-bg: #98999a;
+    --bs-dropdown-color: #b6b8b9;
+    --bs-dropdown-bg: #b6b8b9;
     --bs-dropdown-border-color: var( --bs-border-color-translucent);
     --bs-dropdown-link-color: black;
     --bs-dropdown-link-hover-color: black;
@@ -532,54 +532,5 @@ a.link-black {
     --bs-dropdown-link-active-bg: #0d6efd;
     --bs-dropdown-link-disabled-color: #adb5bd;
     --bs-dropdown-header-color: #adb5bd;
-}
-
-
-.btn-blue {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: #082c45;
-    --bs-btn-border-color: #0a4d7c;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #0a4d7c;
-    --bs-btn-hover-border-color: #082c45;
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #082c45;
-    --bs-btn-active-border-color: #0a4d7c;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #082c45;
-    --bs-btn-disabled-border-color: #0a4d7c;
-}
-
-.btn-verde {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: #084b26;
-    --bs-btn-border-color: #15713e;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #15713e;
-    --bs-btn-hover-border-color: #084b26;
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #084b26;
-    --bs-btn-active-border-color: #15713e;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #084b26;
-    --bs-btn-disabled-border-color: #15713e;
-}
-
-.table-verde {
-    --bs-table-color: #fff;
-    --bs-table-bg: #084b26;
-    --bs-table-border-color: #a6b5cc;
-    --bs-table-striped-bg: #c5d7f2;
-    --bs-table-striped-color: #000;
-    --bs-table-active-bg: #bacbe6;
-    --bs-table-active-color: #000;
-    --bs-table-hover-bg: #bfd1ec;
-    --bs-table-hover-color: #000;
-    color: var(--bs-table-color);
-    border-color: var(--bs-table-border-color);
 }
 

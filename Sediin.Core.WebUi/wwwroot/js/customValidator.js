@@ -43,6 +43,31 @@
     $("[data-valmsg-for]").each(function () {
         observer.observe(this, { childList: true });
     });
+
+    // Gestione reset form per pulire errori e stati
+    $("form").on("reset", function () {
+        // Aspetta qualche ms per permettere al reset di avvenire
+        setTimeout(() => {
+            // Pulisci messaggi errore
+            $("[data-valmsg-for]").each(function () {
+                $(this).html("").removeClass("field-validation-error");
+            });
+
+            // Pulisci classi di stato (has-danger, has-warning, has-success e classi input)
+            $(this).find("input, textarea, select").each(function () {
+                const id = $(this).attr("id");
+                if (!id) return;
+                // Rimuovi classi errore/avviso/successo
+                customValidatorOnBegin(id);
+            });
+        }, 10);
+
+        removeValidClassFromCheckboxes();
+    });
+});
+
+$("form button[type='submit'], form input[type='submit']").on("click", function () {
+    removeValidClassFromCheckboxes()
 });
 
 // Funzione per leggere testo pulito del label (senza figli, asterisco e duplicati consecutivi)
@@ -172,10 +197,14 @@ function customValidatorOnBegin() {
 
     // Validazione iniziale di tutti i campi (text, password, textarea)
     setWarningValidation();
-
+    
     // Valida ogni volta che cambia il valore di un campo text, password, textarea
     $("form .form-group").find("input[type='text'], input[type='password'], textarea").on("input change", function () {
         validateInputField($(this).attr("id"));
+    });
+
+    $("form .form-check input[type='checkbox']").on("change", function () {
+        removeValidClassFromCheckboxes();
     });
 }
 
@@ -311,4 +340,10 @@ function addAsteriskToLabel(id) {
 function resetButtonsState($group) {
     $group.find("input[type='submit'], input[type='button'], button")
         .removeClass("form-control-warning input-validation-error form-control-success");
+}
+
+function removeValidClassFromCheckboxes() {
+    setTimeout(function () {
+        $("form .form-check input[type='checkbox']").removeClass("valid");
+    });
 }

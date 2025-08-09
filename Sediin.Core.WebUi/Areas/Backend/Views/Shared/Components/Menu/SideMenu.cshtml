@@ -1,8 +1,9 @@
-﻿@inject IConfiguration Configuration
+﻿@using Sediin.Core.TemplateConfiguration
+@inject ISediinCoreConfiguration Configuration
 @model IEnumerable<Sediin.Core.DataAccess.Entities.Menu>
 
 @functions
-    {
+{
 
     public void CalcolaPosition(int codmenu, ref int index)
     {
@@ -117,61 +118,61 @@
     var _menupadre = Model.Where(x => (x.CodmenuPadre == 1));
 }
 
+    <ul class="list-unstyled components sidemenubackend">
 
-<ul class="list-unstyled components sidemenubackend">
+        <li class="sidebar-header text-center mt-4" style="min-height:100px">
 
-    <li class="sidebar-header text-center mt-4" style="min-height:100px">
+            @*         <small class="fw-bold" style="color:darkblue;">
+            @Configuration.Get().Result.RagioneSociale.Nome
+        </small>
+ *@
+            <div class="text-center">
+                <img id="sediinTemplateImageLogo" class="mt-2 mb-2"
+                     style="border-radius: 2%; width: 125px; mix-blend-mode: multiply;"
+                     src="@Configuration.Get().Result.RagioneSociale.LogoBase64" />
 
-        <small class="fw-bold" style="color:darkblue;">@Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()</small>
 
-        <div class="text-center">
-            <img id="sediinTemplateImageLogo" class="mt-2 mb-2" style="border-radius: 2%; width: 125px; mix-blend-mode: multiply;"
-                 src="~/images/logo.png" />
-        </div>
+            </div>
 
-    </li>
-
-    <li class="sidebarli">
-        <a href="/Backend/Home"
-           onclick="loadContent('/Backend/Home'); return false">
-            <i style="margin-left:15px !important" class="fas fa-home mr-2"></i>Home
-        </a>
-    </li>
-    @foreach (var item in _menupadre.ToList())
-    {
-        <li class="sidebarli">
-            @Html.Raw(GetMenu(item.Codmenu))
         </li>
-    }
-</ul>
 
-@* @if (User.IsInRole(Roles.Admin.ToString()))
-{
-    <div class="text-center mb-5">
-        <a href="/Admin/Home/Useronline" data-ajax="true"
-           data-ajax-success="alertClose();showModal('Utenti online', data)"
-           data-ajax-begin="alertWaid()">
- *@@*             <small class="mr-2 fw-bold text-dark">
-                Utenti online: <span id="useronlinestatus">
-                    @Sediin.Core.WebUi.Filters.UserOnlineAttribute.Useronline.Select(x => x.Item1).Distinct().Count()
-                </span>
-            </small>
- *@       @*  </a>
-    </div> *@
+        <li class="sidebarli">
+            <a href="/Backend/Home"
+               onclick="loadContent('/Backend/Home'); return false">
+                <i style="margin-left:15px !important" class="fas fa-home mr-2"></i>Home
+            </a>
+        </li>
+        @foreach (var item in _menupadre.ToList())
+        {
+            <li class="sidebarli">
+                @Html.Raw(GetMenu(item.Codmenu))
+            </li>
+        }
+    </ul>
 
+
+
+<a class="nav-link" href="javascript:void(0)"
+   id="sidebarCollapse" style="color:white">
+    <i class="fas fa-sliders-h marginMenuIcon"></i>
+    <span id="sidebarCollapseText">Chiudi menu</span>
+</a>
+
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).tooltip("hide");
+                if ($("#sidebar").hasClass("active")) {
+                    $('#sidebarCollapseText').text("Apri menu");
+                }
+                else {
+                    $('#sidebarCollapseText').text("Chiudi menu");
+                }
+            });
+        });
+    </script>
 }
-
-<script>
-    //$(document).ready(function () {
-        // $('#sidebarCollapse').on('click', function () {
-        //     $('#sidebar').toggleClass('active');
-        //     $(this).tooltip("hide");
-        //     if ($("#sidebar").hasClass("active")) {
-        //         $('#sidebarCollapseText').text("Apri menu");
-        //     }
-        //     else {
-        //         $('#sidebarCollapseText').text("Chiudi menu");
-        //     }
-        // });
-    //});
-</script>

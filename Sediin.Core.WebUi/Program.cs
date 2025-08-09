@@ -73,6 +73,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 //--------------------------------------------------------
 //  DEPENDENCY INJECTION
 //--------------------------------------------------------
+//builder.Services.AddScoped<ISediinCoreConfiguration, SediinCoreConfiguration>();
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
 builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();

@@ -118,14 +118,16 @@
                     class="custom-file-input"
                        id="Logo"
                        name="Logo"
-                       accept=".png,.jpg,.jpeg,.pdf"
-                       onchange="handleFileChange(this, 'LogoBase64', 'imagelogo', 'LogoError')" />
+                       accept=".png,.jpg,.jpeg"
+                       onchange="handleFileChange(this, 'LogoBase64', 'imagelogo', 'LogoBase64-error')" />
 
                 <label class="custom-file-label" for="customFile">Scegli file</label>
-                <label class="badge bg-info">Formati: PNG, JPG, JPEG, PDF (max 2MB)</label>
+                <label class="badge bg-info">Formati: PNG, JPG, JPEG (max 2MB)</label>
 
                 @Html.TextBoxFor(model => model.LogoBase64, new { id = "LogoBase64" })
-                <span class="text-danger field-validation-error" id="LogoError" data-valmsg-for="LogoBase64"></span>
+                @Html.ValidationMessageFor(model => model.LogoBase64)
+@*                 <span class="text-danger field-validation-error" id="LogoError" data-valmsg-for="LogoBase64"></span>
+ *@
             </div>
 
             <img id="imagelogo"
@@ -135,19 +137,22 @@
         </div>
 
     </div>
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-info">Aggiorna</button>
+
+    <hr />
+
+    <div class="text-center" style="margin-top:40px">
+        <button type="submit" class="btn btn-info w-25">Aggiorna</button>
+        <button type="reset" class="btn btn-danger w-25">Reimposta</button>
     </div>
 
 </ajax-form>
 
 
 @section Scripts {
-    <script src="~/js/utilities.js"></script> <!-- definisce validateFileType, validateFileSize -->
 
     <script>
         function handleFileChange(input, hiddenInputId, imagePreviewId, errorSpanId) {
-            const allowedExtensions = [".png", ".jpg", ".jpeg", ".pdf"];
+            const allowedExtensions = [".png", ".jpg", ".jpeg"];
             const maxSizeMB = 2;
 
             const file = input.files[0];
