@@ -234,7 +234,7 @@ function setPlaceholdersFromLabels() {
         if (inputId) {
             const label = $("label[for='" + inputId + "']");
             if (label.length) {
-                labelText = label.text().replace(/\*/g, "").trim();
+                labelText = label.text().replace(/\*/g, "").trim(); // qui rimuovo asterischi dal testo
             }
         }
 
@@ -242,7 +242,10 @@ function setPlaceholdersFromLabels() {
         if (!labelText) {
             const label = $group.find("label").first();
             if (label.length) {
-                labelText = label.text().replace(/\*/g, "").trim();
+                // Qui NON rimuovo asterisco, prendo il testo così com'è (ma rimuovo solo eventuali spazi)
+                labelText = label.text().trim();
+                // Se vuoi rimuovere asterisco qui, togli la riga qui sopra e usa questa:
+                // labelText = label.text().replace(/\*/g, "").trim();
             }
         }
 
