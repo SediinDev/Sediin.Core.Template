@@ -1,8 +1,6 @@
 /*pino tuzzolino*/
 /*css da custoizzare a piacere*/
 
-/* login registrazione e change password*/
-
 .email-confirmation-container {
     background: #f7f9fc;
 }
@@ -12,8 +10,6 @@
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
-
-
 
 .login-container {
     background: #f7f9fc;
@@ -87,7 +83,7 @@ footer {
     }
 
         #sidebar ul li a:hover {
-            color:blue;
+            color:black;
             background: #eee;
             border-top: 1px solid #cacaca;
             border-bottom: 1px solid #cacaca;

@@ -75,6 +75,108 @@
     });
 });
 
+$(document).ready(function () {
+    // Override del metodo equalTo di jQuery Validation per messaggi in italiano
+    if ($.validator) {
+        $.validator.messages.equalTo = function (param, element) {
+            const thisId = $(element).attr("id") || "";
+            let otherId = "";
+
+            if (param) {
+                if (typeof param === "string") {
+                    // param è un selettore, tipo "#Email" o "*.Email"
+                    if (param.startsWith("*.")) {
+                        otherId = param.substring(2);
+                    } else if (param.startsWith("#")) {
+                        otherId = param.substring(1);
+                    } else {
+                        otherId = param;
+                    }
+                } else if (param.selector) {
+                    otherId = param.selector.replace(/^#/, "");
+                }
+            }
+
+            // Funzione per recuperare testo pulito del label
+            function getCleanLabelText(id) {
+                const label = $("label[for='" + id + "']");
+                if (!label.length) return id;
+                let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
+                return text || id;
+            }
+
+            const thisLabel = getCleanLabelText(thisId);
+            const otherLabel = getCleanLabelText(otherId);
+
+            return `Il campo ${thisLabel} deve corrispondere al campo ${otherLabel}.`;
+        };
+    }
+
+    // Funzione per aggiornare data-val-equalto e placeholder
+    function customValidatorOnBegin() {
+        $("form .form-group")
+            .find("input[type='text'], input[type='password'], textarea")
+            .each(function () {
+                if (!$(this).attr("class") || $(this).attr("class").trim() === "") {
+                    $(this).addClass("form-control col-md-12");
+                }
+                const $el = $(this);
+                const id = $el.attr("id");
+                if (!id) return;
+
+                // Aggiorna data-val-required, email, ecc in italiano (tu puoi aggiungere altre traduzioni se vuoi)
+                const labelText = getCleanLabelText(id);
+                if (!labelText) return;
+
+                const translations = {
+                    "data-val-required": `Il campo ${labelText} è obbligatorio.`,
+                    "data-val-email": `Il campo ${labelText} deve contenere un indirizzo email valido.`,
+                    "data-val-length": `Il campo ${labelText} deve rispettare la lunghezza richiesta.`,
+                    "data-val-regex": `Il campo ${labelText} ha un formato non valido.`,
+                    "data-val-date": `Il campo ${labelText} deve essere una data valida.`,
+                    "data-val-number": `Il campo ${labelText} deve essere un numero.`,
+                    "data-val-minlength": `Il campo ${labelText} è troppo corto.`,
+                    "data-val-maxlength": `Il campo ${labelText} è troppo lungo.`,
+                    "data-val-range": `Il campo ${labelText} è fuori dall'intervallo consentito.`,
+                };
+
+                Object.keys(translations).forEach(attr => {
+                    if ($el.attr(attr) !== undefined) {
+                        $el.attr(attr, translations[attr]);
+                    }
+                });
+
+                // Aggiorna data-val-equalto con messaggio italiano personalizzato
+                if ($el.attr("data-val-equalto") !== undefined) {
+                    const otherSelector = $el.attr("data-val-equalto-other");
+                    let otherId = null;
+                    if (otherSelector) {
+                        if (otherSelector.startsWith("*.")) {
+                            otherId = otherSelector.substring(2);
+                        } else if (otherSelector.startsWith("#")) {
+                            otherId = otherSelector.substring(1);
+                        } else {
+                            otherId = otherSelector;
+                        }
+                    }
+
+                    const otherLabel = otherId ? getCleanLabelText(otherId) : otherId;
+                    const equalToMsg = `Il campo ${labelText} deve corrispondere al campo ${otherLabel}.`;
+                    $el.attr("data-val-equalto", equalToMsg);
+                }
+            });
+    }
+
+    function getCleanLabelText(id) {
+        const label = $("label[for='" + id + "']");
+        if (!label.length) return id;
+        let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
+        return text || id;
+    }
+
+    // Avvia la funzione per aggiornare messaggi e placeholder
+    customValidatorOnBegin();
+});
 
 $("form button[type='submit'], form input[type='submit']").on("click", function () {
     removeValidClassFromCheckboxes();
