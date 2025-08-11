@@ -124,7 +124,7 @@
                 <label class="custom-file-label" for="customFile">Scegli file</label>
                 <label class="badge bg-info">Formati: PNG, JPG, JPEG (max 2MB)</label>
 
-                @Html.TextBoxFor(model => model.LogoBase64, new { id = "LogoBase64" })
+                @Html.HiddenFor(model => model.LogoBase64, new { id = "LogoBase64" })
                 @Html.ValidationMessageFor(model => model.LogoBase64)
 @*                 <span class="text-danger field-validation-error" id="LogoError" data-valmsg-for="LogoBase64"></span>
  *@

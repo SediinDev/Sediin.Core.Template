@@ -8,9 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\TemplateEmail\Controllers\**" />
+    <Compile Remove="Areas\TemplateEmail\Data\**" />
     <Compile Remove="wwwroot\Json\**" />
+    <Content Remove="Areas\TemplateEmail\Controllers\**" />
+    <Content Remove="Areas\TemplateEmail\Data\**" />
     <Content Remove="wwwroot\Json\**" />
+    <EmbeddedResource Remove="Areas\TemplateEmail\Controllers\**" />
+    <EmbeddedResource Remove="Areas\TemplateEmail\Data\**" />
     <EmbeddedResource Remove="wwwroot\Json\**" />
+    <None Remove="Areas\TemplateEmail\Controllers\**" />
+    <None Remove="Areas\TemplateEmail\Data\**" />
     <None Remove="wwwroot\Json\**" />
   </ItemGroup>
 
@@ -32,8 +40,6 @@
   <ItemGroup>
     <Folder Include="Areas\Administrator\Data\" />
     <Folder Include="Areas\Backend\Views\Data\" />
-    <Folder Include="Areas\TemplateEmail\Controllers\" />
-    <Folder Include="Areas\TemplateEmail\Data\" />
     <Folder Include="wwwroot\lib\jquery-unobtrusive\" />
   </ItemGroup>
 
