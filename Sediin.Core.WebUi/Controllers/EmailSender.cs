@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Sediin.Core.TemplateConfiguration;
-using System;
-using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace Sediin.Core.WebUi.Controllers
 {
