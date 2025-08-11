@@ -21,7 +21,7 @@ function showModalFullscreenOverModal(title, html, id) {
     _modaleHtml += '<div id="' + _id + 'Body" class="modal-body" style="overflow:hidden; min-height:340px">';
     _modaleHtml += html
     _modaleHtml += '</div>';
-    _modaleHtml += '<div class="modal-footer" style="margin-top:20px">';
+    _modaleHtml += '<div class="modal-footer">';
     _modaleHtml += '<button type="button" class="btn btn-danger" onclick="closeModalOverModal(\'' + _id + '\')">';
     _modaleHtml += 'Chiudi</button>';
     _modaleHtml += '</div>';

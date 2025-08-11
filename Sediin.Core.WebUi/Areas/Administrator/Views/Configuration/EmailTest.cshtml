@@ -7,38 +7,16 @@
            on-failure="handleError">
 
     <div class="form-horizontal row mt-4">
-
-
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.EmailTo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-12">
-                @Html.EditorFor(model => model.EmailTo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EmailTo, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("Indirizzo Email")
+            @Html.TextBoxFor(model => model.EmailTo)
+            @Html.ValidationMessageFor(model => model.EmailTo)
         </div>
+    </div>
 
-@*         <div class="form-group">
-            @Html.LabelFor(model => model.Oggetto, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-12">
-                @Html.EditorFor(model => model.Oggetto, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Oggetto, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Messaggio, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-12">
-                @Html.TextAreaFor(model => model.Messaggio, new { @class = "form-control", rows = 5 })
-                @Html.ValidationMessageFor(model => model.Messaggio, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
- *@
-        <div class="modal-footer" style="margin-top:40px">
-            <button type="submit" class="btn btn-info">Invia Email di Test</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="hideModal()">Chiudi finestra</button>
-        </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Invia Email di Test</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="hideModal()">Chiudi finestra</button>
     </div>
 
 </ajax-form>

@@ -152,3 +152,7 @@ button.close {
     -moz-appearance: none;
     appearance: none;
 }
+
+.modal-footer {
+margin-top:40px;
+}

@@ -77,6 +77,9 @@ namespace Sediin.Core.WebUi.Models
         [Display(Name = "Conferma Indirizzo E-Mail")]
         public string? ConfirmEmail { get; set; }
 
+        [Required]
+        public string Ruolo { get; set; }
+
     }
 
 }

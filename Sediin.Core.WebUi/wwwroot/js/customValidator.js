@@ -109,6 +109,15 @@ function removeDuplicateWords(str) {
 }
 
 function customValidatorOnBegin() {
+
+    // Prima cosa: aggiungi asterischi a tutti i campi required
+    $("form .form-group input, form .form-group select, form .form-group textarea").each(function () {
+        const id = $(this).attr("id");
+        if (id && requiredElement(id)) {
+            addAsteriskToLabel(id);
+        }
+    });
+
     // Traduci messaggi data-val in italiano dinamicamente, solo se diverso da quello già presente
     function translateDataValMessages($el, labelText) {
         const translations = {
@@ -369,9 +378,22 @@ function setWarningValidation() {
 }
 
 function addAsteriskToLabel(id) {
-    const label = $("label[for='" + id + "']");
+    const input = $("#" + id);
+    if (!input.length) return;
+
+    // Verifica se è required (HTML5 o data-val-required)
+    const isRequired = input.prop("required") || input.attr("data-val-required") !== undefined;
+    if (!isRequired) return;
+
+    let label = $("label[for='" + id + "']");
+
+    // Se non c'è label con for, cerca la prima nel form-group
+    if (!label.length) {
+        label = input.closest(".form-group").find("label").first();
+    }
+
     if (label.length) {
-        // controlla se c'è già uno span con classe text-danger e testo esatto "*"
+        // Evita duplicati
         const hasAsterisk = label.children("span.text-danger").filter(function () {
             return $(this).text().trim() === "*";
         }).length > 0;

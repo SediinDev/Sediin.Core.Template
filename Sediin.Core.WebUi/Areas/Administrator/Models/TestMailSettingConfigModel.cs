@@ -7,11 +7,5 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Models
         [Required]
         [EmailAddress]
         public string EmailTo { get; set; }
-
-        //[Required]
-        //public string Oggetto { get; set; }
-
-        //[Required]
-        //public string Messaggio { get; set; }
     }
 }
