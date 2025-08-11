@@ -13,37 +13,37 @@
     <div class="form-horizontal row mt-4">
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.FromName)
+            @Html.Label("From Name")
             @Html.TextBoxFor(model => model.FromName)
             @Html.ValidationMessageFor(model => model.FromName)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.FromEmail)
+            @Html.Label("From Email")
             @Html.TextBoxFor(model => model.FromEmail)
             @Html.ValidationMessageFor(model => model.FromEmail)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.SmtpServer)
+            @Html.Label("Smtp Server")
             @Html.TextBoxFor(model => model.SmtpServer)
             @Html.ValidationMessageFor(model => model.SmtpServer)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.SmtpPort)
+            @Html.Label("Smtp Port")
             @Html.TextBoxFor(model => model.SmtpPort)
             @Html.ValidationMessageFor(model => model.SmtpPort)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.SmtpUsername)
+            @Html.Label("Smtp Username")
             @Html.TextBoxFor(model => model.SmtpUsername)
             @Html.ValidationMessageFor(model => model.SmtpUsername)
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.SmtpPassword)
+            @Html.Label("Smtp Password")
             @Html.TextBoxFor(model => model.SmtpPassword)
             @Html.ValidationMessageFor(model => model.SmtpPassword)
         </div>

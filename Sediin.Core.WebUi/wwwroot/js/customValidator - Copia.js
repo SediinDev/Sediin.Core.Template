@@ -3,6 +3,15 @@
     setPlaceholdersFromLabels();
 
     // MutationObserver per intercettare modifiche ai messaggi di errore e tradurli in italiano
+    const normalizeText = (str) => {
+        return str
+            .toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // rimuove accenti
+            .replace(/[.,;:!?"'(){}[\]]/g, "") // rimuove punteggiatura
+            .replace(/\s+/g, " ") // spazi doppi a singolo spazio
+            .trim();
+    };
+
     const observer = new MutationObserver(function (mutationsList) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'childList') {
@@ -20,27 +29,33 @@
                         const equalToMsg = input.attr("data-val-equalto");
 
                         let newMessage = null;
-                        const currentMsg = $(target).text();
+                        const currentMsgRaw = $(target).text();
+                        const currentMsg = normalizeText(currentMsgRaw);
 
-                        if (requiredMsg && currentMsg.toLowerCase().includes("required")) {
+                        // Più parole chiave, incluse varianti inglesi/frasi
+                        if (requiredMsg && (currentMsg.includes("required") || currentMsg.includes("mandatory") || currentMsg.includes("obbligatorio") || currentMsg.includes("campo obbligatorio"))) {
                             newMessage = requiredMsg;
-                        } else if (emailMsg && currentMsg.toLowerCase().includes("email")) {
+                        } else if (emailMsg && (currentMsg.includes("email") || currentMsg.includes("indirizzo email") || currentMsg.includes("valid email"))) {
                             newMessage = emailMsg;
-                        } else if (lengthMsg && currentMsg.toLowerCase().includes("length")) {
+                        } else if (lengthMsg && (currentMsg.includes("length") || currentMsg.includes("lunghezza") || currentMsg.includes("too short") || currentMsg.includes("too long"))) {
                             newMessage = lengthMsg;
-                        } else if (regexMsg && currentMsg.toLowerCase().includes("format")) {
+                        } else if (regexMsg && (currentMsg.includes("format") || currentMsg.includes("formato"))) {
                             newMessage = regexMsg;
                         } else if (equalToMsg && (
-                            currentMsg.toLowerCase().includes("equal") ||
-                            currentMsg.toLowerCase().includes("uguale") ||
-                            currentMsg.toLowerCase().includes("corrisponda") ||
-                            currentMsg.toLowerCase().includes("same") ||
-                            currentMsg.toLowerCase().includes("non corrisponde")
+                            currentMsg.includes("equal") ||
+                            currentMsg.includes("uguale") ||
+                            currentMsg.includes("corrisponda") ||
+                            currentMsg.includes("same") ||
+                            currentMsg.includes("non corrisponde") ||
+                            currentMsg.includes("does not match")
                         )) {
                             newMessage = equalToMsg;
+                        } else {
+                            // fallback: se non riconosci, metti il messaggio data-val-* che hai (preferisci required, poi email, ecc.)
+                            newMessage = requiredMsg || emailMsg || lengthMsg || regexMsg || equalToMsg;
                         }
 
-                        if (newMessage && newMessage !== currentMsg) {
+                        if (newMessage && newMessage !== currentMsgRaw) {
                             $(target).text(newMessage);
                         }
                     }
@@ -48,6 +63,53 @@
             }
         }
     });
+
+
+    //const observer = new MutationObserver(function (mutationsList) {
+    //    for (const mutation of mutationsList) {
+    //        if (mutation.type === 'childList') {
+    //            const target = mutation.target;
+    //            if ($(target).hasClass('field-validation-error')) {
+    //                const id = $(target).attr('data-valmsg-for');
+    //                if (id) {
+    //                    const input = $("#" + id);
+    //                    const labelText = getCleanLabelText(id);
+
+    //                    const requiredMsg = input.attr("data-val-required");
+    //                    const emailMsg = input.attr("data-val-email");
+    //                    const lengthMsg = input.attr("data-val-length");
+    //                    const regexMsg = input.attr("data-val-regex");
+    //                    const equalToMsg = input.attr("data-val-equalto");
+
+    //                    let newMessage = null;
+    //                    const currentMsg = $(target).text();
+
+    //                    if (requiredMsg && currentMsg.toLowerCase().includes("required")) {
+    //                        newMessage = requiredMsg;
+    //                    } else if (emailMsg && currentMsg.toLowerCase().includes("email")) {
+    //                        newMessage = emailMsg;
+    //                    } else if (lengthMsg && currentMsg.toLowerCase().includes("length")) {
+    //                        newMessage = lengthMsg;
+    //                    } else if (regexMsg && currentMsg.toLowerCase().includes("format")) {
+    //                        newMessage = regexMsg;
+    //                    } else if (equalToMsg && (
+    //                        currentMsg.toLowerCase().includes("equal") ||
+    //                        currentMsg.toLowerCase().includes("uguale") ||
+    //                        currentMsg.toLowerCase().includes("corrisponda") ||
+    //                        currentMsg.toLowerCase().includes("same") ||
+    //                        currentMsg.toLowerCase().includes("non corrisponde")
+    //                    )) {
+    //                        newMessage = equalToMsg;
+    //                    }
+
+    //                    if (newMessage && newMessage !== currentMsg) {
+    //                        $(target).text(newMessage);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //});
 
     // Osservo tutti i messaggi di errore nel form
     $("[data-valmsg-for]").each(function () {
@@ -73,114 +135,67 @@
 
         removeValidClassFromCheckboxes();
     });
+
+    translateExistingValidationMessages();
 });
 
-$(document).ready(function () {
-    // Override del metodo equalTo di jQuery Validation per messaggi in italiano
-    if ($.validator) {
-        $.validator.messages.equalTo = function (param, element) {
-            const thisId = $(element).attr("id") || "";
-            let otherId = "";
-
-            if (param) {
-                if (typeof param === "string") {
-                    // param è un selettore, tipo "#Email" o "*.Email"
-                    if (param.startsWith("*.")) {
-                        otherId = param.substring(2);
-                    } else if (param.startsWith("#")) {
-                        otherId = param.substring(1);
-                    } else {
-                        otherId = param;
-                    }
-                } else if (param.selector) {
-                    otherId = param.selector.replace(/^#/, "");
-                }
-            }
-
-            // Funzione per recuperare testo pulito del label
-            function getCleanLabelText(id) {
-                const label = $("label[for='" + id + "']");
-                if (!label.length) return id;
-                let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
-                return text || id;
-            }
-
-            const thisLabel = getCleanLabelText(thisId);
-            const otherLabel = getCleanLabelText(otherId);
-
-            return `Il campo ${thisLabel} deve corrispondere al campo ${otherLabel}.`;
-        };
-    }
-
-    // Funzione per aggiornare data-val-equalto e placeholder
-    function customValidatorOnBegin() {
-        $("form .form-group")
-            .find("input[type='text'], input[type='password'], textarea")
-            .each(function () {
-                if (!$(this).attr("class") || $(this).attr("class").trim() === "") {
-                    $(this).addClass("form-control col-md-12");
-                }
-                const $el = $(this);
-                const id = $el.attr("id");
-                if (!id) return;
-
-                // Aggiorna data-val-required, email, ecc in italiano (tu puoi aggiungere altre traduzioni se vuoi)
-                const labelText = getCleanLabelText(id);
-                if (!labelText) return;
-
-                const translations = {
-                    "data-val-required": `Il campo ${labelText} è obbligatorio.`,
-                    "data-val-email": `Il campo ${labelText} deve contenere un indirizzo email valido.`,
-                    "data-val-length": `Il campo ${labelText} deve rispettare la lunghezza richiesta.`,
-                    "data-val-regex": `Il campo ${labelText} ha un formato non valido.`,
-                    "data-val-date": `Il campo ${labelText} deve essere una data valida.`,
-                    "data-val-number": `Il campo ${labelText} deve essere un numero.`,
-                    "data-val-minlength": `Il campo ${labelText} è troppo corto.`,
-                    "data-val-maxlength": `Il campo ${labelText} è troppo lungo.`,
-                    "data-val-range": `Il campo ${labelText} è fuori dall'intervallo consentito.`,
-                };
-
-                Object.keys(translations).forEach(attr => {
-                    if ($el.attr(attr) !== undefined) {
-                        $el.attr(attr, translations[attr]);
-                    }
-                });
-
-                // Aggiorna data-val-equalto con messaggio italiano personalizzato
-                if ($el.attr("data-val-equalto") !== undefined) {
-                    const otherSelector = $el.attr("data-val-equalto-other");
-                    let otherId = null;
-                    if (otherSelector) {
-                        if (otherSelector.startsWith("*.")) {
-                            otherId = otherSelector.substring(2);
-                        } else if (otherSelector.startsWith("#")) {
-                            otherId = otherSelector.substring(1);
-                        } else {
-                            otherId = otherSelector;
-                        }
-                    }
-
-                    const otherLabel = otherId ? getCleanLabelText(otherId) : otherId;
-                    const equalToMsg = `Il campo ${labelText} deve corrispondere al campo ${otherLabel}.`;
-                    $el.attr("data-val-equalto", equalToMsg);
-                }
-            });
-    }
-
-    function getCleanLabelText(id) {
-        const label = $("label[for='" + id + "']");
-        if (!label.length) return id;
-        let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
-        return text || id;
-    }
-
-    // Avvia la funzione per aggiornare messaggi e placeholder
-    customValidatorOnBegin();
-});
 
 $("form button[type='submit'], form input[type='submit']").on("click", function () {
     removeValidClassFromCheckboxes();
 });
+
+function translateExistingValidationMessages() {
+    $("[data-valmsg-for]").each(function () {
+        const $msg = $(this);
+        if (!$msg.hasClass("field-validation-error")) return; // solo errori
+
+        const id = $msg.attr("data-valmsg-for");
+        if (!id) return;
+
+        const input = $("#" + id);
+        if (!input.length) return;
+
+        const labelText = getCleanLabelText(id);
+
+        const requiredMsg = input.attr("data-val-required");
+        const emailMsg = input.attr("data-val-email");
+        const lengthMsg = input.attr("data-val-length");
+        const regexMsg = input.attr("data-val-regex");
+        const equalToMsg = input.attr("data-val-equalto");
+
+        const currentMsgRaw = $msg.text();
+
+        // Usiamo la stessa funzione di normalizzazione e logica di keyword vista prima
+        const normalized = normalizeText(currentMsgRaw);
+
+        let newMessage = null;
+
+        if (requiredMsg && (normalized.includes("required") || normalized.includes("mandatory") || normalized.includes("obbligatorio") || normalized.includes("campo obbligatorio"))) {
+            newMessage = requiredMsg;
+        } else if (emailMsg && (normalized.includes("email") || normalized.includes("indirizzo email") || normalized.includes("valid email"))) {
+            newMessage = emailMsg;
+        } else if (lengthMsg && (normalized.includes("length") || normalized.includes("lunghezza") || normalized.includes("too short") || normalized.includes("too long"))) {
+            newMessage = lengthMsg;
+        } else if (regexMsg && (normalized.includes("format") || normalized.includes("formato"))) {
+            newMessage = regexMsg;
+        } else if (equalToMsg && (
+            normalized.includes("equal") ||
+            normalized.includes("uguale") ||
+            normalized.includes("corrisponda") ||
+            normalized.includes("same") ||
+            normalized.includes("non corrisponde") ||
+            normalized.includes("does not match")
+        )) {
+            newMessage = equalToMsg;
+        } else {
+            newMessage = requiredMsg || emailMsg || lengthMsg || regexMsg || equalToMsg;
+        }
+
+        if (newMessage && newMessage !== currentMsgRaw) {
+            $msg.text(newMessage);
+        }
+    });
+}
 
 // Funzione per leggere testo pulito del label (senza figli, asterisco e duplicati consecutivi)
 function getCleanLabelText(id) {
@@ -211,6 +226,15 @@ function removeDuplicateWords(str) {
 }
 
 function customValidatorOnBegin() {
+
+    // Prima cosa: aggiungi asterischi a tutti i campi required
+    $("form .form-group input, form .form-group select, form .form-group textarea").each(function () {
+        const id = $(this).attr("id");
+        if (id && requiredElement(id)) {
+            addAsteriskToLabel(id);
+        }
+    });
+
     // Traduci messaggi data-val in italiano dinamicamente, solo se diverso da quello già presente
     function translateDataValMessages($el, labelText) {
         const translations = {
@@ -336,7 +360,7 @@ function setPlaceholdersFromLabels() {
         if (inputId) {
             const label = $("label[for='" + inputId + "']");
             if (label.length) {
-                labelText = label.text().replace(/\*/g, "").trim();
+                labelText = label.text().replace(/\*/g, "").trim(); // qui rimuovo asterischi dal testo
             }
         }
 
@@ -344,7 +368,10 @@ function setPlaceholdersFromLabels() {
         if (!labelText) {
             const label = $group.find("label").first();
             if (label.length) {
-                labelText = label.text().replace(/\*/g, "").trim();
+                // Qui NON rimuovo asterisco, prendo il testo così com'è (ma rimuovo solo eventuali spazi)
+                labelText = label.text().trim();
+                // Se vuoi rimuovere asterisco qui, togli la riga qui sopra e usa questa:
+                // labelText = label.text().replace(/\*/g, "").trim();
             }
         }
 
@@ -468,9 +495,22 @@ function setWarningValidation() {
 }
 
 function addAsteriskToLabel(id) {
-    const label = $("label[for='" + id + "']");
+    const input = $("#" + id);
+    if (!input.length) return;
+
+    // Verifica se è required (HTML5 o data-val-required)
+    const isRequired = input.prop("required") || input.attr("data-val-required") !== undefined;
+    if (!isRequired) return;
+
+    let label = $("label[for='" + id + "']");
+
+    // Se non c'è label con for, cerca la prima nel form-group
+    if (!label.length) {
+        label = input.closest(".form-group").find("label").first();
+    }
+
     if (label.length) {
-        // controlla se c'è già uno span con classe text-danger e testo esatto "*"
+        // Evita duplicati
         const hasAsterisk = label.children("span.text-danger").filter(function () {
             return $(this).text().trim() === "*";
         }).length > 0;
