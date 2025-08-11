@@ -73,6 +73,8 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> EliminaUtente(string id)
         {
+            _unitOfWorkIdentity.AuthService.OnNotifyUser += AuthService_OnNotifyUserLogOff;
+
             await _unitOfWorkIdentity.AuthService.DeleteUserById(id);
             return Content("Utente eliminato");
         }
@@ -82,7 +84,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> BloccaUtente(string id)
         {
-            _unitOfWorkIdentity.AuthService.OnNotifyUser += AuthService_OnNotifyUser;
+            _unitOfWorkIdentity.AuthService.OnNotifyUser += AuthService_OnNotifyUserLogOff;
            
             await _unitOfWorkIdentity.AuthService.DisableUserById(id);
 
@@ -90,7 +92,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
             return Content("Utente bloccato");
         }
 
-        private async Task AuthService_OnNotifyUser(string username)
+        private async Task AuthService_OnNotifyUserLogOff(string username)
         {
             await _notifytHubContext.Clients.User(username).SendAsync("BloccaUtente");
         }

@@ -345,6 +345,7 @@ namespace Sediin.Core.Identity.Repository
             if (!deleteResult.Succeeded)
                 throw new Exception("Errore eliminare utente");
 
+            OnNotifyUser?.Invoke(user.Id);
         }
 
         public async Task DisableUserById(string id)

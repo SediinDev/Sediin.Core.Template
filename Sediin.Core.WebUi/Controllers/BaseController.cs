@@ -21,7 +21,7 @@ public class BaseController : Controller
     protected IRazorViewToStringRenderer _razorViewRenderer;
     protected IMapper _autoMapper;
     protected ISediinCoreConfiguration _sediinConfiguration;
-protected     IHubContext<NotifyHub> _notifytHubContext;
+    protected IHubContext<NotifyHub> _notifytHubContext;
 
 #pragma warning disable
     public BaseController()
