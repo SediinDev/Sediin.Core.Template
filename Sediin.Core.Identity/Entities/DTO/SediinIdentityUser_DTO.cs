@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Sediin.Core.Identity.Entities.DTO
 {
@@ -27,5 +21,6 @@ namespace Sediin.Core.Identity.Entities.DTO
         [Compare("Email")]
         public string ConfirmEmail { get; set; }
 
+        public string Ruolo { get; set; }
     }
 }

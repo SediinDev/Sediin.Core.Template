@@ -36,15 +36,15 @@ namespace Sediin.Core.Identity.Abstract
 
         Task<string> GetUserRole(string userId);
         
-        Task<SediinIdentityUser> GetUserByUsername(string userName);
+        Task<SediinIdentityUserWithRoles> GetUserByUsername(string userName);
         
-        Task<SediinIdentityUser> GetUserById(string id);
+        Task<SediinIdentityUserWithRoles> GetUserById(string id);
         
         Task ChangePassword(string userName, string currentPassword, string newPassword);
 
-        Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri , int pageNumber, int pageSize);
+        Task<(IList<SediinIdentityUserWithRoles> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri , int pageNumber, int pageSize);
         
-        Task<IList<SediinIdentityUser>> GetAllUsersAsync(UtentiRicercaVM filtri);
+        Task<IList<SediinIdentityUserWithRoles>> GetAllUsersAsync(UtentiRicercaVM filtri);
 
         Task UpdateUser(SediinIdentityUser_DTO user);
 

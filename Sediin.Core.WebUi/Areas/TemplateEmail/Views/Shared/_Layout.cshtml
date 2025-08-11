@@ -1,4 +1,10 @@
-﻿
+﻿@using Sediin.Core.TemplateConfiguration
+@using Sediin.Core.TemplateConfiguration.Models
+@inject ISediinCoreConfiguration Configuration
+@{
+    RagioneSociale ragioneSociale = Configuration.Get().Result.RagioneSociale;
+}
+
 <!DOCTYPE html>
 <html lang="it">
 
@@ -6,39 +12,757 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-
+        @ragioneSociale.Nome
     </title>
 
-    <script type="importmap"></script>
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap/dist/bootstrap.custom.css" rel="stylesheet" />
-    <link href="~/css/backend.css" rel="stylesheet" />
-    <link href="~/css/site.css" rel="stylesheet" />
-    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
-    <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+    <style>
 
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            color: #212529;
+            text-align: center;
+            vertical-align: middle;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+            .btn:hover {
+                opacity: 0.85;
+            }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .btn-success {
+            color: #fff;
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-warning {
+            color: #212529;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .btn-info {
+            color: #fff;
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+        }
+
+        /* --- BADGES --- */
+        .badge {
+            display: inline-block;
+            padding: .25em .4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .375rem;
+            color: #fff;
+            background-color: #6c757d;
+        }
+
+        .badge-primary {
+            background-color: #0d6efd;
+        }
+
+        .badge-success {
+            background-color: #198754;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+        }
+
+        .badge-warning {
+            color: #212529;
+            background-color: #ffc107;
+        }
+
+        .badge-info {
+            background-color: #0dcaf0;
+        }
+
+        /* --- TEXT --- */
+        .text-center {
+            text-align: center !important;
+        }
+
+        .text-white {
+            color: #fff !important;
+        }
+
+        /* --- HELPERS --- */
+        .d-inline-block {
+            display: inline-block !important;
+        }
+
+        .rounded {
+            border-radius: .25rem !important;
+        }
+
+        /* --- TEXT COLORS --- */
+        .text-primary {
+            color: #0d6efd !important;
+        }
+
+        .text-success {
+            color: #198754 !important;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .text-warning {
+            color: #ffc107 !important;
+        }
+
+        .text-info {
+            color: #0dcaf0 !important;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .text-white {
+            color: #fff !important;
+        }
+
+        .text-dark {
+            color: #212529 !important;
+        }
+
+        /* --- TEXT ALIGNMENT --- */
+        .text-start {
+            text-align: left !important;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .text-end {
+            text-align: right !important;
+        }
+
+        /* --- FONT WEIGHT --- */
+        .font-weight-bold {
+            font-weight: 700 !important;
+        }
+
+        .font-weight-normal {
+            font-weight: 400 !important;
+        }
+
+        .font-weight-light {
+            font-weight: 300 !important;
+        }
+
+        /* --- FONT SIZE (relative) --- */
+        .fs-1 {
+            font-size: 2.5rem !important;
+        }
+
+        .fs-2 {
+            font-size: 2rem !important;
+        }
+
+        .fs-3 {
+            font-size: 1.75rem !important;
+        }
+
+        .fs-4 {
+            font-size: 1.5rem !important;
+        }
+
+        .fs-5 {
+            font-size: 1.25rem !important;
+        }
+
+        .fs-6 {
+            font-size: 1rem !important;
+        }
+
+        /* --- TEXT TRANSFORM --- */
+        .text-uppercase {
+            text-transform: uppercase !important;
+        }
+
+        .text-lowercase {
+            text-transform: lowercase !important;
+        }
+
+        .text-capitalize {
+            text-transform: capitalize !important;
+        }
+
+        /* --- TEXT DECORATION --- */
+        .text-decoration-none {
+            text-decoration: none !important;
+        }
+
+        .text-decoration-underline {
+            text-decoration: underline !important;
+        }
+
+        /* --- COLONNE BASE --- */
+        .col-1 {
+            width: 8.3333% !important;
+            float: left;
+        }
+
+        .col-2 {
+            width: 16.6667% !important;
+            float: left;
+        }
+
+        .col-3 {
+            width: 25% !important;
+            float: left;
+        }
+
+        .col-4 {
+            width: 33.3333% !important;
+            float: left;
+        }
+
+        .col-5 {
+            width: 41.6667% !important;
+            float: left;
+        }
+
+        .col-6 {
+            width: 50% !important;
+            float: left;
+        }
+
+        .col-7 {
+            width: 58.3333% !important;
+            float: left;
+        }
+
+        .col-8 {
+            width: 66.6667% !important;
+            float: left;
+        }
+
+        .col-9 {
+            width: 75% !important;
+            float: left;
+        }
+
+        .col-10 {
+            width: 83.3333% !important;
+            float: left;
+        }
+
+        .col-11 {
+            width: 91.6667% !important;
+            float: left;
+        }
+
+        .col-12 {
+            width: 100% !important;
+            float: left;
+        }
+
+        /* --- CLEARFIX --- */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 15px;
+            padding-right: 15px;
+            box-sizing: border-box;
+        }
+
+        /* --- ROW --- */
+        .row {
+            width: 100%;
+            margin-left: -15px;
+            margin-right: -15px;
+            box-sizing: border-box;
+        }
+
+            .row > [class*="col-"] {
+                padding-left: 15px;
+                padding-right: 15px;
+                box-sizing: border-box;
+            }
+
+        /* Contenitore row */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -8px; /* gutter */
+            margin-left: -8px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Colonne con padding (gutter) */
+        .col-md-1 {
+            flex: 0 0 8.3333%;
+            max-width: 8.3333%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-2 {
+            flex: 0 0 16.6667%;
+            max-width: 16.6667%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-4 {
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-5 {
+            flex: 0 0 41.6667%;
+            max-width: 41.6667%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-7 {
+            flex: 0 0 58.3333%;
+            max-width: 58.3333%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-8 {
+            flex: 0 0 66.6667%;
+            max-width: 66.6667%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-9 {
+            flex: 0 0 75%;
+            max-width: 75%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-10 {
+            flex: 0 0 83.3333%;
+            max-width: 83.3333%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-11 {
+            flex: 0 0 91.6667%;
+            max-width: 91.6667%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        /* Per garantire il box-sizing */
+        .row > [class^="col-md-"] {
+            box-sizing: border-box;
+        }
+
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .alert-primary {
+            color: #004085;
+            background-color: #cce5ff;
+            border-color: #b8daff;
+        }
+
+        .alert-secondary {
+            color: #383d41;
+            background-color: #e2e3e5;
+            border-color: #d6d8db;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        .alert-light {
+            color: #818182;
+            background-color: #fefefe;
+            border-color: #fdfdfe;
+        }
+
+        .alert-dark {
+            color: #1b1e21;
+            background-color: #d6d8d9;
+            border-color: #c6c8ca;
+        }
+
+        /* Margin tutto */
+        .m-0 {
+            margin: 0 !important;
+        }
+
+        .m-1 {
+            margin: 4px !important;
+        }
+
+        .m-2 {
+            margin: 8px !important;
+        }
+
+        .m-3 {
+            margin: 16px !important;
+        }
+
+        .m-4 {
+            margin: 24px !important;
+        }
+
+        .m-5 {
+            margin: 32px !important;
+        }
+
+        /* Margin top */
+        .mt-0 {
+            margin-top: 0 !important;
+        }
+
+        .mt-1 {
+            margin-top: 4px !important;
+        }
+
+        .mt-2 {
+            margin-top: 8px !important;
+        }
+
+        .mt-3 {
+            margin-top: 16px !important;
+        }
+
+        .mt-4 {
+            margin-top: 24px !important;
+        }
+
+        .mt-5 {
+            margin-top: 32px !important;
+        }
+
+        /* Margin bottom */
+        .mb-0 {
+            margin-bottom: 0 !important;
+        }
+
+        .mb-1 {
+            margin-bottom: 4px !important;
+        }
+
+        .mb-2 {
+            margin-bottom: 8px !important;
+        }
+
+        .mb-3 {
+            margin-bottom: 16px !important;
+        }
+
+        .mb-4 {
+            margin-bottom: 24px !important;
+        }
+
+        .mb-5 {
+            margin-bottom: 32px !important;
+        }
+
+        /* Margin left */
+        .ml-0 {
+            margin-left: 0 !important;
+        }
+
+        .ml-1 {
+            margin-left: 4px !important;
+        }
+
+        .ml-2 {
+            margin-left: 8px !important;
+        }
+
+        .ml-3 {
+            margin-left: 16px !important;
+        }
+
+        .ml-4 {
+            margin-left: 24px !important;
+        }
+
+        .ml-5 {
+            margin-left: 32px !important;
+        }
+
+        /* Margin right */
+        .mr-0 {
+            margin-right: 0 !important;
+        }
+
+        .mr-1 {
+            margin-right: 4px !important;
+        }
+
+        .mr-2 {
+            margin-right: 8px !important;
+        }
+
+        .mr-3 {
+            margin-right: 16px !important;
+        }
+
+        .mr-4 {
+            margin-right: 24px !important;
+        }
+
+        .mr-5 {
+            margin-right: 32px !important;
+        }
+
+        /* Padding tutto */
+        .p-0 {
+            padding: 0 !important;
+        }
+
+        .p-1 {
+            padding: 4px !important;
+        }
+
+        .p-2 {
+            padding: 8px !important;
+        }
+
+        .p-3 {
+            padding: 16px !important;
+        }
+
+        .p-4 {
+            padding: 24px !important;
+        }
+
+        .p-5 {
+            padding: 32px !important;
+        }
+
+        /* Padding top */
+        .pt-0 {
+            padding-top: 0 !important;
+        }
+
+        .pt-1 {
+            padding-top: 4px !important;
+        }
+
+        .pt-2 {
+            padding-top: 8px !important;
+        }
+
+        .pt-3 {
+            padding-top: 16px !important;
+        }
+
+        .pt-4 {
+            padding-top: 24px !important;
+        }
+
+        .pt-5 {
+            padding-top: 32px !important;
+        }
+
+        /* Padding bottom */
+        .pb-0 {
+            padding-bottom: 0 !important;
+        }
+
+        .pb-1 {
+            padding-bottom: 4px !important;
+        }
+
+        .pb-2 {
+            padding-bottom: 8px !important;
+        }
+
+        .pb-3 {
+            padding-bottom: 16px !important;
+        }
+
+        .pb-4 {
+            padding-bottom: 24px !important;
+        }
+
+        .pb-5 {
+            padding-bottom: 32px !important;
+        }
+
+        /* Padding left */
+        .pl-0 {
+            padding-left: 0 !important;
+        }
+
+        .pl-1 {
+            padding-left: 4px !important;
+        }
+
+        .pl-2 {
+            padding-left: 8px !important;
+        }
+
+        .pl-3 {
+            padding-left: 16px !important;
+        }
+
+        .pl-4 {
+            padding-left: 24px !important;
+        }
+
+        .pl-5 {
+            padding-left: 32px !important;
+        }
+
+        /* Padding right */
+        .pr-0 {
+            padding-right: 0 !important;
+        }
+
+        .pr-1 {
+            padding-right: 4px !important;
+        }
+
+        .pr-2 {
+            padding-right: 8px !important;
+        }
+
+        .pr-3 {
+            padding-right: 16px !important;
+        }
+
+        .pr-4 {
+            padding-right: 24px !important;
+        }
+
+        .pr-5 {
+            padding-right: 32px !important;
+        }
+
+    </style>
 </head>
 
 <body>
 
-    <div class="row">
-
-        <div class="col-md-12">
-            <img src="cid:logo_cid" alt="Logo" />
-        </div>
-
-        
-        <div class="col-md-12" style="padding-top:40px">
-
-
-            @RenderBody()
-
-        </div>
-
-
+    <div>
+        <img src="cid:logo_cid" alt="Logo" />
     </div>
 
+    <br />
+    <hr />
+    <br />
+    <br />
 
+    <div>
+        @RenderBody()
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <p style="font-size:0.9em;color:#666;">
+        <em>Nota: questa email è stata inviata automaticamente dal sistema, ti preghiamo di non rispondere.</em>
+    </p>
+    <hr />
+    <br />
+
+    <div>
+        <strong>@ragioneSociale.Nome</strong><br />
+        Piva: @ragioneSociale.PartitaIva - Cf: @ragioneSociale.CodiceFiscale<br />
+        Tel: @ragioneSociale.Telefono - Email: @ragioneSociale.Email<br />
+        @ragioneSociale.Indirizzo - @ragioneSociale.Cap @ragioneSociale.Citta @ragioneSociale.Provincia
+    </div>
 
 
 </body>

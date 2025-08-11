@@ -143,7 +143,7 @@ namespace Sediin.Core.Identity.Repository
                 throw new Exception("Token errato. Email non confermata.");
         }
 
-        public async Task<(IList<SediinIdentityUser> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri, int pageNumber, int pageSize)
+        public async Task<(IList<SediinIdentityUserWithRoles> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri, int pageNumber, int pageSize)
         {
             var query = _userManager.Users.AsNoTracking();
 
@@ -174,10 +174,17 @@ namespace Sediin.Core.Identity.Repository
                 .Take(pageSize)
                 .ToListAsync();
 
-            return (users, totalCount);
+            var usersWithRoles = new List<SediinIdentityUserWithRoles>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                usersWithRoles.Add(new SediinIdentityUserWithRoles { User = user, Roles = roles });
+            }
+
+            return (usersWithRoles, totalCount);
         }
 
-        public async Task<IList<SediinIdentityUser>> GetAllUsersAsync(UtentiRicercaVM filtri)
+        public async Task<IList<SediinIdentityUserWithRoles>> GetAllUsersAsync(UtentiRicercaVM filtri)
         {
             var query = _userManager.Users.AsNoTracking();
 
@@ -201,9 +208,17 @@ namespace Sediin.Core.Identity.Repository
                 query = query.Where(x => x.Email.Contains(filtri.UtentiRicercaVM_Email));
             }
 
-            return await query.ToListAsync();
-        }
+            var users = await query.ToListAsync();
 
+            var usersWithRoles = new List<SediinIdentityUserWithRoles>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                usersWithRoles.Add(new SediinIdentityUserWithRoles { User = user, Roles = roles });
+            }
+
+            return usersWithRoles;
+        }
         public async Task<string> GetUserRole(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
@@ -220,10 +235,47 @@ namespace Sediin.Core.Identity.Repository
             return null;
         }
 
-        public async Task<SediinIdentityUser> GetUserByUsername(string userName)
+        //public async Task<SediinIdentityUser> GetUserByUsername(string userName)
+        //{
+        //    return await _userManager.FindByNameAsync(userName);
+        //}
+
+
+        //public async Task<SediinIdentityUser> GetUserById(string id)
+        //{
+        //    return await _userManager.FindByIdAsync(id);
+        //}
+
+        public async Task<SediinIdentityUserWithRoles> GetUserByUsername(string userName)
         {
-            return await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new SediinIdentityUserWithRoles
+            {
+                User = user,
+                Roles = roles
+            };
         }
+
+        public async Task<SediinIdentityUserWithRoles> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new SediinIdentityUserWithRoles
+            {
+                User = user,
+                Roles = roles
+            };
+        }
+
 
         public async Task ChangePassword(string userName, string currentPassword, string newPassword)
         {
@@ -235,11 +287,6 @@ namespace Sediin.Core.Identity.Repository
             }
         }
 
-        public async Task<SediinIdentityUser> GetUserById(string id)
-        {
-            return await _userManager.FindByIdAsync(id);
-        }
-
         public async Task UpdateUser(SediinIdentityUser_DTO user)
         {
             var existingUser = await _userManager.FindByIdAsync(user.Id);
@@ -248,7 +295,7 @@ namespace Sediin.Core.Identity.Repository
                 throw new Exception("Utente non trovato");
 
             var email = _userManager.Users.Where(u => (u.NormalizedEmail != null) && (u.NormalizedEmail == user.Email.ToUpper()));
-            if(email != null && email.Count() > 1)
+            if (email != null && email.Count() > 1)
             {
                 throw new Exception("Email già registrata nel sistema.");
             }
@@ -268,7 +315,8 @@ namespace Sediin.Core.Identity.Repository
             // Salva modifiche
             var _result = await _userManager.UpdateAsync(existingUser);
 
-            if (!_result.Succeeded) {
+            if (!_result.Succeeded)
+            {
                 throw new Exception("Dati utente non aggiornati");
             }
         }
