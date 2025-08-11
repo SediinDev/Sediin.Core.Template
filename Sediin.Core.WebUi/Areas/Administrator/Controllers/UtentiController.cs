@@ -75,6 +75,24 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
             return Content("Utente eliminato");
         }
 
+        [HttpPost]
+        [RedirectIfNotAjax]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
+        public async Task<IActionResult> BloccaUtente(string id)
+        {
+            await _unitOfWorkIdentity.AuthService.DisableUserById(id);
+            return Content("Utente bloccato");
+        }
+
+        [HttpPost]
+        [RedirectIfNotAjax]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
+        public async Task<IActionResult> SbloccaUtente(string id)
+        {
+            await _unitOfWorkIdentity.AuthService.EnableUserById(id);
+            return Content("Utente sbloccato");
+        }
+
         /// <summary>
         /// per tutti utenti loggate
         /// </summary>

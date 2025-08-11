@@ -56,14 +56,21 @@ else
 
                                         @if (item.User.LockoutEnabled == true && item.User.LockoutEnd == DateTimeOffset.MaxValue)
                                         {
-                                            <li><a class="dropdown-item" href="#">Sblocca utente</a></li>
+                                            <li>
+                                                <a href="javascript:void(0)" onclick="sbloccaUtente('@item.User.Id')"
+                                                   class="dropdown-item">Sblocca utente</a>
+                                            </li>
                                         }
-                                        else{
-                                            <li><a class="dropdown-item" href="#">Blocca utente</a></li>
+                                        else
+                                        {
+                                            <li>
+                                                <a href="javascript:void(0)" onclick="bloccaUtente('@item.User.Id')"
+                                                   class="dropdown-item">Blocca utente</a>
+                                            </li>
                                         }
-                                        
+
                                     }
-                                   
+
                                 </ul>
                             </div>
 
@@ -77,6 +84,12 @@ else
     <script>
         function eliminaUtente(id) {
             confirmAndPostAction("@Url.Action("EliminaUtente", "Utenti")", { id }, "Sicuro di voler \"eliminare\" questa utenza?");
+        }
+        function bloccaUtente(id) {
+            confirmAndPostAction("@Url.Action("BloccaUtente", "Utenti")", { id }, "Sicuro di voler \"bloccare\" questa utenza?");
+        }
+        function sbloccaUtente(id) {
+            confirmAndPostAction("@Url.Action("SbloccaUtente", "Utenti")", { id }, "Sicuro di voler \"sbloccare\" questa utenza?");
         }
 
     </script>
