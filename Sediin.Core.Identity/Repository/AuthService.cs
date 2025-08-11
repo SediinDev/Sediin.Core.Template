@@ -235,10 +235,47 @@ namespace Sediin.Core.Identity.Repository
             return null;
         }
 
-        public async Task<SediinIdentityUser> GetUserByUsername(string userName)
+        //public async Task<SediinIdentityUser> GetUserByUsername(string userName)
+        //{
+        //    return await _userManager.FindByNameAsync(userName);
+        //}
+
+
+        //public async Task<SediinIdentityUser> GetUserById(string id)
+        //{
+        //    return await _userManager.FindByIdAsync(id);
+        //}
+
+        public async Task<SediinIdentityUserWithRoles> GetUserByUsername(string userName)
         {
-            return await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new SediinIdentityUserWithRoles
+            {
+                User = user,
+                Roles = roles
+            };
         }
+
+        public async Task<SediinIdentityUserWithRoles> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new SediinIdentityUserWithRoles
+            {
+                User = user,
+                Roles = roles
+            };
+        }
+
 
         public async Task ChangePassword(string userName, string currentPassword, string newPassword)
         {
@@ -248,11 +285,6 @@ namespace Sediin.Core.Identity.Repository
             {
                 throw new Exception("Non è stato possibile cambiare la password.");
             }
-        }
-
-        public async Task<SediinIdentityUser> GetUserById(string id)
-        {
-            return await _userManager.FindByIdAsync(id);
         }
 
         public async Task UpdateUser(SediinIdentityUser_DTO user)

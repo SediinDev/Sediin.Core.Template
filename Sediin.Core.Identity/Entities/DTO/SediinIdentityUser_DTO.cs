@@ -21,5 +21,6 @@ namespace Sediin.Core.Identity.Entities.DTO
         [Compare("Email")]
         public string ConfirmEmail { get; set; }
 
+        public string Ruolo { get; set; }
     }
 }

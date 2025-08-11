@@ -36,9 +36,9 @@ namespace Sediin.Core.Identity.Abstract
 
         Task<string> GetUserRole(string userId);
         
-        Task<SediinIdentityUser> GetUserByUsername(string userName);
+        Task<SediinIdentityUserWithRoles> GetUserByUsername(string userName);
         
-        Task<SediinIdentityUser> GetUserById(string id);
+        Task<SediinIdentityUserWithRoles> GetUserById(string id);
         
         Task ChangePassword(string userName, string currentPassword, string newPassword);
 
