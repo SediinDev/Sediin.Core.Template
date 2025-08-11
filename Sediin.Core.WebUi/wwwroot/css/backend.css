@@ -17,7 +17,7 @@ body {
     padding: 20px;
     padding-left: 0px;
     padding-right: 0px;
-    min-height: 100vh;
+    min-height: 90vh;
     transition: all 0.3s;
     overflow: hidden;
 }
