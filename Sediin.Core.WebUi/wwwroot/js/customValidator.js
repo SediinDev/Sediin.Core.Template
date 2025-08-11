@@ -75,7 +75,6 @@
         observer.observe(this, { childList: true });
     });
 
-    // Gestione reset form per pulire errori e stati
     $("form").on("reset", function () {
         setTimeout(() => {
             $("[data-valmsg-for]").each(function () {
@@ -86,6 +85,10 @@
                 if (!id) return;
                 clearFieldClasses(id);
             });
+
+            // Qui riapplico gli stati di warning o successo dopo reset
+            setWarningValidation();
+
         }, 10);
 
         removeValidClassFromCheckboxes();
