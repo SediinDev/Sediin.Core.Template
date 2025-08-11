@@ -262,7 +262,22 @@ function confirmAndPostForm(formId, message) {
     });
 }
 
-function confirmAndPostAction(action, params, message, callbackfunction) {
+
+/*  
+esempio
+
+function eliminaUtente(id) {
+    confirmAndPostAction("@Url.Action("EliminaUtente", "Utenti")", { id }, "Sicuro di voler \"eliminare\" questa utenza?", onSuccessRimuoviUtenza);
+}
+
+function onSuccessRimuoviUtenza(data) {
+    updateListRicerca();
+    alertClose();
+    toastSuccess("Utente eliminato");
+}
+
+*/
+function confirmAndPostAction(action, params, message, callbackFunction) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mr-1',
@@ -285,14 +300,12 @@ function confirmAndPostAction(action, params, message, callbackfunction) {
         if (result.isConfirmed) {
             alertWaid();
             $.post(action, params, function (data) {
-
-                if (callbackfunction == undefined || callbackfunction == "") {
-                    alertSuccess(data);
+                if (typeof callbackFunction === 'function') {
+                    callbackFunction(data);
+                } else {
+                    alertClose();
+                    toastSuccess(data);
                     updateListRicerca();
-                }
-                else {
-                    var func = new Function(callbackfunction);
-                    func();
                 }
             }).fail(function (err) {
                 handleError(err);

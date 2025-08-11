@@ -48,5 +48,10 @@ namespace Sediin.Core.Identity.Abstract
 
         Task UpdateUser(SediinIdentityUser_DTO user);
 
+        Task DeleteUserById(string id);
+
+        Task DisableUserById(string id);
+
+        Task EnableUserById(string id);
     }
 }
