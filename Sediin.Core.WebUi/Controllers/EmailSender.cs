@@ -1,46 +1,51 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
+using NuGet.Protocol.Plugins;
+using Sediin.Core.TemplateConfiguration;
+using Sediin.Core.TemplateConfiguration.Models;
 using System.Net;
 using System.Net.Mail;
 
 namespace Sediin.Core.WebUi.Controllers
 {
-    public class EmailSettings
-    {
-        public string SmtpServer { get; set; } = string.Empty;
-        public int SmtpPort { get; set; }
-        public string SmtpUsername { get; set; } = string.Empty;
-        public string SmtpPassword { get; set; } = string.Empty;
-        public bool SmtpServerAutentication { get; set; }
-        public bool SmtpServerUseSSL { get; set; }
-        public string FromName { get; set; } = string.Empty;
-        public string FromEmail { get; set; } = string.Empty;
-    }
+    //public class EmailSettings
+    //{
+    //    public string SmtpServer { get; set; } = string.Empty;
+    //    public int SmtpPort { get; set; }
+    //    public string SmtpUsername { get; set; } = string.Empty;
+    //    public string SmtpPassword { get; set; } = string.Empty;
+    //    public bool SmtpServerAutentication { get; set; }
+    //    public bool SmtpServerUseSSL { get; set; }
+    //    public string FromName { get; set; } = string.Empty;
+    //    public string FromEmail { get; set; } = string.Empty;
+    //}
 
     public class EmailSender : IEmailSender
     {
-        private readonly EmailSettings _emailSettings;
+        private readonly ISediinCoreConfiguration _emailSettings;
 
-        public EmailSender(IOptions<EmailSettings> emailSettings)
+        public EmailSender(ISediinCoreConfiguration _settings)
         {
-            _emailSettings = emailSettings.Value;
+            _emailSettings = _settings;
         }
 
         public async Task SendEmailAsync(string toAddress, string subject, string body)
         {
             try
             {
-                var smtpClient = new SmtpClient(_emailSettings.SmtpServer)
+                var _es= _emailSettings.Get().Result.EmailSettings;
+
+                var smtpClient = new SmtpClient(_es.SmtpServer)
                 {
-                    Port = _emailSettings.SmtpPort,
-                    EnableSsl = _emailSettings.SmtpServerUseSSL,
+                    Port = _es.SmtpPort,
+                    EnableSsl = _es.SmtpServerUseSSL,
                     UseDefaultCredentials = false,
                 };
-                smtpClient.Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword);
+                smtpClient.Credentials = new NetworkCredential(_es.SmtpUsername, _es.SmtpPassword);
 
                 var emailMessage = new MailMessage
                 {
-                    From = new MailAddress(_emailSettings.FromEmail, _emailSettings.FromName),
+                    From = new MailAddress(_es.FromEmail, _es.FromName),
                     Subject = subject,
                     Body = body,
                     IsBodyHtml = true,
