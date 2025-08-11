@@ -20,38 +20,30 @@ namespace Sediin.Core.WebUi.Controllers
 
         public async Task SendEmailAsync(string toAddress, string subject, string bodyHtml)
         {
-            var _es = _emailSettings.Get().Result.EmailSettings;
+            var _mailSettings = _emailSettings.Get().Result.EmailSettings;
 
-            using var smtpClient = new SmtpClient(_es.SmtpServer)
+            var _ragioneSociale = _emailSettings.Get().Result.RagioneSociale;
+
+            using var smtpClient = new SmtpClient(_mailSettings.SmtpServer)
             {
-                Port = _es.SmtpPort,
-                EnableSsl = _es.SmtpServerUseSSL,
+                Port = _mailSettings.SmtpPort,
+                EnableSsl = _mailSettings.SmtpServerUseSSL,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_es.SmtpUsername, _es.SmtpPassword)
+                Credentials = new NetworkCredential(_mailSettings.SmtpUsername, _mailSettings.SmtpPassword)
             };
 
             var emailMessage = new MailMessage
             {
-                From = new MailAddress(_es.FromEmail, _es.FromName),
-                Subject = subject,
+                From = new MailAddress(_mailSettings.FromEmail, _mailSettings.FromName),
+                Subject = _ragioneSociale.Nome + " - " + subject,
                 IsBodyHtml = true
             };
             emailMessage.To.Add(toAddress);
 
             // La tua stringa base64 con prefisso
-            string base64WithPrefix = _emailSettings.Get().Result.RagioneSociale.LogoBase64;
+            string base64WithPrefix = _ragioneSociale.LogoBase64;
 
             var logoResource = CreateLinkedResourceFromBase64(base64WithPrefix, "logo_cid");
-
-            // Qui costruisci l’HTML con img che fa riferimento al CID
-            //string htmlBody = $@"
-            //    <html>
-            //        <body>
-            //            <h1>{subject}</h1>
-            //            <p>{bodyHtml}</p>
-            //            <img src=""cid:logo_cid"" alt=""Logo"" />
-            //        </body>
-            //    </html>";
 
             // Creo AlternateView HTML con risorsa collegata inline
             var htmlView = AlternateView.CreateAlternateViewFromString(bodyHtml, null, MediaTypeNames.Text.Html);

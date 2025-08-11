@@ -735,10 +735,8 @@
 
 <body>
 
-    <div class="row">
-        <div class="col-md-12">
-            <img src="cid:logo_cid" alt="Logo" />
-        </div>
+    <div>
+        <img src="cid:logo_cid" alt="Logo" />
     </div>
 
     <br />
@@ -746,23 +744,20 @@
     <br />
     <br />
 
-    <div class="row">
-        <div class="col-md-12">
-            @RenderBody()
-        </div>
+    <div>
+        @RenderBody()
     </div>
 
     <br />
     <br />
     <br />
-    <p style="" margin-top:30px; font-size:0.9em; color:#666;"">
+    <p style="font-size:0.9em;color:#666;">
         <em>Nota: questa email è stata inviata automaticamente dal sistema, ti preghiamo di non rispondere.</em>
     </p>
-    <br />
     <hr />
     <br />
 
-    <div class="row">
+    <div>
         <strong>@ragioneSociale.Nome</strong><br />
         Piva: @ragioneSociale.PartitaIva - Cf: @ragioneSociale.CodiceFiscale<br />
         Tel: @ragioneSociale.Telefono - Email: @ragioneSociale.Email<br />
