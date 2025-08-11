@@ -22,22 +22,18 @@ body {
     overflow: hidden;
 }
 
-footer {
-    width: 100%;
+footer.container-fluid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px;
-    font-size: 14px;
     background-color: #245397;
     color: white;
     border-top: 1px solid #fba341;
     box-sizing: border-box;
-    text-align: center;
-    /* non serve bottom: 0 o position fixed */
+    font-size: 14px;
 }
-footer {
-    background-color: #245397;
-    color: white;
-    border-top: 1px solid #fba341;
-}
+
 
 .wrapper {
     display: flex;
@@ -684,13 +680,3 @@ a[data-toggle="collapse"] {
         width: 100%;
     }
 
-footer {
-    width: 100%;
-    padding: 15px;
-    font-size: 14px;
-    background-color: #245397;
-    color: white;
-    border-top: 1px solid #fba341;
-    box-sizing: border-box;
-    text-align: center;
-}

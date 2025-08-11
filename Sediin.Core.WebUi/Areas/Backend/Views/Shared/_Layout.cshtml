@@ -53,15 +53,17 @@
 
         </div>
     </div>
+
     <footer class="container-fluid blurEffect">
-        <div class="row">
-            <div class="col-md-4" style="text-align: left;">
-                @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
-            </div>
-            <div class="col-md-4" style="text-align: center;">&nbsp;</div>
-            <div class="col-md-4" style="text-align: right;">&copy; Sediin Spa</div>
-        </div>
+        <span>
+            @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
+        </span>
+        <span>
+            &copy; Sediin Spa
+        </span>
     </footer>
+
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
