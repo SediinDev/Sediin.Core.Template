@@ -18,6 +18,7 @@ using Sediin.Core.TemplateConfiguration;
 using Sediin.Core.WebUi.Areas;
 using Sediin.Core.WebUi.Controllers;
 using Sediin.Core.WebUi.Filters;
+using Sediin.Core.WebUi.Hubs;
 using Serilog;
 using System.Globalization;
 
@@ -138,10 +139,14 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddSignalR();
+
 //--------------------------------------------------------
 //  APP BUILD
 //--------------------------------------------------------
 var app = builder.Build();
+
+app.MapHub<NotifyHub>("/notifyhub");
 
 app.UseRequestLocalization();
 

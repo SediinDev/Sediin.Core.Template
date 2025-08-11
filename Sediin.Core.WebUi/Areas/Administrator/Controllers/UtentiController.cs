@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Sediin.Core.Identity.Entities.DTO;
 using Sediin.Core.Identity.Models;
 using Sediin.Core.WebUi.Areas.Administrator.Models;
 using Sediin.Core.WebUi.Filters;
+using Sediin.Core.WebUi.Hubs;
 
 namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
 {
@@ -79,8 +82,17 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
         public async Task<IActionResult> BloccaUtente(string id)
         {
+            _unitOfWorkIdentity.AuthService.OnNotifyUser += AuthService_OnNotifyUser;
+           
             await _unitOfWorkIdentity.AuthService.DisableUserById(id);
+
+
             return Content("Utente bloccato");
+        }
+
+        private async Task AuthService_OnNotifyUser(string username)
+        {
+            await _notifytHubContext.Clients.User(username).SendAsync("BloccaUtente");
         }
 
         [HttpPost]

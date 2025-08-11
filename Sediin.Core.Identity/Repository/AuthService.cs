@@ -21,6 +21,7 @@ namespace Sediin.Core.Identity.Repository
 
         public event SendMail OnSendMailRecoveryPassword;
         public event SendMail OnSendMailConfermaEmail;
+        public event NotifyUser OnNotifyUser;
 
         public AuthService(
             SignInManager<SediinIdentityUser> signInManager,
@@ -58,7 +59,7 @@ namespace Sediin.Core.Identity.Repository
             if (await IsEmailConfirmed(user))
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                OnSendMailRecoveryPassword?.Invoke(user.Email, user.Id, code, user.Nome, user.Cognome);
+                OnSendMailRecoveryPassword?.Invoke(user.Email, user.UserName, code, user.Nome, user.Cognome);
             }
         }
 
@@ -67,7 +68,7 @@ namespace Sediin.Core.Identity.Repository
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                OnSendMailConfermaEmail?.Invoke(user.Email, user.Id, code, user.Nome, user.Cognome);
+                OnSendMailConfermaEmail?.Invoke(user.Email, user.UserName, code, user.Nome, user.Cognome);
                 return false;
             }
             return true;
@@ -358,6 +359,8 @@ namespace Sediin.Core.Identity.Repository
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
                 throw new Exception("Non e stato possibile disattivare utente");
+
+            OnNotifyUser?.Invoke(user.Id);
         }
 
         public async Task EnableUserById(string id)

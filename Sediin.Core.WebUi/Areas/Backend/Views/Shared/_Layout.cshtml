@@ -69,7 +69,14 @@
         </span>
     </footer>
 
-
+    <div id="blockOverlay" style="
+    display:none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.3); /* sfondo semitrasparente (opzionale) */
+    z-index: 9999;
+    cursor: wait;"></div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
@@ -90,6 +97,7 @@
     <script src="~/js/onesidepage.js"></script>
     <script src="~/js/toastr.js"></script>
     <script src="~/js/soundmanager2-jsmin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -104,6 +112,30 @@
                 }
             });
         });
+
+
+        const connection = new signalR.HubConnectionBuilder()
+          .withUrl("/notifyhub")
+          .build();
+
+        connection.on("BloccaUtente", () => {
+          blockPage();
+          alertWarning("L'utente è stato bloccato");
+          setTimeout(function(){
+            location.href = "/Authentication/LogOff";
+          }, 3000);
+
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+
+        function blockPage() {
+          document.getElementById("blockOverlay").style.display = "block";
+        }
+
+        function unblockPage() {
+          document.getElementById("blockOverlay").style.display = "none";
+        }
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

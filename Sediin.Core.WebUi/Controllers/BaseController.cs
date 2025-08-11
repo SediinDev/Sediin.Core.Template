@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.SignalR;
 using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.Helpers.Html;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Mvc.Helpers.PagingHelpers;
 using Sediin.Core.TemplateConfiguration;
+using Sediin.Core.WebUi.Hubs;
 using System.Text;
 
 public class BaseController : Controller
@@ -19,6 +21,7 @@ public class BaseController : Controller
     protected IRazorViewToStringRenderer _razorViewRenderer;
     protected IMapper _autoMapper;
     protected ISediinCoreConfiguration _sediinConfiguration;
+protected     IHubContext<NotifyHub> _notifytHubContext;
 
 #pragma warning disable
     public BaseController()
@@ -52,6 +55,9 @@ public class BaseController : Controller
 
         if (_sediinConfiguration == null)
             _sediinConfiguration = HttpContext.RequestServices.GetService<ISediinCoreConfiguration>();
+
+        if (_notifytHubContext == null)
+            _notifytHubContext = HttpContext.RequestServices.GetService<IHubContext<NotifyHub>>();
 
         base.OnActionExecuting(context);
     }

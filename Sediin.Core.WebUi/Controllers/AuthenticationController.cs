@@ -181,6 +181,7 @@ namespace Sediin.Core.WebUi.Controllers
                         Nome = nome,
                         Cognome = cognome,
                         Email = email,
+                        Username = userId
                     });
 
             await _emailSender.SendEmailAsync(email, subject, htmlBody);

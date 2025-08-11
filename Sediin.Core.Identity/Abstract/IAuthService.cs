@@ -7,11 +7,15 @@ namespace Sediin.Core.Identity.Abstract
 {
     public delegate Task SendMail(string email, string userId, string token, string nome, string cognome);
 
+    public delegate Task NotifyUser(string username);
+
     public interface IAuthService
     {
         event SendMail OnSendMailConfermaEmail;
 
         event SendMail OnSendMailRecoveryPassword;
+
+        event NotifyUser OnNotifyUser;
         
         Task<SignInResult> LoginAsync(string email, string password, bool rememberMe);
         
