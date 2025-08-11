@@ -66,12 +66,17 @@
 
     </div>
 
-    <hr />
-
     <div class="text-center" style="margin-top:40px">
         <button type="submit" class="btn btn-info w-25">Aggiorna</button>
         <button type="reset" class="btn btn-danger w-25">Reimposta</button>
+        <button type="button" class="btn btn-primary w-25">
+            <a class="d-block" data-ajax="true"
+               data-ajax-begin="alertWaid()"
+               data-ajax-failure="handleError"
+               data-ajax-success="showModal_NoFooter('Prova Email', data); alertClose()"
+               href="@Url.Action("EmailTest", "Configuration")"
+            <i class="fa fa-user-plus mr-1"></i>Prova Email</a>
+        </button>
     </div>
 
 </ajax-form>
-
