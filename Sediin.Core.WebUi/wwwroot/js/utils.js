@@ -1,17 +1,14 @@
 ﻿
-//sweetalert
-
-
 function alert(text) {
     Swal.fire(text);
 }
 
 function playNotifyInfo() {
-    playNotify("/Content/sound/info.mp3");
+    playNotify("/sound/info.mp3");
 }
 
 function playNotifyConfirm() {
-    playNotify("/Content/sound/confirm2.mp3");
+    playNotify("/sound/confirm2.mp3");
 }
 
 function playNotifyAlert() {
@@ -19,24 +16,24 @@ function playNotifyAlert() {
 }
 
 function playNotifyError() {
-    playNotify("/Content/sound/error.mp3");
+    playNotify("/sound/error.mp3");
 }
 
 function playNotifySuccess() {
-    playNotify("/Content/sound/success.mp3");
+    playNotify("/sound/success.mp3");
 }
 
 function playNotifyWarning() {
-    playNotify("/Content/sound/warning.mp3");
+    playNotify("/sound/warning.mp3");
 }
 
 function playNotify(url) {
-//    var mySound = soundManager.createSound({
-//        url: url,
-//        useConsole: false,
-//        //consoleOnly:false
-//    });
-//    mySound.play();
+    var mySound = soundManager.createSound({
+        url: url,
+        useConsole: false,
+        //consoleOnly:false
+    });
+    mySound.play();
 }
 
 function alertWarning(text) {
@@ -192,8 +189,6 @@ function handleError(xhr) {
     }
 }
 
-
-
 function scrollToElement(e) {
     try {
         $('html, body').animate({
@@ -239,4 +234,69 @@ function validateFileSize(file, maxSizeMB) {
         };
     }
     return { valid: true };
+}
+
+function confirmAndPostForm(formId, message) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mr-1',
+            cancelButton: 'btn btn-danger mr-1'
+        },
+        buttonsStyling: false
+    });
+
+    playNotifyConfirm();
+
+    swalWithBootstrapButtons.fire({
+        html: message,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: 'Conferma',
+        cancelButtonText: 'Annulla',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $("#" + formId).submit();
+        }
+    });
+}
+
+function confirmAndPostAction(action, params, message, callbackfunction) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mr-1',
+            cancelButton: 'btn btn-danger mr-1'
+        },
+        buttonsStyling: false
+    });
+
+    playNotifyConfirm();
+
+    swalWithBootstrapButtons.fire({
+        html: message,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: 'Conferma',
+        cancelButtonText: 'Annulla',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            alertWaid();
+            $.post(action, params, function (data) {
+
+                if (callbackfunction == undefined || callbackfunction == "") {
+                    alertSuccess(data);
+                    updateListRicerca();
+                }
+                else {
+                    var func = new Function(callbackfunction);
+                    func();
+                }
+            }).fail(function (err) {
+                handleError(err);
+            });
+        }
+    });
 }

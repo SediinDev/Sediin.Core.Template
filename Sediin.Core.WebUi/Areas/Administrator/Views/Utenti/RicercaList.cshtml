@@ -14,6 +14,7 @@ else
                     <th>Nome</th>
                     <th>Cognome</th>
                     <th>Email</th>
+                    <th>Ruolo</th>
                     <th style="width:100px;"></th>
                 </tr>
             </thead>
@@ -21,9 +22,10 @@ else
                 @foreach (var item in Model.Result)
                 {
                     <tr>
-                        <td>@item.Nome</td>
-                        <td>@item.Cognome</td>
-                        <td>@item.Email</td>
+                        <td>@item.User.Nome</td>
+                        <td>@item.User.Cognome</td>
+                        <td>@item.User.Email</td>
+                        <td>@item.Roles.FirstOrDefault()</td>
                         <td>
 
                             <div class="dropdown">
@@ -38,14 +40,14 @@ else
                                            data-ajax-begin="alertWaid()"
                                            data-ajax-failure="handleError"
                                            data-ajax-success="showModal_NoFooter('Modifica utente', data); alertClose()"
-                                           href="@Url.Action("ModificaUtente", "Utenti", new { item.Id })">
+                                           href="@Url.Action("ModificaUtente", "Utenti", new { item.User.Id })">
                                             Modifica utente
                                         </a>
 
                                     </li>
                                     <li>
-
-                                        <a class="dropdown-item" href="#">Elimina utente</a>
+                                        <a href="javascript:void(0)" onclick="rimuoviUtenza('@item.User.Id')"
+                                           class="dropdown-item">Elimina utente</a>
 
                                     </li>
                                     <li><a class="dropdown-item" href="#">Blocca utente</a></li>
@@ -58,6 +60,20 @@ else
             </tbody>
         </table>
     </div>
+
+    <script>
+        function rimuoviUtenza(id) {
+            confirmAndPostAction("@Url.Action("RiumoviUtenza", "Memberships")", { id }, "Sicuro di voler \"eliminare\" questa utenza?", "onSuccessRiumoviUtenza()");
+        }
+
+        function onSuccessRiumoviUtenza() {
+            updateListRicerca();
+            alertClose();
+            toastSuccess("Utente eliminato");
+        }
+
+
+    </script>
 
     <paging-ajax page-size="@Model.PageSize"
                  page-index="@Model.CurrentPage"

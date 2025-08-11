@@ -22,7 +22,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         {
             var _result = await _unitOfWorkIdentity.AuthService.GetUsersPagedAsync(filtri, page.GetValueOrDefault(), 10);
 
-            var resultModel = GetModelWithPaging<UtentiVM, SediinIdentityUser>(page, _result.Users, filtri, _result.TotalCount, 10);
+            var resultModel = GetModelWithPaging<UtentiVM, SediinIdentityUserWithRoles>(page, _result.Users, filtri, _result.TotalCount, 10);
 
             return AjaxView("RicercaList", resultModel);
         }
