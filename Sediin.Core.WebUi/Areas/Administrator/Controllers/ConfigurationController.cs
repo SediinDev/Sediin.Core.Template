@@ -1,11 +1,7 @@
-﻿using HtmlAgilityPack;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+﻿using Microsoft.AspNetCore.Mvc;
 using Sediin.Core.TemplateConfiguration.Models;
 using Sediin.Core.WebUi.Areas.Administrator.Models;
 using Sediin.Core.WebUi.Filters;
-using System.Configuration;
-using System.Threading.Tasks;
 
 namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
 {
@@ -38,7 +34,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
             return Content("Email settings aggiornati");
         }
 
-        public async Task<IActionResult> EmailTest()
+        public IActionResult EmailTest()
         {
             var model = new TestMailSettingConfigModel();
             return AjaxView(model: model);

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Entities.DTO;
 using Sediin.Core.Identity.Models;
 using Sediin.Core.WebUi.Areas.Administrator.Models;
@@ -98,7 +97,7 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         /// </summary>
         /// <returns></returns>
         [RedirectIfNotAjax]
-        public async Task<IActionResult> ChangePassword()
+        public IActionResult ChangePassword()
         {
             return AjaxView();
         }

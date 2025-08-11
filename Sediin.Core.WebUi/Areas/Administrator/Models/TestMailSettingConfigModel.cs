@@ -6,6 +6,6 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Models
     {
         [Required]
         [EmailAddress]
-        public string EmailTo { get; set; }
+        public string? EmailTo { get; set; }
     }
 }
