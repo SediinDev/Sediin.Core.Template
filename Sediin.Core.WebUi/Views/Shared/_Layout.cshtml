@@ -1,6 +1,9 @@
 ﻿@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+@inject ISediinCoreConfiguration Configuration
 
+@{
+    RagioneSociale ragioneSociale = Configuration.Get().Result.RagioneSociale;
+}
 
 <!DOCTYPE html>
 <html lang="it">
@@ -9,14 +12,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-        @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
+        @ragioneSociale.Nome
     </title>
 
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/bootstrap.custom.css" rel="stylesheet" />
     <link href="~/css/backend.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
     <link href="~/css/validation.css" rel="stylesheet" />
@@ -44,7 +47,7 @@
                     <li>
                         <a class="nav-link" href="https://www.sediin.it" target="_blank">
                             <i class="fas fa-home marginMenuIcon"></i>
-                            Sito @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
+                            Sito @ragioneSociale.Nome
                         </a>
                     </li>
 
@@ -76,7 +79,7 @@
 
     <footer class="container-fluid blurEffect">
         <span>
-            @Configuration.GetSection("ApplicationSettings")["ApplicationName"]?.ToString()
+            @ragioneSociale.Nome
         </span>
         <span>
             &copy; Sediin Spa
@@ -91,9 +94,7 @@
     <script src="~/js/globalize/cultures/globalize.cultures.js"></script>
     <script src="~/js/globalize/cultures/globalize.culture.it-IT.js"></script>
     <script src="~/js/validator.methods.js"></script>
-
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/font-awesome/js/all.min.js"></script>
     <script src="~/lib/font-awesome/js/all.js"></script>
     <script src="~/js/sweetalert2.js"></script>
