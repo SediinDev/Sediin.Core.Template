@@ -3,7 +3,7 @@
 <ajax-form asp-action="EmailTest"
            asp-controller="Configuration"
            on-begin="alertWaid()"
-           on-success="toastSuccess(data); alertClose();"
+           on-success="hideModal(); toastSuccess(data); alertClose();"
            on-failure="handleError">
 
     <div class="form-horizontal row mt-4">

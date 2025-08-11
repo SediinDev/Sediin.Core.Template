@@ -2,7 +2,19 @@
     customValidatorOnBegin();
     setPlaceholdersFromLabels();
 
-    // MutationObserver per intercettare modifiche ai messaggi di errore e tradurli in italiano
+    // Funzione di normalizzazione testo per confronto
+    const normalizeText = (str) => {
+        return str
+            .toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // rimuove accenti
+            .replace(/[.,;:!?"'(){}[\]]/g, "") // rimuove punteggiatura
+            .replace(/\s+/g, " ") // spazi doppi a singolo spazio
+            .trim();
+    };
+
+    // Regex per messaggi tipo: "The ConfirmEmail field is required."
+    const requiredPattern = /^the\s.+\sfield\sis\srequired\.?$/i;
+
     const observer = new MutationObserver(function (mutationsList) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'childList') {
@@ -20,27 +32,37 @@
                         const equalToMsg = input.attr("data-val-equalto");
 
                         let newMessage = null;
-                        const currentMsg = $(target).text();
+                        const currentMsgRaw = $(target).text();
+                        const currentMsg = normalizeText(currentMsgRaw);
 
-                        if (requiredMsg && currentMsg.toLowerCase().includes("required")) {
-                            newMessage = requiredMsg;
-                        } else if (emailMsg && currentMsg.toLowerCase().includes("email")) {
-                            newMessage = emailMsg;
-                        } else if (lengthMsg && currentMsg.toLowerCase().includes("length")) {
-                            newMessage = lengthMsg;
-                        } else if (regexMsg && currentMsg.toLowerCase().includes("format")) {
-                            newMessage = regexMsg;
-                        } else if (equalToMsg && (
-                            currentMsg.toLowerCase().includes("equal") ||
-                            currentMsg.toLowerCase().includes("uguale") ||
-                            currentMsg.toLowerCase().includes("corrisponda") ||
-                            currentMsg.toLowerCase().includes("same") ||
-                            currentMsg.toLowerCase().includes("non corrisponde")
+                        if (requiredMsg && (
+                            currentMsg.includes("required") ||
+                            currentMsg.includes("mandatory") ||
+                            currentMsg.includes("obbligatorio") ||
+                            currentMsg.includes("campo obbligatorio") ||
+                            requiredPattern.test(currentMsgRaw.trim())
                         )) {
-                            newMessage = equalToMsg;
+                            newMessage = requiredMsg.replace(/\{0\}/g, labelText);
+                        } else if (emailMsg && (currentMsg.includes("email") || currentMsg.includes("indirizzo email") || currentMsg.includes("valid email"))) {
+                            newMessage = emailMsg.replace(/\{0\}/g, labelText);
+                        } else if (lengthMsg && (currentMsg.includes("length") || currentMsg.includes("lunghezza") || currentMsg.includes("too short") || currentMsg.includes("too long"))) {
+                            newMessage = lengthMsg.replace(/\{0\}/g, labelText);
+                        } else if (regexMsg && (currentMsg.includes("format") || currentMsg.includes("formato"))) {
+                            newMessage = regexMsg.replace(/\{0\}/g, labelText);
+                        } else if (equalToMsg && (
+                            currentMsg.includes("equal") ||
+                            currentMsg.includes("uguale") ||
+                            currentMsg.includes("corrisponda") ||
+                            currentMsg.includes("same") ||
+                            currentMsg.includes("non corrisponde") ||
+                            currentMsg.includes("does not match")
+                        )) {
+                            newMessage = equalToMsg.replace(/\{0\}/g, labelText);
+                        } else {
+                            newMessage = (requiredMsg || emailMsg || lengthMsg || regexMsg || equalToMsg)?.replace(/\{0\}/g, labelText);
                         }
 
-                        if (newMessage && newMessage !== currentMsg) {
+                        if (newMessage && newMessage !== currentMsgRaw) {
                             $(target).text(newMessage);
                         }
                     }
@@ -48,7 +70,6 @@
             }
         }
     });
-
     // Osservo tutti i messaggi di errore nel form
     $("[data-valmsg-for]").each(function () {
         observer.observe(this, { childList: true });
@@ -56,14 +77,10 @@
 
     // Gestione reset form per pulire errori e stati
     $("form").on("reset", function () {
-        // Aspetta qualche ms per permettere al reset di avvenire
         setTimeout(() => {
-            // Pulisci messaggi errore
             $("[data-valmsg-for]").each(function () {
                 $(this).html("").removeClass("field-validation-error");
             });
-
-            // Pulisci classi di stato (has-danger, has-warning, has-success e classi input)
             $(this).find("input, textarea, select").each(function () {
                 const id = $(this).attr("id");
                 if (!id) return;
@@ -73,34 +90,127 @@
 
         removeValidClassFromCheckboxes();
     });
-});
 
+    translateExistingValidationMessages();
+});
 
 $("form button[type='submit'], form input[type='submit']").on("click", function () {
     removeValidClassFromCheckboxes();
 });
 
+function translateExistingValidationMessages() {
+    const requiredPattern = /^the\s.+\sfield\sis\srequired\.?$/i;
+
+    $("[data-valmsg-for]").each(function () {
+        const $msg = $(this);
+        if (!$msg.hasClass("field-validation-error")) return;
+
+        const id = $msg.attr("data-valmsg-for");
+        if (!id) return;
+
+        const input = $("#" + id);
+        if (!input.length) return;
+
+        const labelText = getCleanLabelText(id);
+
+        const requiredMsg = input.attr("data-val-required");
+        const emailMsg = input.attr("data-val-email");
+        const lengthMsg = input.attr("data-val-length");
+        const regexMsg = input.attr("data-val-regex");
+        const equalToMsg = input.attr("data-val-equalto");
+
+        const currentMsgRaw = $msg.text();
+
+        const normalized = normalizeText(currentMsgRaw);
+
+        let newMessage = null;
+
+        if (requiredMsg && (
+            normalized.includes("required") ||
+            normalized.includes("mandatory") ||
+            normalized.includes("obbligatorio") ||
+            normalized.includes("campo obbligatorio") ||
+            requiredPattern.test(currentMsgRaw.trim())
+        )) {
+            newMessage = requiredMsg.replace(/\{0\}/g, labelText);
+        } else if (emailMsg && (normalized.includes("email") || normalized.includes("indirizzo email") || normalized.includes("valid email"))) {
+            newMessage = emailMsg.replace(/\{0\}/g, labelText);
+        } else if (lengthMsg && (normalized.includes("length") || normalized.includes("lunghezza") || normalized.includes("too short") || normalized.includes("too long"))) {
+            newMessage = lengthMsg.replace(/\{0\}/g, labelText);
+        } else if (regexMsg && (normalized.includes("format") || normalized.includes("formato"))) {
+            newMessage = regexMsg.replace(/\{0\}/g, labelText);
+        } else if (equalToMsg && (
+            normalized.includes("equal") ||
+            normalized.includes("uguale") ||
+            normalized.includes("corrisponda") ||
+            normalized.includes("same") ||
+            normalized.includes("non corrisponde") ||
+            normalized.includes("does not match")
+        )) {
+            newMessage = equalToMsg.replace(/\{0\}/g, labelText);
+        } else {
+            newMessage = (requiredMsg || emailMsg || lengthMsg || regexMsg || equalToMsg)?.replace(/\{0\}/g, labelText);
+        }
+
+        if (newMessage && newMessage !== currentMsgRaw) {
+            $msg.text(newMessage);
+        }
+    });
+}
 // Funzione per leggere testo pulito del label (senza figli, asterisco e duplicati consecutivi)
 function getCleanLabelText(id) {
-    const label = $("label[for='" + id + "']");
-    if (!label.length) return "";
+    // Provo a prendere il label con for="id"
+    let label = $("label[for='" + id + "']");
+
+    if (!label.length) {
+        // Se non trovato, prendo il primo label nel form-group del campo
+        const input = $("#" + id);
+        if (!input.length) return "";
+        label = input.closest(".form-group").find("label").first();
+        if (!label.length) return "";
+    }
+
+    // Rimuovo eventuali figli (es. span asterisco) e prendo solo il testo pulito
     let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
 
-    // Se la lunghezza è pari, prova a dividere a metà e confrontare le due metà
+    // Se la lunghezza è pari, controllo se il testo è duplicato e rimuovo la seconda metà
     if (text.length % 2 === 0) {
         const half = text.length / 2;
         const part1 = text.substring(0, half);
         const part2 = text.substring(half);
         if (part1 === part2) {
-            text = part1; // rimuovo la seconda metà duplicata
+            text = part1;
         }
     }
 
-    // Rimuove duplicati consecutivi di parole (es. CognomeCognome -> Cognome)
+    // Rimuovo parole duplicate consecutive
     text = text.replace(/(\b\w+\b)\1+/gi, "$1");
 
     return text;
 }
+
+//function getCleanLabelText(id) {
+//    const label = $("label[for='" + id + "']");
+//    if (!label.length) return "";
+//    let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
+
+//    // Se la lunghezza è pari, prova a dividere a metà e confrontare le due metà
+//    if (text.length % 2 === 0) {
+//        const half = text.length / 2;
+//        const part1 = text.substring(0, half);
+//        const part2 = text.substring(half);
+//        if (part1 === part2) {
+//            text = part1; // rimuovo la seconda metà duplicata
+//        }
+//    }
+
+//    // Rimuove duplicati consecutivi di parole (es. CognomeCognome -> Cognome)
+//    text = text.replace(/(\b\w+\b)\1+/gi, "$1");
+
+//    return text;
+//}
+
+
 
 // Rimuove parole duplicate consecutive in una stringa
 function removeDuplicateWords(str) {
