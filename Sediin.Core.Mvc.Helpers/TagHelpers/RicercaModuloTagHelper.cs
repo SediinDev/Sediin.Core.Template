@@ -188,6 +188,7 @@ window.updateListRicerca = function(showalert) {{
                 }}, 150);" : "")}
                 
                 customValidatorOnBegin();
+                setPlaceholdersFromLabels();
 
                 var form = document.getElementById('{formId}');
                 if (form) {{

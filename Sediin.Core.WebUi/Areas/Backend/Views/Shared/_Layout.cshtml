@@ -13,11 +13,10 @@
     </title>
 
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/bootstrap.custom.css" rel="stylesheet" />
     <link href="~/css/backend.css" rel="stylesheet" />
-    <link href="~/css/navmenu.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
     <link href="~/css/validation.css" rel="stylesheet" />
@@ -26,10 +25,13 @@
 </head>
 
 <body>
+
     <div class="wrapper blurEffect">
+
         <nav id="sidebar" class="d-none d-md-block d-lg-block">
             @await Component.InvokeAsync("Menu", new { tipo = "sidemenu" })
         </nav>
+
         <!-- Page Content -->
         <div id="content" style="margin-top:-30px">
             @await Component.InvokeAsync("Menu", new { tipo = "navmenu" })
@@ -81,6 +83,22 @@
     <script src="~/js/onesidepage.js"></script>
     <script src="~/js/toastr.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+                $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $('#content').toggleClass('fullwidth');
+
+                if ($('#sidebar').hasClass('active')) {
+                    $('#sidebarCollapseText').text('Apri menu');
+                } else {
+                    $('#sidebarCollapseText').text('Chiudi menu');
+                }
+            });
+        });
+
+    </script>
 </body>
 </html>
 

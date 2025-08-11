@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     customValidatorOnBegin();
+    setPlaceholdersFromLabels();
 
     // MutationObserver per intercettare modifiche ai messaggi di errore e tradurli in italiano
     const observer = new MutationObserver(function (mutationsList) {
@@ -243,10 +244,6 @@ function setPlaceholdersFromLabels() {
         }
     });
 }
-
-$(document).ready(function () {
-    setPlaceholdersFromLabels();
-});
 
 function clearValidationSummaryErrors() {
     $(".validation-summary-errors").hide();

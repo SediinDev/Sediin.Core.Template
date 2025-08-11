@@ -152,27 +152,3 @@
 
 
 
-<a class="nav-link" href="javascript:void(0)"
-   id="sidebarCollapse" style="color:white">
-    <i class="fas fa-sliders-h marginMenuIcon"></i>
-    <span id="sidebarCollapseText">Chiudi menu</span>
-</a>
-
-
-@section Scripts {
-
-    <script>
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-                $(this).tooltip("hide");
-                if ($("#sidebar").hasClass("active")) {
-                    $('#sidebarCollapseText').text("Apri menu");
-                }
-                else {
-                    $('#sidebarCollapseText').text("Chiudi menu");
-                }
-            });
-        });
-    </script>
-}
