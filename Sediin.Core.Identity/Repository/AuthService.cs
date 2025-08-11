@@ -250,7 +250,7 @@ namespace Sediin.Core.Identity.Repository
         {
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
-                return null;
+                throw new Exception("Utente non trovato");
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -265,7 +265,7 @@ namespace Sediin.Core.Identity.Repository
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
-                return null;
+                throw new Exception("Utente non trovato");
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -320,5 +320,63 @@ namespace Sediin.Core.Identity.Repository
                 throw new Exception("Dati utente non aggiornati");
             }
         }
+
+        public async Task DeleteUserById(string id)
+        {
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                throw new Exception("Utente non trovato");
+
+            // Prendo i ruoli dell'utente
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Any())
+            {
+                // Rimuovo tutti i ruoli
+                var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, roles);
+                if (!removeRolesResult.Succeeded)
+                    throw new Exception("Errore rimuovere utente dal ruolo");
+            }
+
+            // Elimino l'utente
+            var deleteResult = await _userManager.DeleteAsync(user);
+            if (!deleteResult.Succeeded)
+                throw new Exception("Errore eliminare utente");
+
+        }
+
+        public async Task DisableUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                throw new Exception("Utente non trovato");
+
+            user.LockoutEnabled = true;
+            user.LockoutEnd = DateTimeOffset.MaxValue; // blocca l’accesso
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception("Non e stato possibile disattivare utente");
+        }
+
+        public async Task EnableUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                throw new Exception("Utente non trovato");
+
+            // Sblocco account
+            user.LockoutEnd = null;
+            user.LockoutEnabled = false;
+
+            // Se hai un campo custom tipo IsActive
+            // user.IsActive = true;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception("Non e stato possibile abilitare utente");
+        }
+
     }
 }

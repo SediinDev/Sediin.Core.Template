@@ -65,6 +65,16 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
             return Content("Utente aggiornato");
         }
 
+
+        [HttpPost]
+        [RedirectIfNotAjax]
+        [AuthorizeSediin(Roles = [Identity.Roles.SuperAdmin, Identity.Roles.Admin])]
+        public async Task<IActionResult> EliminaUtente(string id)
+        {
+            await _unitOfWorkIdentity.AuthService.DeleteUserById(id);
+            return Content("Utente eliminato");
+        }
+
         /// <summary>
         /// per tutti utenti loggate
         /// </summary>
