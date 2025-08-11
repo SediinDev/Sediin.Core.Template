@@ -1,25 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.Options;
-using NuGet.Protocol.Plugins;
 using Sediin.Core.TemplateConfiguration;
-using Sediin.Core.TemplateConfiguration.Models;
 using System.Net;
 using System.Net.Mail;
 
 namespace Sediin.Core.WebUi.Controllers
 {
-    //public class EmailSettings
-    //{
-    //    public string SmtpServer { get; set; } = string.Empty;
-    //    public int SmtpPort { get; set; }
-    //    public string SmtpUsername { get; set; } = string.Empty;
-    //    public string SmtpPassword { get; set; } = string.Empty;
-    //    public bool SmtpServerAutentication { get; set; }
-    //    public bool SmtpServerUseSSL { get; set; }
-    //    public string FromName { get; set; } = string.Empty;
-    //    public string FromEmail { get; set; } = string.Empty;
-    //}
-
     public class EmailSender : IEmailSender
     {
         private readonly ISediinCoreConfiguration _emailSettings;
