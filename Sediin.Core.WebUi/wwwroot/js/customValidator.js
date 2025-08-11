@@ -210,6 +210,44 @@ function customValidatorOnBegin() {
 
 // FUNZIONI DI VALIDAZIONE
 
+function setPlaceholdersFromLabels() {
+    $("form .form-group").each(function () {
+        const $group = $(this);
+        const input = $group.find("input[type='text'], input[type='password'], input[type='search'], input:not([type]), textarea").first();
+        if (!input.length) return;
+
+        // Se ha già placeholder, skip
+        if (input.attr("placeholder")) return;
+
+        let labelText = "";
+
+        // Prova label con for
+        const inputId = input.attr("id");
+        if (inputId) {
+            const label = $("label[for='" + inputId + "']");
+            if (label.length) {
+                labelText = label.text().replace(/\*/g, "").trim();
+            }
+        }
+
+        // Se non trovato, prova la prima label dentro form-group
+        if (!labelText) {
+            const label = $group.find("label").first();
+            if (label.length) {
+                labelText = label.text().replace(/\*/g, "").trim();
+            }
+        }
+
+        if (labelText) {
+            input.attr("placeholder", labelText);
+        }
+    });
+}
+
+$(document).ready(function () {
+    setPlaceholdersFromLabels();
+});
+
 function clearValidationSummaryErrors() {
     $(".validation-summary-errors").hide();
 }

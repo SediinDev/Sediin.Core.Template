@@ -62,19 +62,32 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 PartialHtml?.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
                 sb.Append(writer.ToString());
 
+                //sb.AppendLine("<script>");
+                //sb.AppendLine("$(function () {");
+                //sb.AppendLine("  $(\"input[type='text'], input[type='password'], textarea\").each(function () {");
+                //sb.AppendLine("    if (!$(this).hasClass(\"form-control\")) {");
+                //sb.AppendLine("      $(this).addClass(\"form-control\");");
+                //sb.AppendLine("    }");
+                //sb.AppendLine("    if (!$(this).hasClass(\"col-md-12\")) {");
+                //sb.AppendLine("      $(this).addClass(\"col-md-12\");");
+                //sb.AppendLine("    }");
+                //sb.AppendLine("  });");
+                //sb.AppendLine("});");
+                //sb.AppendLine("</script>");
+                //sb.Append("   <hr />");
+
                 sb.AppendLine("<script>");
-                sb.AppendLine("$(function () {");
-                sb.AppendLine("  $(\"input[type='text'], input[type='password'], textarea\").each(function () {");
-                sb.AppendLine("    if (!$(this).hasClass(\"form-control\")) {");
-                sb.AppendLine("      $(this).addClass(\"form-control\");");
-                sb.AppendLine("    }");
-                sb.AppendLine("    if (!$(this).hasClass(\"col-md-12\")) {");
-                sb.AppendLine("      $(this).addClass(\"col-md-12\");");
-                sb.AppendLine("    }");
-                sb.AppendLine("  });");
+                sb.AppendLine("document.addEventListener(\"DOMContentLoaded\", function() {");
+                sb.AppendLine("  var inputs = document.querySelectorAll(\"form .form-group input[type='password'],form .form-group input[type='text'], form .form-group textarea\");");
+                sb.AppendLine("  for (var i = 0; i < inputs.length; i++) {");
+                sb.AppendLine("    var el = inputs[i];");
+                sb.AppendLine("    if (!el.classList.contains(\"form-control\")) el.classList.add(\"form-control\");");
+                sb.AppendLine("    if (!el.classList.contains(\"col-md-12\")) el.classList.add(\"col-md-12\");");
+                sb.AppendLine("  }");
                 sb.AppendLine("});");
                 sb.AppendLine("</script>");
-                sb.Append("   <hr />");
+                sb.AppendLine("   <hr />");
+
 
                 sb.Append(@"<div class=""d-flex justify-content-center gap-2 mt-3"">");
                 sb.Append($@"<button type=""submit"" onclick=""return submitIfValid_{uniqueId}(event);"" class=""btn btn-primary"" id=""submitBtn_{uniqueId}"">{SubmitText}</button>");
