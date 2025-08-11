@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Sediin.Core.Identity;
 using Sediin.Core.WebUi.Areas.TemplateEmail.Models;
 using Sediin.Core.WebUi.Filters;
 using Sediin.Core.WebUi.Models;
@@ -136,8 +137,10 @@ namespace Sediin.Core.WebUi.Controllers
                 }
 
                 _unitOfWorkIdentity.AuthService.OnSendMailConfermaEmail += AuthService_OnSendMailConfermaEmail;
+              
+                Roles _role = (Roles)Enum.Parse(typeof(Roles), model.Ruolo);
 
-                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, Identity.Roles.SuperAdmin);
+                await _unitOfWorkIdentity.AuthService.CreateUser(model.UserName, model.Email, model.Nome, model.Cognome, _role);
 
                 return Json(new
                 {
