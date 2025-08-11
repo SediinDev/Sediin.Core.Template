@@ -1,9 +1,16 @@
-﻿@inject IConfiguration Configuration
-@inject IUnitOfWorkIdentity UnitOfWorkIdentity
-@model IEnumerable<Sediin.Core.DataAccess.Entities.Menu>
+﻿@model IEnumerable<Sediin.Core.DataAccess.Entities.Menu>
 @using Microsoft.AspNetCore.Html
 @using Sediin.Core.Identity.Abstract
 @using Sediin.Core.Identity.Repository
+@using Microsoft.Extensions.Configuration
+@using Sediin.Core.TemplateConfiguration
+@using Sediin.Core.TemplateConfiguration.Models
+@inject IConfiguration Configuration
+@inject IUnitOfWorkIdentity UnitOfWorkIdentity
+@inject ISediinCoreConfiguration Configuration
+@{
+    RagioneSociale ragioneSociale = Configuration.Get().Result.RagioneSociale;
+}
 
 @functions
 {
@@ -106,10 +113,10 @@
                 }
 
                 <li>
-                    @*<a class="nav-link" href="@Html.GetConfiguration().RagioneSociale.SitoWeb" target="_blank" style="color:white">*@
-                    <i class="fas fa-home marginMenuIcon"></i>
-                    @*Sito @Html.GetConfiguration().RagioneSociale.NomeCordo*@
-                    @*</a>*@
+                    <a class="nav-link" href="https://www.sediin.it" target="_blank">
+                        <i class="fas fa-home marginMenuIcon"></i>
+                        Sito @ragioneSociale.Nome
+                    </a>
                 </li>
 
             </ul>
@@ -149,7 +156,7 @@
         <div class="collapse navbar-collapse" id="navbar1">
             <ul class="navbar-nav mr-auto">
                 <li>
-                    <a class="nav-link" href="javascript:void(0)" id="sidebarCollapse" style="color:white;">
+                    <a class="nav-link" href="javascript:void(0)" id="sidebarCollapse">
                         <i class="fas fa-sliders-h marginMenuIcon"></i>
                         <span id="sidebarCollapseText">Chiudi menu</span>
                     </a>
@@ -157,17 +164,17 @@
                 </li>
 
                 <li>
-                    @*<a class="nav-link" href="@Html.GetConfiguration().RagioneSociale.SitoWeb" target="_blank" style="color:white">
+                    <a class="nav-link" href="https://www.sediin.it" target="_blank">
                         <i class="fas fa-home marginMenuIcon"></i>
-                        Sito @Html.GetConfiguration().RagioneSociale.NomeCordo
-                    </a>*@
+                        Sito @ragioneSociale.Nome
+                    </a>
                 </li>
 
             </ul>
             <ul class="navbar-nav ms-auto mr-2">
                 <li class="nav-item dropdown dropstart">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false" style="color:white">
+                       data-bs-toggle="dropdown" aria-expanded="false">
                         @{
                             var _user = UnitOfWorkIdentity.AuthService.GetUserByUsername(User.Identity.Name).Result;
                         }
