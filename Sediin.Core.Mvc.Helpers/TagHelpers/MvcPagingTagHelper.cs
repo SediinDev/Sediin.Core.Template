@@ -63,7 +63,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
 
 
                 var queryString = string.Join("&", parameters);
-                var encrypted = CryptoHelper.Encrypt(queryString);
+                var encrypted = HttpUtility.UrlEncode(CryptoHelper.Encrypt(queryString));
                 var encryptedParam = HttpUtility.UrlEncode(encrypted);
 
                 return $"{baseUrl}?q={encryptedParam}";

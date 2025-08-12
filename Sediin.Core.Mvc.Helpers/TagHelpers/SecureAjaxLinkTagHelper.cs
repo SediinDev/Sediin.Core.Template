@@ -86,7 +86,7 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
             {
                 var queryString = string.Join("&", RouteValues.Select(kvp => $"{kvp.Key}={HttpUtility.UrlEncode(kvp.Value)}"));
                 var encrypted = CryptoHelper.Encrypt(queryString);
-                encryptedParam = HttpUtility.UrlEncode(queryString);
+                encryptedParam = HttpUtility.UrlEncode(encrypted);
             }
 
             var url = urlHelper.Action(Action, Controller, encryptedParam != null ? new { q = encryptedParam } : null);
