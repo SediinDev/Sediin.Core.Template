@@ -46,6 +46,9 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
         [HtmlAttributeName("asp-action")]
         public string Action { get; set; }
 
+        [HtmlAttributeName("asp-area")]
+        public string Area { get; set; }
+
         // Singoli parametri da criptare e passare in query string
         [HtmlAttributeName(DictionaryAttributePrefix = "asp-route-")]
         public Dictionary<string, string> RouteValues { get; set; } = new();
@@ -89,7 +92,23 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 encryptedParam = HttpUtility.UrlEncode(encrypted);
             }
 
-            var url = urlHelper.Action(Action, Controller, encryptedParam != null ? new { q = encryptedParam } : null);
+            string? url = "";
+            if (encryptedParam != null && Area != null)
+            {
+                url = urlHelper.Action(Action, Controller, new { area = Area, q = encryptedParam });
+            }
+            else if (encryptedParam != null && Area == null)
+            {
+                url = urlHelper.Action(Action, Controller, new { q = encryptedParam });
+            }
+            else if (encryptedParam == null && Area != null)
+            {
+                url = urlHelper.Action(Action, Controller, new { area = Area });
+            }
+            else
+            {
+                url = urlHelper.Action(Action, Controller);
+            }
 
             output.TagName = "a";
             output.Attributes.SetAttribute("href", url);
