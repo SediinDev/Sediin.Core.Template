@@ -1,4 +1,6 @@
 ﻿@model Sediin.Core.WebUi.Areas.Administrator.Models.UtentiVM
+@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
 
 
 @if (Model.TotalRecords == 0)
@@ -36,11 +38,14 @@ else
                                 <ul class="dropdown-menu">
                                     <li>
 
-                                        <a class="dropdown-item" data-ajax="true"
-                                           data-ajax-begin="alertWaid()"
-                                           data-ajax-failure="handleError"
-                                           data-ajax-success="showModal_NoFooter('Modifica utente', data); alertClose()"
-                                           href="@Url.Action("ModificaUtente", "Utenti", new { item.User.Id })">
+                                        <a class="dropdown-item"
+                                           asp-controller="Utenti"
+                                           asp-action="ModificaUtente"
+                                           asp-route-id="@item.User.Id"
+                                           asp-ajax="true"
+                                           asp-ajax-begin="alertWaid()"
+                                           asp-ajax-failure="handleError"
+                                           asp-ajax-success="showModal_NoFooter('Modifica utente', data); alertClose()">
                                             Modifica utente
                                         </a>
 

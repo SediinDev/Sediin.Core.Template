@@ -61,10 +61,12 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                     parameters.Add($"page={page.Value}");
                 }
 
-                var queryString = string.Join("&", parameters);
-                var encrypted = HttpUtility.UrlEncode(CryptoHelper.Encrypt(queryString));
 
-                return $"{baseUrl}?q={encrypted}";
+                var queryString = string.Join("&", parameters);
+                var encrypted = CryptoHelper.Encrypt(queryString);
+                var encryptedParam = HttpUtility.UrlEncode(encrypted);
+
+                return $"{baseUrl}?q={encryptedParam}";
             }
 
             int pageGroupSize = 10;
