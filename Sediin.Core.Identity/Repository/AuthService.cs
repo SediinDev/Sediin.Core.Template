@@ -134,9 +134,9 @@ namespace Sediin.Core.Identity.Repository
             await IsEmailConfirmed(user);
         }
 
-        public async Task ConfirmEmail(string userId, string code)
+        public async Task ConfirmEmail(string username, string code)
         {
-            var user = await _userManager.FindByIdAsync(userId)
+            var user = await _userManager.FindByNameAsync(username)
                 ?? throw new Exception("Utente inesistente");
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
@@ -220,9 +220,9 @@ namespace Sediin.Core.Identity.Repository
 
             return usersWithRoles;
         }
-        public async Task<string> GetUserRole(string userName)
+        public async Task<string> GetUserRole(string username)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(username);
             if (user != null)
             {
                 var roles = await _userManager.GetRolesAsync(user);
@@ -247,9 +247,9 @@ namespace Sediin.Core.Identity.Repository
         //    return await _userManager.FindByIdAsync(id);
         //}
 
-        public async Task<SediinIdentityUserWithRoles> GetUserByUsername(string userName)
+        public async Task<SediinIdentityUserWithRoles> GetUserByUsername(string username)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(username);
             if (user == null)
                 throw new Exception("Utente non trovato");
 
@@ -278,9 +278,9 @@ namespace Sediin.Core.Identity.Repository
         }
 
 
-        public async Task ChangePassword(string userName, string currentPassword, string newPassword)
+        public async Task ChangePassword(string username, string currentPassword, string newPassword)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(username);
             var _result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (!_result.Succeeded)
             {

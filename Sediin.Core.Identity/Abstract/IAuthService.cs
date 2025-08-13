@@ -5,7 +5,7 @@ using Sediin.Core.Identity.Models;
 
 namespace Sediin.Core.Identity.Abstract
 {
-    public delegate Task SendMail(string email, string userId, string token, string nome, string cognome);
+    public delegate Task SendMail(string email, string username, string token, string nome, string cognome);
 
     public delegate Task NotifyUser(string username);
 
@@ -36,15 +36,15 @@ namespace Sediin.Core.Identity.Abstract
 
         Task CreateUser(string username, string email, string nome, string cognome, Roles role);
         
-        Task ConfirmEmail(string userId, string code);
+        Task ConfirmEmail(string username, string code);
 
         Task<string> GetUserRole(string userId);
         
-        Task<SediinIdentityUserWithRoles> GetUserByUsername(string userName);
+        Task<SediinIdentityUserWithRoles> GetUserByUsername(string username);
         
         Task<SediinIdentityUserWithRoles> GetUserById(string id);
         
-        Task ChangePassword(string userName, string currentPassword, string newPassword);
+        Task ChangePassword(string username, string currentPassword, string newPassword);
 
         Task<(IList<SediinIdentityUserWithRoles> Users, int TotalCount)> GetUsersPagedAsync(UtentiRicercaVM filtri , int pageNumber, int pageSize);
         

@@ -34,7 +34,17 @@ namespace Sediin.Core.WebUi.Areas.Administrator.Controllers
         public async Task<IActionResult> RicercaExcel(UtentiRicercaVM filtri)
         {
             var _result = await _unitOfWorkIdentity.AuthService.GetAllUsersAsync(filtri);
-            return ExportExcel(_result, "RicercaList");
+            return ExportExcel(_result.Select(x => new
+            {
+                x.User.UserName,
+                x.User.Nome,
+                x.User.Cognome,
+                x.User.Email,
+                x.User.PhoneNumber,
+                Bloccato = x.User.LockoutEnd,
+                Ruolo = x.Roles.FirstOrDefault(),
+
+            }), "RicercaList");
         }
 
         [RedirectIfNotAjax]
