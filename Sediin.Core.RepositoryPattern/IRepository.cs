@@ -18,15 +18,15 @@ namespace Sediin.Core.RepositoryPattern
             string? includeProperties = null,
             bool tracked = false) where TEntity : class;
 
-        Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
-            Expression<Func<TEntity, bool>>? predicate = null,
-            string? includeProperties = null,
-            bool tracked = false,
-            int? pageNumber = null,
-            int? pageSize = null) where TEntity : class;
+        //Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
+        //    Expression<Func<TEntity, bool>>? predicate = null,
+        //    string? includeProperties = null,
+        //    bool tracked = false,
+        //    int? pageNumber = null,
+        //    int? pageSize = null) where TEntity : class;
 
 
-        Task<(IEnumerable<TEntity> Items, int TotalCount)> GetAllPagedAsync<TEntity>(
+        Task<(IEnumerable<TEntity> Items, int TotalCount)> GetAllAsync<TEntity>(
             Expression<Func<TEntity, bool>>? predicate = null,
             string? includeProperties = null,
             bool tracked = false,
