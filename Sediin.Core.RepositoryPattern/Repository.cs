@@ -12,38 +12,44 @@ namespace Sediin.Core.RepositoryPattern
             _db = db;
         }
 
-        public void Add<TEntity>(TEntity entity) where TEntity : class
+        public async Task AddAsync<TEntity>(TEntity entity) where TEntity : class
         {
-            _db.Set<TEntity>().Add(entity);
+            await _db.Set<TEntity>().AddAsync(entity);
         }
 
-        public void Update<TEntity>(TEntity entity) where TEntity : class
+        public async Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class
         {
             _db.Set<TEntity>().Update(entity);
+            await Task.CompletedTask; // EF Update è sincrono, lasciamo compatibilità async
         }
 
-        public void Delete<TEntity>(TEntity entity) where TEntity : class
+        public async Task DeleteAsync<TEntity>(TEntity entity) where TEntity : class
         {
             _db.Set<TEntity>().Remove(entity);
+            await Task.CompletedTask;
         }
 
-        public void DeleteAll<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        public async Task DeleteAllAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             _db.Set<TEntity>().RemoveRange(entities);
+            await Task.CompletedTask;
         }
 
-        public TEntity Get<TEntity>(
+        public async Task<TEntity?> GetAsync<TEntity>(
             Expression<Func<TEntity, bool>>? predicate = null,
             string? includeProperties = null,
             bool tracked = false) where TEntity : class
         {
-            return GetAll(predicate, includeProperties, tracked).FirstOrDefault();
+            var query = await GetAllAsync(predicate, includeProperties, tracked, null, null);
+            return query.FirstOrDefault();
         }
 
-        public IEnumerable<TEntity> GetAll<TEntity>(
+        public async Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
             Expression<Func<TEntity, bool>>? predicate = null,
             string? includeProperties = null,
-            bool tracked = false) where TEntity : class
+            bool tracked = false,
+            int? pageNumber = null,
+            int? pageSize = null) where TEntity : class
         {
             IQueryable<TEntity> query = tracked
                 ? _db.Set<TEntity>()
@@ -60,7 +66,13 @@ namespace Sediin.Core.RepositoryPattern
                 }
             }
 
-            return query;
+            if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
+            {
+                int skip = (pageNumber.Value - 1) * pageSize.Value;
+                query = query.Skip(skip).Take(pageSize.Value);
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

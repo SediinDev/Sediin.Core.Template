@@ -1,26 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Sediin.Core.RepositoryPattern
 {
     public interface IRepository<TContext> where TContext : DbContext
     {
-        IEnumerable<TEntity> GetAll<TEntity>(
+        Task AddAsync<TEntity>(TEntity entity) where TEntity : class;
+
+        Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class;
+
+        Task DeleteAsync<TEntity>(TEntity entity) where TEntity : class;
+
+        Task DeleteAllAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
+
+        Task<TEntity?> GetAsync<TEntity>(
             Expression<Func<TEntity, bool>>? predicate = null,
             string? includeProperties = null,
             bool tracked = false) where TEntity : class;
 
-        TEntity Get<TEntity>(
+        Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
             Expression<Func<TEntity, bool>>? predicate = null,
             string? includeProperties = null,
-            bool tracked = false) where TEntity : class;
-
-        void Add<TEntity>(TEntity entity) where TEntity : class;
-
-        void Update<TEntity>(TEntity entity) where TEntity : class;
-
-        void Delete<TEntity>(TEntity entity) where TEntity : class;
-
-        void DeleteAll<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
+            bool tracked = false,
+            int? pageNumber = null,
+            int? pageSize = null) where TEntity : class;
     }
 }
