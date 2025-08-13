@@ -3,6 +3,7 @@ using Sediin.Core.DataAccess;
 using Sediin.Core.DataAccess.Entities;
 using Sediin.Core.Helpers.Cache;
 using Sediin.Core.Identity;
+using System.Collections.Generic;
 
 
 namespace Sediin.Core.WebUi.Areas.Backend.Components
@@ -32,10 +33,41 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
                 if (cached != null)
                     return cached;
 
+                IEnumerable<Menu> _allMenu = _unitOfWorkDataAccess.Menu.GetAll().Result;
+
                 var role = _unitOfWorkIdentity.AuthService.GetUserRole(User.Identity.Name).Result;
-                var menu = _unitOfWorkDataAccess.Menu.GetAll(x => x.Ruoli
-                    .Where(a => a.Ruolo == role).Count() > 0).Result.ToList();
-                HttpContext.Session.SetObject("Menu", menu);
+
+                var menu = _allMenu.Where(x => x.Ruoli
+                    .Where(a => a.Ruolo == role).Count() > 0);
+
+                List<Menu> _menuPadri = new List<Menu>();
+
+                foreach (var item in menu)
+                {
+                    if (item.CodmenuPadre.GetValueOrDefault() > 1)
+                    {
+                        GetPadre(item.CodmenuPadre.GetValueOrDefault());
+                    }
+                }
+
+
+                void GetPadre(int codPadre)
+                {
+                    var _padre = _allMenu.FirstOrDefault(x => x.Codmenu == codPadre);
+                    if (_padre != null)
+                    {
+                        _menuPadri.Add(_padre);
+
+                        if (_padre.CodmenuPadre.GetValueOrDefault() > 1)
+                        {
+                            GetPadre(_padre.CodmenuPadre.GetValueOrDefault());
+                        }
+                    }
+                }
+
+                var _newenu = menu.Union(_menuPadri).Distinct();
+
+                HttpContext.Session.SetObject("Menu", _newenu);
                 return menu;
             }
             set
@@ -52,7 +84,6 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
             {
                 case "sidemenu":
                     return View("~/Areas/Backend/Views/Shared/Components/Menu/SideMenu.cshtml", Menu);
-
                 case "navmenu":
                     return View("~/Areas/Backend/Views/Shared/Components/Menu/NavMenu.cshtml", Menu);
                 case "homemenu":

@@ -44,6 +44,42 @@ namespace Sediin.Core.RepositoryPattern
             return query.FirstOrDefault();
         }
 
+        public async Task<(IEnumerable<TEntity> Items, int TotalCount)> GetAllPagedAsync<TEntity>(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            string? includeProperties = null,
+            bool tracked = false,
+            int? pageNumber = null,
+            int? pageSize = null
+        ) where TEntity : class
+        {
+            IQueryable<TEntity> query = tracked
+                ? _db.Set<TEntity>()
+                : _db.Set<TEntity>().AsNoTracking();
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                foreach (var includeProperty in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            int totalCount = await query.CountAsync();
+
+            if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
+            {
+                int skip = (pageNumber.Value - 1) * pageSize.Value;
+                query = query.Skip(skip).Take(pageSize.Value);
+            }
+
+            var items = await query.ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public async Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
             Expression<Func<TEntity, bool>>? predicate = null,
             string? includeProperties = null,
