@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Sediin.Core.Identity;
 using Sediin.Core.WebUi.Areas.TemplateEmail.Models;
 using Sediin.Core.WebUi.Filters;
@@ -169,7 +168,7 @@ namespace Sediin.Core.WebUi.Controllers
         }
 
         #region helper
-        private async Task AuthService_OnSendMailRecoveryPassword(string email, string userId, string token, string nome, string cognome)
+        private async Task AuthService_OnSendMailRecoveryPassword(string email, string userId, string username, string token, string nome, string cognome)
         {
             string _url = CreateUrl("ResetPassword", userId, token);
             string subject = "Cambio password";
@@ -181,13 +180,13 @@ namespace Sediin.Core.WebUi.Controllers
                         Nome = nome,
                         Cognome = cognome,
                         Email = email,
-                        Username = userId
+                        Username = username
                     });
 
             await _emailSender.SendEmailAsync(email, subject, htmlBody);
         }
 
-        private async Task AuthService_OnSendMailConfermaEmail(string email, string userId, string token, string nome, string cognome)
+        private async Task AuthService_OnSendMailConfermaEmail(string email, string userId, string username, string token, string nome, string cognome)
         {
             string _url = CreateUrl("ConfirmEmail", userId, token);
             string subject = "Conferma email";
@@ -199,6 +198,7 @@ namespace Sediin.Core.WebUi.Controllers
                        Cognome = cognome,
                        Nome = nome,
                        Email = email,
+                       Username= username
                    });
 
             await _emailSender.SendEmailAsync(email, subject, htmlBody);

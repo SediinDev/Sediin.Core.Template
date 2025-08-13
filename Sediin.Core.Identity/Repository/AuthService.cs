@@ -59,7 +59,7 @@ namespace Sediin.Core.Identity.Repository
             if (await IsEmailConfirmed(user))
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                OnSendMailRecoveryPassword?.Invoke(user.Email, user.UserName, code, user.Nome, user.Cognome);
+                OnSendMailRecoveryPassword?.Invoke(user.Email, user.Id, user.UserName, code, user.Nome, user.Cognome);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Sediin.Core.Identity.Repository
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                OnSendMailConfermaEmail?.Invoke(user.Email, user.UserName, code, user.Nome, user.Cognome);
+                OnSendMailConfermaEmail?.Invoke(user.Email, user.Id, user.UserName, code, user.Nome, user.Cognome);
                 return false;
             }
             return true;

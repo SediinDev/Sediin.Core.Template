@@ -5,7 +5,7 @@ using Sediin.Core.Identity.Models;
 
 namespace Sediin.Core.Identity.Abstract
 {
-    public delegate Task SendMail(string email, string username, string token, string nome, string cognome);
+    public delegate Task SendMail(string email, string userId, string username, string token, string nome, string cognome);
 
     public delegate Task NotifyUser(string username);
 
