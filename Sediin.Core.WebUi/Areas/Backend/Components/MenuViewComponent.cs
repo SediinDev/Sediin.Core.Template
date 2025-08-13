@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sediin.Core.DataAccess.Abstract;
+using Sediin.Core.DataAccess;
 using Sediin.Core.DataAccess.Entities;
 using Sediin.Core.Helpers.Cache;
-using Sediin.Core.Identity.Abstract;
+using Sediin.Core.Identity;
 
 
 namespace Sediin.Core.WebUi.Areas.Backend.Components

@@ -2,9 +2,15 @@
 using Microsoft.AspNetCore.Identity;
 using Sediin.Core.Identity.Abstract;
 using Sediin.Core.Identity.Entities;
+using Sediin.Core.Identity.Repository;
 
-namespace Sediin.Core.Identity.Repository
+namespace Sediin.Core.Identity
 {
+    public interface IUnitOfWorkIdentity
+    {
+        IAuthService AuthService { get; }
+    }
+
     public class UnitOfWorkIdentity : IUnitOfWorkIdentity
     {
         public IAuthService AuthService { get; }
