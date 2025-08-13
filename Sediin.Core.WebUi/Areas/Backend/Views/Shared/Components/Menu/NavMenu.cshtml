@@ -131,7 +131,7 @@
                        data-ajax="true"
                        data-ajax-begin="alertWaid()"
                        data-ajax-failure="handleError"
-                       data-ajax-success="showModal_NoFooter('Modifica Password',data); alertClose()">
+                       data-ajax-success="showModal('Modifica Password',data); alertClose()">
                         <i class="fas fa-key marginMenuIcon"></i>
                         Modifica Password
                     </a>
@@ -193,7 +193,7 @@
                                data-ajax="true"
                                data-ajax-begin="alertWaid()"
                                data-ajax-failure="handleError"
-                               data-ajax-success="showModal_NoFooter('Modifica Password',data); alertClose()">Modifica Password</a>
+                               data-ajax-success="showModal('Modifica Password',data); alertClose()">Modifica Password</a>
                         </li>
                         <li><a class="dropdown-item" href="@Url.Action("LogOff", "Authentication", new { area = "" })">Esci</a></li>
                     </ul>
