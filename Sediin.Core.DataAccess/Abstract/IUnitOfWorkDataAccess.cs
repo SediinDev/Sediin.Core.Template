@@ -3,10 +3,8 @@ using Sediin.Core.RepositoryPattern;
 
 namespace Sediin.Core.DataAccess.Abstract
 {
-    public interface IUnitOfWorkDataAccess
+    public interface IUnitOfWorkDataAccess : IUnitOfWork<SediinCoreDataAccessDbContext>
     {
         IMenuRepository Menu { get; }
-        IRepository<SediinCoreDataAccessDbContext> Repository { get; }
-        void Save();
     }
 }
