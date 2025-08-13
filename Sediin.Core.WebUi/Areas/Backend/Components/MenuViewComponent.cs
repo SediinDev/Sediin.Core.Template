@@ -34,7 +34,7 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
 
                 var role = _unitOfWorkIdentity.AuthService.GetUserRole(User.Identity.Name).Result;
                 var menu = _unitOfWorkDataAccess.Menu.GetAll(x => x.Ruoli
-                    .Where(a => a.Ruolo == role).Count() > 0, includeProperts: "Ruoli").ToList();
+                    .Where(a => a.Ruolo == role).Count() > 0).ToList();
                 HttpContext.Session.SetObject("Menu", menu);
                 return menu;
             }
@@ -59,7 +59,7 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
                     return View("~/Areas/Backend/Views/Shared/Components/Menu/HomeMenu.cshtml", Menu);
 
                 default:
-                    menu = _unitOfWorkDataAccess.Menu.GetAll(includeProperts: "Ruoli");
+                    menu = _unitOfWorkDataAccess.Menu.GetAll();
                     return View("Default", menu);
             }
         }

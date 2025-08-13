@@ -1,17 +1,24 @@
 ﻿using Sediin.Core.DataAccess.Abstract;
 using Sediin.Core.DataAccess.Data;
 using Sediin.Core.DataAccess.Entities;
+using Sediin.Core.RepositoryPattern;
+using System.Linq.Expressions;
 
 namespace Sediin.Core.DataAccess.Repository
 {
-    public class MenuRepository : Repository<Menu>, IMenuRepository
+    public class MenuRepository : IMenuRepository
     {
-        SediinCoreDataAccessDbContext _db;
+        private readonly IRepository<SediinCoreDataAccessDbContext> _repo;
 
-        public MenuRepository(SediinCoreDataAccessDbContext db) : base(db)
+        public MenuRepository(IRepository<SediinCoreDataAccessDbContext> repo)
         {
-            _db = db;
+            _repo = repo;
         }
 
+        // Metodo generico con filtro opzionale
+        public IEnumerable<Menu> GetAll(Expression<Func<Menu, bool>>? filter = null)
+        {
+            return _repo.GetAll<Menu>(filter, "Ruoli");
+        }
     }
 }

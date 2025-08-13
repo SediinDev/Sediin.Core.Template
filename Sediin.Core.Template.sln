@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.Mvc.Helpers", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.TemplateConfiguration", "Sediin.Core.TemplateConfiguration\Sediin.Core.TemplateConfiguration.csproj", "{C4D23637-1549-41D3-8F13-5ABE6C814FA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sediin.Core.RepositoryPattern", "Sediin.Core.RepositoryPattern\Sediin.Core.RepositoryPattern.csproj", "{8281F18C-E577-430C-A0BA-E97C18B36DE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{C4D23637-1549-41D3-8F13-5ABE6C814FA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4D23637-1549-41D3-8F13-5ABE6C814FA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4D23637-1549-41D3-8F13-5ABE6C814FA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8281F18C-E577-430C-A0BA-E97C18B36DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8281F18C-E577-430C-A0BA-E97C18B36DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8281F18C-E577-430C-A0BA-E97C18B36DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8281F18C-E577-430C-A0BA-E97C18B36DE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

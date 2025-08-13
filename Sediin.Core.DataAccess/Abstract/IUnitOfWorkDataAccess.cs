@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sediin.Core.DataAccess.Data;
+using Sediin.Core.RepositoryPattern;
 
 namespace Sediin.Core.DataAccess.Abstract
 {
     public interface IUnitOfWorkDataAccess
     {
-        IAziendaRepository Aziende { get; }
-        IMenuRepository Menu{ get; }
+        IMenuRepository Menu { get; }
+        IRepository<SediinCoreDataAccessDbContext> Repository { get; }
         void Save();
-
     }
 }
