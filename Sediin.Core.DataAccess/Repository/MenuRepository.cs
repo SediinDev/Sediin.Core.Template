@@ -18,7 +18,7 @@ namespace Sediin.Core.DataAccess.Repository
         // Metodo generico con filtro opzionale
         public async Task<IEnumerable<Menu>> GetAll(Expression<Func<Menu, bool>>? filter = null)
         {
-            return await _repo.GetAllAsync<Menu>(filter, "Ruoli");
+            return await _repo.GetAllAsync(filter, "Ruoli");
         }
     }
 }
