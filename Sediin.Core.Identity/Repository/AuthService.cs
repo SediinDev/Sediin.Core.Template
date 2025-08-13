@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sediin.Core.Identity.Abstract;
@@ -7,7 +6,6 @@ using Sediin.Core.Identity.Entities;
 using Sediin.Core.Identity.Entities.DTO;
 using Sediin.Core.Identity.Models;
 using System.Diagnostics;
-using System.Security.Claims;
 using System.Text;
 
 namespace Sediin.Core.Identity.Repository

@@ -113,7 +113,7 @@
                 }
 
                 <li>
-                    <a class="nav-link" href="https://www.sediin.it" target="_blank">
+                    <a class="nav-link" href="@ragioneSociale.SitoWeb" target="_blank">
                         <i class="fas fa-home marginMenuIcon"></i>
                         Sito @ragioneSociale.Nome
                     </a>
@@ -126,7 +126,7 @@
 
                 <li>
                     <a class="nav-link"
-                       href="@Url.Action("ModificaPassword", "Utenti", new { area = "Admin" })"
+                       href="@Url.Action("ChangePassword", "Utenti", new { area = "Administrator" })"
                        data-ajax="true"
                        data-ajax-begin="alertWaid()"
                        data-ajax-failure="handleError"
@@ -164,7 +164,7 @@
                 </li>
 
                 <li>
-                    <a class="nav-link" href="https://www.sediin.it" target="_blank">
+                    <a class="nav-link" href="@ragioneSociale.SitoWeb" target="_blank">
                         <i class="fas fa-home marginMenuIcon"></i>
                         Sito @ragioneSociale.Nome
                     </a>
