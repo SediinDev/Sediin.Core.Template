@@ -68,7 +68,7 @@ namespace Sediin.Core.WebUi.Areas.Backend.Components
                 var _newenu = menu.Union(_menuPadri).Distinct();
 
                 HttpContext.Session.SetObject("Menu", _newenu);
-                return menu;
+                return _newenu;
             }
             set
             {
