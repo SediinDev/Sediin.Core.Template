@@ -1,4 +1,6 @@
 ﻿@model Sediin.Core.WebUi.Models.RegisterViewModel
+@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
 
 <ajax-form asp-action="Register"
            asp-controller="Authentication"
@@ -17,15 +19,15 @@
             @Html.LabelFor(m => m.Ruolo)
 
             @* Costruzione opzioni enum direttamente inline *@
-            <select asp-for="Ruolo"
+            <select-custom asp-for="Ruolo"
                     class="form-control"
                     placeholder="[Seleziona un'opzione]"
                     asp-items="Enum.GetValues(typeof(Sediin.Core.Identity.Roles))
                                     .Cast<Sediin.Core.Identity.Roles>()
-                                    .Select(r => new SelectOption {
+                                    .Select(r => new SelectOptionCustom {
                                         Value = r.ToString(),
                                         Text = r.ToString() })
-                                    .ToList()"></select>
+                                    .ToList()"></select-custom>
 
             @Html.ValidationMessageFor(m => m.Ruolo, "", new { @class = "text-danger" })
         </div>

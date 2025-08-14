@@ -4,20 +4,20 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Sediin.Core.Mvc.Helpers.TagHelpers
 {
-    public class SelectOption
+    public class SelectOptionCustom
     {
         public string Value { get; set; }
         public string Text { get; set; }
     }
 
-    [HtmlTargetElement("select", Attributes = "asp-items,asp-for")]
-    public class SelectTagHelper : TagHelper
+    [HtmlTargetElement("select-custom", Attributes = "asp-items,asp-for")]
+    public class SelectCustomTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-for")]
         public ModelExpression For { get; set; }
 
         [HtmlAttributeName("asp-items")]
-        public IEnumerable<SelectOption> Items { get; set; }
+        public IEnumerable<SelectOptionCustom> Items { get; set; }
 
         [HtmlAttributeName("multiple")]
         public bool Multiple { get; set; } = false;
@@ -27,6 +27,9 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            // Trasforma il tag personalizzato in una select HTML standard
+            output.TagName = "select";
+
             // ID e Name
             var id = For.Name.Replace(".", "_");
             output.Attributes.SetAttribute("id", id);
@@ -51,7 +54,6 @@ namespace Sediin.Core.Mvc.Helpers.TagHelpers
                 var ph = new TagBuilder("option");
                 ph.Attributes["value"] = "";
 
-                // Se modello null o vuoto → seleziona placeholder
                 if (modelValue == null || string.IsNullOrEmpty(modelValue.ToString()))
                 {
                     ph.Attributes["selected"] = "selected";
