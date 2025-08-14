@@ -1,0 +1,36 @@
+﻿@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
+
+
+<wizard id="mywizard" asp-target="contentDiv" asp-method="POST"
+        asp-loading-text="Sto caricando i dati..."
+        asp-loading-class="text-primary"
+        on-begin="alertWaid();"
+        on-success="alertClose();"
+        on-failure="handleError"
+        on-complete="toastSuccess('Chiamata finita');">
+    <li data-url="@Url.Action("Step1", "Wizard")">Dati Piano</li>
+    <li data-url="@Url.Action("Step2", "Wizard", new { id = 3, nome = "aaa" })">Beneficiari</li>
+    <li data-url="@Url.Action("Step3", "Wizard")">Progetti</li>
+    <li data-url="@Url.Action("Step4", "Wizard")">Voci Spesa</li>
+    <li data-url="@Url.Action("Step5", "Wizard")">Ammissione</li>
+</wizard>
+
+
+<div id="contentDiv">
+</div>
+
+<button style="margin-top:100px" onclick="w()">set manuale view index 3</button>
+
+<script>
+    alertWaid()
+
+function w()
+{
+            setWizardTab('mywizard', 2); // apre il terzo tab
+
+}
+
+</script>
+
+

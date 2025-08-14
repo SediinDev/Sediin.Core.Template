@@ -1,162 +1,161 @@
-﻿//using Microsoft.AspNetCore.Mvc.Rendering;
-//using Microsoft.AspNetCore.Mvc.ViewFeatures;
-//using Microsoft.AspNetCore.Razor.TagHelpers;
-//using Sediin.Core.Mvc.Helpers.Security;
-//using System.Text.Encodings.Web;
-//using System.Web;
+﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 
-//namespace Sediin.Core.Mvc.Helpers.TagHelpers
-//{
-//    public class WizardContext
-//    {
-//        public List<WizardStepItem> Steps { get; } = new();
-//    }
+namespace Sediin.Core.Mvc.Helpers.TagHelpers
+{
+    [HtmlTargetElement("wizard", Attributes = "asp-target")]
+    public class WizardTagHelper : TagHelper
+    {
+        [HtmlAttributeName("asp-target")]
+        public string TargetDivId { get; set; }
 
-//    public class WizardStepItem
-//    {
-//        public string? Title { get; set; }
-//        public string? Action { get; set; }
-//        public Dictionary<string, string?> RouteValues { get; set; } = new();
-//        public bool Active { get; set; }
-//        public string? CssClass { get; set; }
-//        public string? DataId { get; set; }
-//        public IDictionary<string, string?> DataAttributes { get; } = new Dictionary<string, string?>();
-//    }
+        [HtmlAttributeName("asp-method")]
+        public string Method { get; set; } = "GET";
 
-//    [HtmlTargetElement("wizard-nav")]
-//    public class WizardNavTagHelper : TagHelper
-//    {
-//        private const string DefaultBaseClass = "nav nav-wizard";
+        [HtmlAttributeName("on-begin")]
+        public string OnBegin { get; set; }
 
-//        [HtmlAttributeName("class")] public string? Class { get; set; }
-//        [HtmlAttributeName("id")] public string? Id { get; set; }
-//        [HtmlAttributeName("target-id")] public string TargetId { get; set; } = "wizardContent";
+        [HtmlAttributeName("on-success")]
+        public string OnSuccess { get; set; }
 
-//        [ViewContext]
-//        [HtmlAttributeNotBound]
-//        public ViewContext? ViewContext { get; set; }
+        [HtmlAttributeName("on-failure")]
+        public string OnFailure { get; set; }
 
-//        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
-//        {
-//            var wizardContext = new WizardContext();
-//            context.Items[typeof(WizardContext)] = wizardContext;
+        [HtmlAttributeName("on-complete")]
+        public string OnComplete { get; set; }
 
-//            await output.GetChildContentAsync();
+        [HtmlAttributeName("asp-loading-text")]
+        public string LoadingText { get; set; } = "Caricamento in corso...";
 
-//            output.TagName = "ul";
-//            var classes = string.IsNullOrWhiteSpace(Class) ? DefaultBaseClass : $"{DefaultBaseClass} {Class}";
-//            output.Attributes.SetAttribute("class", classes);
-//            if (!string.IsNullOrWhiteSpace(Id)) output.Attributes.SetAttribute("id", Id);
+        [HtmlAttributeName("asp-loading-class")]
+        public string LoadingClass { get; set; } = "text-primary";
 
-//            var html = new System.Text.StringBuilder();
-//            foreach (var step in wizardContext.Steps)
-//            {
-//                var li = new TagBuilder("li");
-//                var liClasses = new List<string> { "btnRichiestaNavWizard" };
-//                if (!string.IsNullOrWhiteSpace(step.CssClass)) liClasses.Add(step.CssClass);
-//                if (step.Active) liClasses.Add("active");
-//                li.AddCssClass(string.Join(" ", liClasses));
+        // true => su errore torna al tab precedente; false => resta sul tab corrente
+        [HtmlAttributeName("asp-error-select-last-tab")]
+        public bool ErrorSelectLastTab { get; set; } = false;
 
-//                if (!string.IsNullOrWhiteSpace(step.Action))
-//                    li.Attributes["data-action"] = step.Action!;
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "ul";
+            if (!output.Attributes.TryGetAttribute("class", out var _))
+                output.Attributes.SetAttribute("class", "nav nav-wizard");
 
-//                if (step.RouteValues.Any())
-//                {
-//                    var queryString = string.Join("&", step.RouteValues.Select(kvp => $"{kvp.Key}={HttpUtility.UrlEncode(kvp.Value)}"));
-//                    var encrypted = CryptoHelper.Encrypt(queryString);
-//                    var encryptedParam = HttpUtility.UrlEncode(encrypted);
-//                    li.Attributes["data-query"] = encryptedParam;
-//                }
+            // usa l'id presente o generane uno
+            var existingId = output.Attributes["id"]?.Value?.ToString();
+            var id = string.IsNullOrWhiteSpace(existingId) ? $"wizard_{Guid.NewGuid():N}" : existingId!;
+            output.Attributes.SetAttribute("id", id);
 
-//                if (!string.IsNullOrWhiteSpace(step.DataId))
-//                    li.Attributes["data-id"] = step.DataId!;
+            var httpMethod = (Method ?? "GET").ToUpperInvariant() == "POST" ? "POST" : "GET";
 
-//                foreach (var kv in step.DataAttributes)
-//                    if (!string.IsNullOrWhiteSpace(kv.Key) && !string.IsNullOrWhiteSpace(kv.Value))
-//                        li.Attributes[$"data-{kv.Key}"] = kv.Value;
+            var script = $@"
+<script>
+document.addEventListener('DOMContentLoaded', function() {{
+  var wizard = document.getElementById('{id}');
+  if (!wizard) return;
+  var targetDiv = document.getElementById('{TargetDivId}');
+  if (!targetDiv) return;
 
-//                li.InnerHtml.Append(step.Title ?? string.Empty);
+  var lastActiveIndex = null;
 
-//                using var writer = new System.IO.StringWriter();
-//                li.WriteTo(writer, HtmlEncoder.Default);
-//                html.AppendLine(writer.ToString());
-//            }
+  function handleClick(li) {{
+    var lis = wizard.querySelectorAll('li');
+    lastActiveIndex = Array.prototype.findIndex.call(lis, function(x) {{
+      return x.classList.contains('active');
+    }});
 
-//            output.Content.SetHtmlContent(html.ToString());
+    // attiva il tab cliccato
+    lis.forEach(function(x) {{ x.classList.remove('active'); }});
+    li.classList.add('active');
 
-//            // JS integrato
-//            var script = $@"
-//<script>
-//document.addEventListener('DOMContentLoaded', function() {{
-//    document.querySelectorAll('.btnRichiestaNavWizard').forEach(function(el) {{
-//        el.addEventListener('click', function() {{
-//            var action = el.getAttribute('data-action');
-//            var query = el.getAttribute('data-query');
-//            var target = document.getElementById('{TargetId}');
-//            if(!action || !target) return;
+    var url = li.getAttribute('data-url');
+    if (!url) return;
 
-//            // Rimuovi active precedente
-//            document.querySelectorAll('.btnRichiestaNavWizard').forEach(x => x.classList.remove('active'));
-//            el.classList.add('active');
+    // loading dinamico
+    targetDiv.innerHTML =
+      '<div class=""loading_outer text-center p-5"">' +
+        '<div class=""spinner-border mt-3 {LoadingClass}""></div>' +
+        '<div class=""{LoadingClass} mt-3""><strong>{LoadingText}</strong></div>' +
+      '</div>';
 
-//            fetch(action + '?p=' + encodeURIComponent(query))
-//                .then(r => r.text())
-//                .then(html => {{
-//                    target.innerHTML = html;
-//                }})
-//                .catch(err => console.error('Errore caricamento wizard step', err));
-//        }});
-//    }});
-//}});
-//</script>";
-//            output.PostContent.AppendHtml(script);
-//        }
-//    }
+    {(string.IsNullOrWhiteSpace(OnBegin) ? "" : $"{OnBegin}(li);")}
 
-//    [HtmlTargetElement("wizard-step", ParentTag = "wizard-nav")]
-//    public class WizardStepTagHelper : TagHelper
-//    {
-//        [HtmlAttributeName("title")] public string? Title { get; set; }
-//        [HtmlAttributeName("action")] public string? Action { get; set; }
-//        [HtmlAttributeName("route-values")] public Dictionary<string, string?> RouteValues { get; set; } = new();
-//        [HtmlAttributeName("active")] public bool Active { get; set; }
-//        [HtmlAttributeName("class")] public string? Class { get; set; }
-//        [HtmlAttributeName("data-id")] public string? DataId { get; set; }
-//        [HtmlAttributeName("data-additional")] public string? DataAdditional { get; set; }
+    fetch(url, {{
+      method: '{httpMethod}',
+      headers: {{ 'X-Requested-With': 'XMLHttpRequest' }}
+    }})
+    .then(function(response) {{
+      if (!response.ok) throw response;
+      return response.text();
+    }})
+    .then(function(html) {{
+      targetDiv.innerHTML = html;
+      {(string.IsNullOrWhiteSpace(OnSuccess) ? "" : $"{OnSuccess}(html, li);")}
+    }})
+    .catch(function(err) {{
+      function showErrorMessage(msg) {{
+        targetDiv.innerHTML = '<div class=""alert alert-danger mt-3 p-3"">' + msg + '</div>';
+      }}
 
-//        public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
-//        {
-//            if (!context.Items.TryGetValue(typeof(WizardContext), out var ctxObj) || ctxObj is not WizardContext wizardContext)
-//                return Task.CompletedTask;
+      var fallback = 'Si è verificato un errore imprevisto.';
+      if (err instanceof Response) {{
+        err.text().then(function(text) {{
+          var msg = fallback;
+          try {{
+            var json = text ? JSON.parse(text) : null;
+            if (json && typeof json.message === 'string' && json.message.trim() !== '') {{
+              msg = json.message;
+            }} else {{
+              msg = text || fallback;
+            }}
+          }} catch (_e) {{
+            msg = text || fallback;
+          }}
+          showErrorMessage(msg);
+          {(string.IsNullOrWhiteSpace(OnFailure) ? "" : $"{OnFailure}({{ message: msg, status: err.status }}, li);")}
+        }});
+      }} else {{
+        var msg = (err && err.message) ? err.message : fallback;
+        showErrorMessage(msg);
+        {(string.IsNullOrWhiteSpace(OnFailure) ? "" : $"{OnFailure}({{ message: msg }}, li);")}
+      }}
 
-//            var item = new WizardStepItem
-//            {
-//                Title = Title,
-//                Action = Action,
-//                RouteValues = RouteValues ?? new(),
-//                Active = Active,
-//                CssClass = Class,
-//                DataId = DataId
-//            };
+      // gestione tab in caso di errore
+      {(ErrorSelectLastTab
+        ? @"var liList = wizard.querySelectorAll('li');
+            liList.forEach(function(x) {{ x.classList.remove('active'); }});
+            if (lastActiveIndex !== null && lastActiveIndex >= 0 && lastActiveIndex < liList.length) {{
+              liList[lastActiveIndex].classList.add('active');
+            }}"
+        : @"/* resta sul tab corrente (cliccato) in caso di errore */")}
+    }})
+    .finally(function() {{
+      {(string.IsNullOrWhiteSpace(OnComplete) ? "" : $"{OnComplete}(li);")}
+    }});
+  }}
 
-//            if (!string.IsNullOrWhiteSpace(DataAdditional))
-//            {
-//                var parts = DataAdditional.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-//                foreach (var p in parts)
-//                {
-//                    var kv = p.Split(':', 2, StringSplitOptions.TrimEntries);
-//                    if (kv.Length == 2)
-//                    {
-//                        var key = kv[0].Replace(" ", "-").ToLowerInvariant();
-//                        item.DataAttributes[key] = kv[1];
-//                    }
-//                }
-//            }
+  // listener sui <li>
+  wizard.querySelectorAll('li').forEach(function(li) {{
+    li.addEventListener('click', function() {{ handleClick(li); }});
+  }});
 
-//            wizardContext.Steps.Add(item);
-//            output.SuppressOutput();
-//            return Task.CompletedTask;
-//        }
-//    }
+  // funzione globale per cambiare tab da JS
+  window.setWizardTab = function(wizardId, tabIndex) {{
+    var w = document.getElementById(wizardId);
+    if (!w) return;
+    var lis = w.querySelectorAll('li');
+    if (tabIndex < 0 || tabIndex >= lis.length) {{
+      console.error('Indice tab non valido:', tabIndex);
+      return;
+    }}
+    lis[tabIndex].click();
+  }};
 
-//}
+  // auto-run: tab con .active, altrimenti il primo
+  var initial = wizard.querySelector('li.active') || wizard.querySelector('li');
+  if (initial) initial.click();
+}});
+</script>";
+
+            output.PostElement.AppendHtml(script);
+        }
+    }
+}
