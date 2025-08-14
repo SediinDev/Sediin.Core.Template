@@ -8,50 +8,50 @@
 
     <div class="form-horizontal row mt-4">
         <div class="col-md-6 form-group">
-            @Html.Label("Username")
-            @Html.TextBoxFor(model => model.UserName)
-            @Html.ValidationMessageFor(model => model.UserName)
+            @Html.LabelFor(m => m.UserName)
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.Label("Ruolo")
-            <div>
-                <select data-val="true" data-val-required="Il campo Ruolo è obbligatorio."
-                        class="form-control col-md-12 field-warning"
-                        id="Ruolo" name="Ruolo">
-                    @foreach (var item in Enum.GetValues(typeof(Sediin.Core.Identity.Roles)))
-                    {
-                        <option value="@item">@item</option>
+            @Html.LabelFor(m => m.Ruolo)
 
-                    }
-                </select>
-                @Html.ValidationMessage("Ruolo")
-            </div>
-        </div>
+            @* Costruzione opzioni enum direttamente inline *@
+            <select asp-for="Ruolo"
+                    class="form-control"
+                    placeholder="[Seleziona un'opzione]"
+                    asp-items="Enum.GetValues(typeof(Sediin.Core.Identity.Roles))
+                                    .Cast<Sediin.Core.Identity.Roles>()
+                                    .Select(r => new SelectOption {
+                                        Value = r.ToString(),
+                                        Text = r.ToString() })
+                                    .ToList()"></select>
 
-
-        <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Nome)
-            @Html.TextBoxFor(model => model.Nome)
-            @Html.ValidationMessageFor(model => model.Nome)
+            @Html.ValidationMessageFor(m => m.Ruolo, "", new { @class = "text-danger" })
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Cognome)
-            @Html.TextBoxFor(model => model.Cognome)
-            @Html.ValidationMessageFor(model => model.Cognome)
+            @Html.LabelFor(m => m.Nome)
+            @Html.TextBoxFor(m => m.Nome, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Nome, "", new { @class = "text-danger" })
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Email)
-            @Html.TextBoxFor(model => model.Email)
-            @Html.ValidationMessageFor(model => model.Email)
+            @Html.LabelFor(m => m.Cognome)
+            @Html.TextBoxFor(m => m.Cognome, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Cognome, "", new { @class = "text-danger" })
         </div>
 
         <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.ConfirmEmail)
-            @Html.TextBoxFor(model => model.ConfirmEmail)
-            @Html.ValidationMessageFor(model => model.ConfirmEmail)
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(m => m.ConfirmEmail)
+            @Html.TextBoxFor(m => m.ConfirmEmail, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ConfirmEmail, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -62,9 +62,7 @@
 
 </ajax-form>
 
-@{
-    Html.RenderPartial("_ValidationScriptsPartial");
-}
+@Html.Partial("_ValidationScriptsPartial")
 
 <script>
     function onRegisterSuccess(data) {

@@ -1,6 +1,12 @@
 ﻿$(document).ready(function () {
+    //// --- 1. Salvo i valori iniziali delle select ---
+    //const selectValues = {};
+    //$("form select").each(function () {
+    //    selectValues[this.id] = $(this).val();
+    //});
     customValidatorOnBegin();
     setPlaceholdersFromLabels();
+    setWarningValidation();
 
     // Funzione di normalizzazione testo per confronto
     const normalizeText = (str) => {
@@ -95,11 +101,14 @@
     });
 
     translateExistingValidationMessages();
+
 });
+
 
 $("form button[type='submit'], form input[type='submit']").on("click", function () {
     removeValidClassFromCheckboxes();
 });
+
 
 function translateExistingValidationMessages() {
     const requiredPattern = /^the\s.+\sfield\sis\srequired\.?$/i;
@@ -192,30 +201,6 @@ function getCleanLabelText(id) {
     return text;
 }
 
-//function getCleanLabelText(id) {
-//    const label = $("label[for='" + id + "']");
-//    if (!label.length) return "";
-//    let text = label.clone().children().remove().end().text().replace(/\*/g, "").trim();
-
-//    // Se la lunghezza è pari, prova a dividere a metà e confrontare le due metà
-//    if (text.length % 2 === 0) {
-//        const half = text.length / 2;
-//        const part1 = text.substring(0, half);
-//        const part2 = text.substring(half);
-//        if (part1 === part2) {
-//            text = part1; // rimuovo la seconda metà duplicata
-//        }
-//    }
-
-//    // Rimuove duplicati consecutivi di parole (es. CognomeCognome -> Cognome)
-//    text = text.replace(/(\b\w+\b)\1+/gi, "$1");
-
-//    return text;
-//}
-
-
-
-// Rimuove parole duplicate consecutive in una stringa
 function removeDuplicateWords(str) {
     if (!str) return str;
     return str.replace(/(\b\w+\b)\1+/gi, "$1");
@@ -336,6 +321,18 @@ function customValidatorOnBegin() {
     $("form .form-check input[type='checkbox']").on("change", function () {
         removeValidClassFromCheckboxes();
     });
+
+
+    setTimeout(() => {
+        $("form select").each(function () {
+            const $sel = $(this);
+            const selectedOption = $sel.find("option[selected]");
+            if (selectedOption.length) {
+                $sel.val(selectedOption.last().val()).trigger("change");
+            }
+        });
+    }, 10);
+
 }
 
 // FUNZIONI DI VALIDAZIONE
@@ -420,9 +417,24 @@ function validateInputField(id) {
         removeValidationError(id);
         return;
     }
-    const val = $("#" + id).val();
-    if (val === "") {
-        addValidationError(id); // se vuoto, mostra errore rosso
+
+    const $el = $("#" + id);
+    const val = $el.val();
+
+    let isEmpty;
+    if ($el.is("select")) {
+        if ($el.prop("multiple")) {
+            isEmpty = !Array.isArray(val) || val.length === 0;
+        } else {
+            // Considero vuoto anche null e "0" (tipico placeholder)
+            isEmpty = (val === "" || val === null || val === "0");
+        }
+    } else {
+        isEmpty = (val === "" || val === null);
+    }
+
+    if (isEmpty) {
+        addValidationError(id);
     } else {
         removeValidationError(id);
     }
@@ -468,45 +480,66 @@ function setWarningValidation() {
 
         clearFieldMessage(id);
 
-        if (!requiredElement(id)) {
+        // Controlla se il campo è richiesto
+        const isRequired = requiredElement(id);
+
+        if (!isRequired) {
             // Non richiesto → stato success (verde)
             removeValidationError(id);
             return;
         }
 
         if (!input.prop("disabled")) {
+            // Aggiunge asterisco solo se il campo è richiesto
             addAsteriskToLabel(id);
 
-            if (input.val() === "") {
-                // Campo richiesto vuoto → stato warning (giallo)
+            let v = input.val();
+            let isEmpty;
+
+            if (input.is("select")) {
+                if (input.prop("multiple")) {
+                    isEmpty = !Array.isArray(v) || v.length === 0;
+                } else {
+                    isEmpty = (v === "" || v === null || v === "0");
+                }
+            } else {
+                isEmpty = (v === "" || v === null);
+            }
+
+            if (isEmpty) {
+                // Campo richiesto vuoto → warning giallo
                 addValidationWarning(id);
-                resetButtonsState($group);
             } else {
                 // Campo richiesto con valore → stato success (verde)
                 removeValidationError(id);
-                resetButtonsState($group);
             }
+
+            resetButtonsState($group);
         }
     });
 }
+
 
 function addAsteriskToLabel(id) {
     const input = $("#" + id);
     if (!input.length) return;
 
-    // Verifica se è required (HTML5 o data-val-required)
-    const isRequired = input.prop("required") || input.attr("data-val-required") !== undefined;
-    if (!isRequired) return;
+    // Recupera il form-group di appartenenza
+    const $group = input.closest(".form-group");
+    if (!$group.length) return;
 
-    let label = $("label[for='" + id + "']");
+    // Verifica se almeno un campo dentro al form-group è richiesto
+    const hasRequiredField = $group.find("input,textarea,select").toArray().some(el => requiredElement(el.id));
+    if (!hasRequiredField) return; // nessun campo richiesto → niente asterisco
 
-    // Se non c'è label con for, cerca la prima nel form-group
+    // Cerca la label **solo dentro il form-group**
+    let label = $group.find("label[for='" + id + "']").first();
     if (!label.length) {
-        label = input.closest(".form-group").find("label").first();
+        label = $group.find("label").first();
     }
 
     if (label.length) {
-        // Evita duplicati
+        // Evita di aggiungere l’asterisco se già presente
         const hasAsterisk = label.children("span.text-danger").filter(function () {
             return $(this).text().trim() === "*";
         }).length > 0;
