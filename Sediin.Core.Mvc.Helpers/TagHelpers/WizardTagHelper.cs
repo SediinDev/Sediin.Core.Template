@@ -52,7 +52,8 @@ $(function() {{
     var lastActiveIndex = null;
 
     function handleClick(li) {{
-        if ($(li).data('disabled') === true) return;
+        // Se data-disabled=""true"" non cliccabile
+        if ($(li).attr('data-disabled') === 'true') return;
 
         // VALIDAZIONE SOLO SE IL TAB CLICCATO HA data-require-validation=""true""
         if ($(li).data('require-validation') === true) {{
@@ -105,7 +106,6 @@ $(function() {{
 
                 targetDiv.html('<div class=""alert alert-danger mt-3 p-3"">' + msg + '</div>');
 
-                // chiama asp-failure passando xhr originale
                 if (window['{OnFailure}']) {{
                     window['{OnFailure}'](xhr, li);
                 }}
