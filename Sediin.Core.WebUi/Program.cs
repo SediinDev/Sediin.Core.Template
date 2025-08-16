@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,7 @@ using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 
 //--------------------------------------------------------
-//  DATABASE CONFIGURATION
+// DATABASE CONFIGURATION
 //--------------------------------------------------------
 builder.Services.AddDbContext<SediinCoreIdentityDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SediinCoreIdentityConnection")));
@@ -32,7 +32,7 @@ builder.Services.AddDbContext<SediinCoreDataAccessDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //--------------------------------------------------------
-//  IDENTITY
+// IDENTITY
 //--------------------------------------------------------
 builder.Services.AddDefaultIdentity<SediinIdentityUser>(options =>
 {
@@ -68,46 +68,35 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 //--------------------------------------------------------
-//  DEPENDENCY INJECTION
+// DEPENDENCY INJECTION
 //--------------------------------------------------------
-//builder.Services.AddScoped<ISediinCoreConfiguration, SediinCoreConfiguration>();
 builder.Services.AddScoped<IUnitOfWorkDataAccess, UnitOfWorkDataAccess>();
 builder.Services.AddScoped<IUnitOfWorkIdentity, UnitOfWorkIdentity>();
 builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
 builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton<ISediinCoreConfiguration>(provider =>
 {
     var env = provider.GetRequiredService<IWebHostEnvironment>();
     var memoryCache = provider.GetRequiredService<IMemoryCache>();
-
     var configPath = Path.Combine(env.ContentRootPath, "App_Data", "config.json");
-
-    // Durata cache personalizzabile
     var cacheDuration = TimeSpan.FromMinutes(20);
 
     return new SediinCoreConfiguration(configPath, memoryCache, cacheDuration);
 });
 
-
 //--------------------------------------------------------
-//  AUTO MAPPER
+// AUTO MAPPER
 //--------------------------------------------------------
-//builder.Services.SediinIdentityAutoMapper();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //--------------------------------------------------------
-//  SESSION, CACHE, LOCALIZATION
+// SESSION, LOCALIZATION
 //--------------------------------------------------------
-builder.Services.AddMemoryCache();
 builder.Services.AddSession();
-
-//builder.Services.Configure<EmailSettings>(
-//    builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -118,13 +107,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 
 //--------------------------------------------------------
-//  LOGGING
+// LOGGING
 //--------------------------------------------------------
 builder.Host.UseSerilog((ctx, lc) =>
     lc.ReadFrom.Configuration(ctx.Configuration));
 
 //--------------------------------------------------------
-//  MVC, RAZOR, FILTERS, AREAS
+// MVC, RAZOR, FILTERS, AREAS
 //--------------------------------------------------------
 builder.Services.AddControllersWithViews(options =>
 {
@@ -134,18 +123,22 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddRazorPages();
-
 builder.Services.AddSignalR();
 
 //--------------------------------------------------------
-//  APP BUILD
+// APP BUILD
 //--------------------------------------------------------
 var app = builder.Build();
 
+//--------------------------------------------------------
+// HUBS & LOCALIZATION
+//--------------------------------------------------------
 app.MapHub<NotifyHub>("/notifyhub");
-
 app.UseRequestLocalization();
 
+//--------------------------------------------------------
+// ERROR HANDLING
+//--------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -156,20 +149,31 @@ else
     app.UseHsts();
 }
 
-app.UseMiddleware<QueryDecryptMiddleware>();
-
+//--------------------------------------------------------
+// HTTPS & STATIC FILES
+//--------------------------------------------------------
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
+//--------------------------------------------------------
+// SESSION (prima del middleware di query decryption)
+//--------------------------------------------------------
 app.UseSession();
 
 //--------------------------------------------------------
-//  ROUTING
+// MIDDLEWARE PERSONALIZZATI
+//--------------------------------------------------------
+app.UseQueryDecrypt(); // QueryDecryptMiddleware
+
+//--------------------------------------------------------
+// ROUTING, AUTHENTICATION, AUTHORIZATION
+//--------------------------------------------------------
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+//--------------------------------------------------------
+// ROUTE MAP
 //--------------------------------------------------------
 app.MapControllerRoute(
     name: "areas",

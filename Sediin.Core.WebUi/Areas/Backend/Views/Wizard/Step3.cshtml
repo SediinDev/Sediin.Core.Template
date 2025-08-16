@@ -1,1 +1,60 @@
-﻿step tre
+﻿@model Sediin.Core.Identity.Entities.DTO.SediinIdentityUser_DTO
+@using Sediin.Core.Mvc.Helpers.TagHelpers
+@addTagHelper *, Sediin.Core.Mvc.Helpers
+
+
+<ajax-form asp-action="ModificaUtente"
+asp-controller="Utenti"
+on-begin="alertWaid()"
+on-success="hideModal(); toastSuccess(data); updateListRicerca()"
+on-failure="handleError">
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="form-horizontal row mt-4">
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Username)
+            <div>@Model.Username</div>
+
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Ruolo)
+            <div>@Model.Ruolo</div>
+
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Nome)
+            @Html.TextBoxFor(model => model.Nome)
+            @Html.ValidationMessageFor(model => model.Nome)
+        </div>
+
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Cognome)
+            @Html.TextBoxFor(model => model.Cognome)
+            @Html.ValidationMessageFor(model => model.Cognome)
+        </div>
+        <div class="col-md-6 form-group">
+
+            @Html.LabelFor(model => model.Email)
+            @Html.TextBoxFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+        <div class="col-md-6 form-group">
+
+            @Html.Label("Conferma Email")
+            @Html.TextBoxFor(model => model.ConfirmEmail)
+            @Html.ValidationMessageFor(model => model.ConfirmEmail)
+            </>
+
+
+        </div>
+    </div>
+    <button type="submit" class="btn btn-info">Aggiorna</button>
+
+</ajax-form>
+
+
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+

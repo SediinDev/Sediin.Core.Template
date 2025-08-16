@@ -6,7 +6,7 @@ namespace Sediin.Core.WebUi.Areas.Backend.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return AjaxView();
         }
         public IActionResult Step1()
         {
@@ -19,9 +19,9 @@ namespace Sediin.Core.WebUi.Areas.Backend.Controllers
         }
         public IActionResult Step3()
         {
-            Thread.Sleep(3000);
+            //Thread.Sleep(3000);
 
-            return AjaxView();
+            return AjaxView(model:new Sediin.Core.Identity.Entities.DTO.SediinIdentityUser_DTO { });
         }
         public IActionResult Step4()
         {
