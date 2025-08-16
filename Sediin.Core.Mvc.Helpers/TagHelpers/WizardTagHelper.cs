@@ -51,16 +51,16 @@ $(function() {{
     var targetDiv = $('#{TargetDivId}');
     var lastActiveIndex = null;
 
-    function validateContent(container) {{
-        return $(container).find('.input-validation-error').length === 0;
-    }}
-
     function handleClick(li) {{
         if ($(li).data('disabled') === true) return;
 
-        if ($(li).data('require-validation') === true && !validateContent(targetDiv)) {{
-            console.warn('Contenuto non valido.');
-            return;
+        // VALIDAZIONE SOLO SE IL TAB CLICCATO HA data-require-validation=""true""
+        if ($(li).data('require-validation') === true) {{
+            var form = targetDiv.find('form').first();
+            if (form.length > 0 && $.validator && !form.valid()) {{
+                console.warn('Form non valido. Impossibile cambiare tab.');
+                return;
+            }}
         }}
 
         var lis = wizard.find('li');
@@ -87,7 +87,6 @@ $(function() {{
             success: function(html) {{
                 targetDiv.html(html);
 
-                // Riinizializza jQuery Unobtrusive Validation
                 if ($.validator) {{
                     $.validator.unobtrusive.parse(targetDiv);
                 }}
@@ -97,37 +96,24 @@ $(function() {{
             error: function(xhr) {{
                 var msg = 'Si è verificato un errore imprevisto.';
                 try {{
-                    var res = xhr.responseText;
-                    var json = res ? JSON.parse(res) : null;
-                    if (json && typeof json.message === 'string' && json.message.trim() !== '') {{
-                        msg = json.message;
-                    }} else if (res && res.trim() !== '') {{
-                        msg = res;
-                    }}
-                }} catch {{
-                    if (xhr.responseText && xhr.responseText.trim() !== '') {{
-                        msg = xhr.responseText;
-                    }}
+                    var res = xhr.responseText ? JSON.parse(xhr.responseText) : null;
+                    if (res && res.message) msg = res.message;
+                    else if (xhr.responseText && xhr.responseText.trim() !== '') msg = xhr.responseText;
+                }} catch (_e) {{
+                    if (xhr.responseText && xhr.responseText.trim() !== '') msg = xhr.responseText;
                 }}
 
                 targetDiv.html('<div class=""alert alert-danger mt-3 p-3"">' + msg + '</div>');
 
-                // Crea oggetto compatibile con handleError
-                var fakeXhr = {{
-                    responseText: JSON.stringify({{ message: msg }}),
-                    status: xhr.status
-                }};
-
-                if (typeof window['{OnFailure}'] === 'function') {{
-                    window['{OnFailure}'](fakeXhr, li);
+                // chiama asp-failure passando xhr originale
+                if (window['{OnFailure}']) {{
+                    window['{OnFailure}'](xhr, li);
                 }}
 
-                // Gestione tab in caso di errore
                 if ({ErrorSelectLastTab.ToString().ToLower()}) {{
                     lis.removeClass('active');
-                    if (lastActiveIndex !== null && lastActiveIndex >= 0 && lastActiveIndex < lis.length) {{
+                    if (lastActiveIndex !== null && lastActiveIndex >= 0 && lastActiveIndex < lis.length)
                         lis.eq(lastActiveIndex).addClass('active');
-                    }}
                 }}
             }},
             complete: function() {{
